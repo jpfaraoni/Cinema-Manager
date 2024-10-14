@@ -1,0 +1,35 @@
+Gustavo Henrique Costa Ramos (24103661) e João Pedro Faraoni (22204115)
+Desenvolvimento de Sistemas Orientados à Objetos (INE5605)
+
+"""Caso a equipe escolha um tema livre, deve também apresentar a descrição do sistema (utilizar o mesmo formato da descrição do tema padrão)."""
+
+Sistemas de Gerenciamento de Cinema
+PROBLEMA:  
+Implementar um sistema orientado a objetos em Python para o gerenciamento de um cinema, com foco na organização de sessões, vendas de ingressos e controle de clientes.
+
+ESCOPO DO DESENVOLVIMENTO:  
+O gerenciamento de sessões de cinema deve garantir que os filmes sejam exibidos em horários adequados, sem conflitos de salas, e que os clientes possam comprar ingressos conforme a disponibilidade e as restrições da classificação indicativa.
+
+O cinema conta com uma ou mais salas, onde são exibidos os filmes. Cada sala possui um número único de identificação e a quantidade máxima de assentos disponíveis. O cadastro de cada filme deve incluir: título, gênero, duração e classificação indicativa (idade mínima para assistir).
+
+Cada sessão corresponde à exibição de um filme em uma sala específica e deve conter: data e horário, filme a ser exibido, sala onde será exibido e o número de ingressos disponíveis. Ao criar uma sessão, é necessário verificar se já não existe uma sessão marcada na mesma sala e horário. Se houver, a nova sessão não pode ser criada.
+
+O cadastro de clientes inclui: CPF, nome, data de nascimento e endereço. Para comprar um ingresso, o cliente precisa estar cadastrado no sistema. Durante o processo de compra, o sistema deve verificar se o cliente tem idade suficiente para assistir ao filme conforme a classificação indicativa e se há ingressos disponíveis para a sessão.
+
+As vendas de ingressos registram: a data da compra, o cliente, a sessão e a quantidade de ingressos adquiridos. Caso a sessão já esteja esgotada, o sistema deve impedir a venda. Se a venda for bem-sucedida, o número de ingressos restantes da sessão deve ser atualizado.
+
+O sistema deve permitir emitir relatórios das vendas realizadas em determinado período e listar as sessões disponíveis para um filme específico. Também deve ser possível emitir um relatório das sessões esgotadas e das sessões com ingressos ainda disponíveis.
+
+Considere algumas regras:
+1. Não pode haver duas sessões no mesmo horário e na mesma sala.
+2. O cliente só pode comprar ingressos se a sessão tiver ingressos disponíveis.
+3. O cliente só pode comprar ingressos para filmes cuja classificação indicativa seja compatível com sua idade.
+4. O sistema deve registrar corretamente a quantidade de ingressos disponíveis em cada sessão, reduzindo conforme as vendas são realizadas.
+
+RESTRIÇÕES DE ESCOPO:
+Para simplificar este trabalho, o sistema contempla somente algumas das funcionalidades de um processo de gerenciamento de cinema, não abordando todas as questões de segurança e pagamento.
+
+Para este tema padrão, serão considerados:
+- Cadastros: Cliente, Filme, Sala e Sessão.
+- Registros: Ingresso e Venda.
+- Relatórios: Vendas por período, sessões esgotadas e sessões disponíveis por filme.
