@@ -10,12 +10,12 @@ Parte 1 - Descrição do Sistema + Modelagem e Implementação das Entidades
 Entrega: 14/10
 
 Gustavo: 
-- Implementação das entidades principais do sistema (Cliente, Filme, Sala).
+- Implementação das entidades principais do sistema (Cliente, Filme, Venda).
 - Desenvolvimento do cadastro de entidades, incluindo métodos para inclusão, exclusão, alteração e listagem (CRUD completo) das entidades atribuídas.
 - Suporte na criação do diagrama de classes e na modelagem das relações entre entidades.
 
 João Pedro:
-- Implementação das entidades auxiliares e de registro (Sessão, Ingresso, Venda).
+- Implementação das entidades auxiliares e de registro (Sessão, Ingresso, Sala).
 - Desenvolvimento do CRUD para as entidades de registro, incluindo métodos para inclusão, exclusão, alteração e listagem (CRUD completo).
 - Criação do diagrama de classes das entidades (Model), seguindo a notação UML 2.
 
