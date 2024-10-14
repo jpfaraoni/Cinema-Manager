@@ -1,20 +1,13 @@
 from clientecontrolador import ClienteControlador
 
 class ClienteVisao:
-    """
-    Classe que representa a interface com o usuário para gerenciar os clientes.
-    """
-
     def __init__(self):
-        self.controlador = ClienteControlador()  # Instancia do controlador
+        self.controlador = ClienteControlador()
 
     def tela_opcoes(self):
-        """
-        Exibe as opções do menu principal para o gerenciamento de clientes e retorna a opção escolhida.
-        """
         print("-------- GERENCIAMENTO DE CLIENTES ----------")
         print("Escolha a opção:")
-        print("1 - Adicionar Cliente")
+        print("1 - Cadastrar Cliente")
         print("2 - Atualizar Cliente")
         print("3 - Remover Cliente")
         print("4 - Listar Clientes")
@@ -26,61 +19,37 @@ class ClienteVisao:
                 raise ValueError("Opção inválida.")
         except ValueError as e:
             print(f"Erro: {e}. Por favor, digite um número válido.")
-            return self.tela_opcoes()  # Chama novamente para uma entrada correta
+            return self.tela_opcoes()
 
         return opcao
 
     def pega_dados_cliente(self):
-        """
-        Solicita os dados de um cliente ao usuário e retorna um dicionário com esses dados.
-        """
-        print("-------- DADOS DO CLIENTE----------")
-
         nome = input("Nome do Cliente: ")
         fone = input("Telefone para Contato: ")
-        email = input("Email: ").strip().upper()
+        email = input("Email: ").strip()  # Não converte para maiúsculas
+        return {"nome": nome, "fone": fone, "email": email}
 
-        return {"nome": nome, "telefone": fone, "email": email}
-
-    def mostra_cliente(self, dados_cliente):
-        """
-        Exibe os dados de um cliente específico.
-        """
+    def mostra_cliente(self, cliente):
         print("-------- CLIENTE ----------")
-        print(f"NOME: {dados_cliente.nome}")
-        print(f"TELEFONE: {dados_cliente.fone}")
-        print(f"EMAIL: {dados_cliente.email}")
+        print(f"NOME: {cliente.nome}")
+        print(f"TELEFONE: {cliente.fone}")
+        print(f"EMAIL: {cliente.email}")
         print("\n")
 
     def seleciona_cliente(self):
-        """
-        Solicita ao usuário o nome do cliente que deseja selecionar e retorna esse nome.
-        """
-        try:
-            nome = input("Digite o nome do cliente que deseja selecionar: ")
-        except ValueError:
-            print("Erro: nome inválido. Por favor, insira um nome cadastrado.")
-            return self.seleciona_cliente()  # Chama novamente para uma entrada correta
-
-        return nome
+        return input("Digite o nome do cliente que deseja selecionar: ")
 
     def mostra_mensagem(self, msg):
-        """
-        Exibe uma mensagem para o usuário.
-        """
         print(msg)
 
     def listar_clientes(self, clientes):
-        """
-        Exibe a lista de clientes cadastrados.
-        """
-        if isinstance(clientes, str):  # Se a lista retornada for uma mensagem de erro
+        if isinstance(clientes, str):
             self.mostra_mensagem(clientes)
         else:
-            if not clientes:  # Verifica se a lista de salas está vazia
-                self.mostra_mensagem("Nenhum clente cadastrado.")
+            if not clientes:
+                self.mostra_mensagem("Nenhum cliente cadastrado.")
                 return
 
             print("\nClientes cadastrados:")
-            for cliente in clietes:
-                self.mostra_cliente(cliente)  # Passa cada objeto cliente diretamente
+            for cliente in clientes:
+                self.mostra_cliente(cliente)
