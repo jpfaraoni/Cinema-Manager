@@ -15,7 +15,7 @@ def cadastrarCliente(self):
         Cliente.clientes_db.append(self)
         return f"Cliente: '{self.__nome}' adicionado com sucesso."
 
-    def atualizarCliente(self, nome=None, fone=None, email=None, historico_compras=None):
+    def atualizarCliente(self, nome=None, fone=None, email=None):
         # Atualiza os atributos do cliente se os novos valores forem fornecidos
         if nome is not None:
             self.__nome = nome
@@ -23,9 +23,7 @@ def cadastrarCliente(self):
             self.__fone = fone
         if email is not None:
             self.__email = email
-        if historico_compras is not None:
-            self.__historico_compras
-        return f"Cliente atualizado: {self.__nome}, {self.__fone}, {self.__email}, {self.__historico_compras}"
+        return f"Cliente atualizado: {self.__nome}, {self.__fone}, {self.__email}"
 
     def removerCliente(self):
         # Remove o cliente do "banco de dados"
@@ -38,8 +36,7 @@ def cadastrarCliente(self):
     def __str__(self):
         return (f"Nome: {self.__nome}\n"
                 f"Fone: {self.__fone}\n"
-                f"Email: {self.__email}\n"
-                f"Histórico de Compras: {self.__historico_compras}\n")
+                f"Email: {self.__email}\n")
       
     def listar_clientes(self):
         """
