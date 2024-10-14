@@ -8,8 +8,7 @@ class ClienteModelo:
     - email
     - historico_compras
   """
-clientes_db = []
-
+  
     def __init__(self, nome: str, fone: str, email: str, historico_compras: None):
         self.__nome = nome
         self.__fone = fone
