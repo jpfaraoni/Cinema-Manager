@@ -41,7 +41,7 @@ class SalaVisao:
             tipo = input("Tipo da sala (2D, 3D, IMAX): ").strip().upper()
 
             if tipo not in ["2D", "3D", "IMAX"]:
-                raise ValueError("Tipo de sala inválido. Deve ser '2D', '3D' ou 'IMAX'.")
+                raise ValueError("Tipo de sala inválido. Deve ser '2D', '3D' ou 'IMAX'.") #Tratamento com ENUM
         except ValueError as e:
             print(f"Erro: {e}. Por favor, insira os dados corretamente.")
             return self.pega_dados_sala()  # Chama novamente para uma entrada correta
