@@ -32,13 +32,7 @@ João Pedro:
 - Modelagem e implementação da entidade "Sala" utilizando o padrão MVC.
 - Implementação do controlador (Controller) e da tela (View) para a entidade "Sala".
 
-
 ____________________________________________________________________________
-
-
-
-
-
 
 Parte 3 - Sistema Completo
 Entrega: 04/11
@@ -58,3 +52,4 @@ ____________________________________________________________________________
 Observações:
 
 - Gustavo e João trabalharão em conjunto na revisão de todo o sistema, garantindo que todas as entidades e funcionalidades estejam bem integradas.
+
