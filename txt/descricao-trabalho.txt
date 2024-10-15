@@ -8,7 +8,8 @@ PROBLEMA:
 Implementar um sistema orientado a objetos em Python para o gerenciamento de um cinema, com foco na organização de sessões, vendas de ingressos e controle de clientes.
 
 ESCOPO DO DESENVOLVIMENTO:  
-O gerenciamento de sessões de cinema deve garantir que os filmes sejam exibidos em horários adequados, sem conflitos de salas, e que os clientes possam comprar ingressos conforme a disponibilidade e as restrições da classificação indicativa.
+O gerenciamento de sessões de cinema deve garantir que os filmes sejam exibidos em horários adequados, sem conflitos de salas, 
+e que os clientes possam comprar ingressos conforme a disponibilidade e as restrições da classificação indicativa.
 
 O cinema conta com uma ou mais salas, onde são exibidos os filmes. Cada sala possui um número único de identificação e a quantidade máxima de assentos disponíveis. 
 O cadastro de cada filme deve incluir: título, gênero, duração e classificação indicativa (idade mínima para assistir).
