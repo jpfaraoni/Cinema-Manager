@@ -7,7 +7,7 @@ class Sala:
 
     salas_db = []
 
-    def __init__(self, numero, capacidade, tipo):
+    def __init__(self, numero: int, capacidadnt: int, tipo: str): #Fazer o isIntance do tipos de dados
         self.__numero = numero
         self.__capacidade = capacidade
         self.__tipo = tipo
