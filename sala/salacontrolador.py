@@ -8,7 +8,7 @@ class TipoSala(Enum):#TODO implementar um versão melhor do enum(com numeros).
     """
     _2D = "2D"
     _3D = "3D"
-    IMAX = "IMAX"
+    _IMAX = "IMAX"
 
 
 class SalaControlador:
