@@ -1,4 +1,4 @@
-class SalaModelo:
+class Sala:
     """
     Classe que representa o modelo de uma Sala no sistema.
 
@@ -8,10 +8,13 @@ class SalaModelo:
     - tipo: Tipo da sala (ex: '2D', '3D', 'IMAX').
     """
 
-    def __init__(self, numero, capacidade, tipo):
-        self.__numero = numero
-        self.__capacidade = capacidade
-        self.__tipo = tipo
+    def __init__(self, numero:int, capacidade:int, tipo:str):
+        if isinstance(numero, int):
+            self.__numero = numero
+        if isinstance(capacidade, int):
+            self.__capacidade = capacidade
+        if isinstance(tipo, str):
+             self.__tipo = tipo
 
     @property
     def numero(self):
@@ -19,7 +22,8 @@ class SalaModelo:
 
     @numero.setter
     def numero(self, numero: int):
-        self.__numero = numero
+        if isinstance(numer, int):
+            self.__numero = numero
 
     @property
     def capacidade(self):
@@ -27,7 +31,8 @@ class SalaModelo:
 
     @capacidade.setter
     def capacidade(self, capacidade: int):
-        self.__capacidade = capacidade
+        if isinstance(capacidade, int):
+            self.__capacidade = capacidade
 
     @property
     def tipo(self):
@@ -35,4 +40,5 @@ class SalaModelo:
 
     @tipo.setter
     def tipo(self, tipo: str):
-        self.__tipo = tipo
+        if isinstance(tipo, str):
+            self.__tipo = tipo
