@@ -1,4 +1,5 @@
 from salacontrolador import SalaControlador
+from salacontrolador import TipoSala
 
 class SalaVisao:
     """
@@ -38,15 +39,19 @@ class SalaVisao:
         try:
             numero = int(input("Número da sala: "))
             capacidade = int(input("Capacidade da sala: "))
-            tipo = input("Tipo da sala (2D, 3D, IMAX): ").strip().upper()
+            tipo_str = input("Tipo da sala (2D, 3D, IMAX): ").strip().upper()
 
-            if tipo not in ["2D", "3D", "IMAX"]:
-                raise ValueError("Tipo de sala inválido. Deve ser '2D', '3D' ou 'IMAX'.") #Tratamento com ENUM
+            # Converte a entrada para o tipo de enumeração TipoSala
+            try:
+                tipo = TipoSala[f"_{tipo_str}"]
+            except KeyError:
+                raise ValueError("Tipo de sala inválido. Deve ser '2D', '3D' ou 'IMAX'.")
+
         except ValueError as e:
             print(f"Erro: {e}. Por favor, insira os dados corretamente.")
             return self.pega_dados_sala()  # Chama novamente para uma entrada correta
 
-        return {"numero": numero, "capacidade": capacidade, "tipo": tipo}
+        return {"numero": numero, "capacidade": capacidade, "tipo": tipo}  # Retorna os dados com tipo convertid
 
     def mostra_sala(self, dados_sala):
         """
@@ -82,7 +87,7 @@ class SalaVisao:
 
         :param salas: Lista de salas a serem exibidas.
         """
-        if isinstance(salas, str):  
+        if isinstance(salas, str):
             self.mostra_mensagem(salas)
         else:
             if not salas:  # Verifica se a lista de salas está vazia
@@ -91,4 +96,4 @@ class SalaVisao:
 
             print("\nSalas cadastradas:")
             for sala in salas:
-                self.mostra_sala(sala) 
+                self.mostra_sala(sala)
