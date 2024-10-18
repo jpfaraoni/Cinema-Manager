@@ -1,4 +1,4 @@
-from clientemodelo import ClienteModelo
+from cliente import Cliente
 
 
 class ClienteControlador:
