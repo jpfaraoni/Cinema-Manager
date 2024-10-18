@@ -1,4 +1,4 @@
-class Sala:
+class SalaModelo:
     """
     Classe que representa o modelo de uma Sala no sistema.
 
