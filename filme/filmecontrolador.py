@@ -1,4 +1,4 @@
-from filmemodelo import FilmeModelo
+from filme import Filme
 
 class FilmeControlador:
     filmes_db = []  # Simulação do banco de dados em memória
