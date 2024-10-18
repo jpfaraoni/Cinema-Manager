@@ -1,4 +1,4 @@
-class ClienteModelo:
+class Cliente:
     def __init__(self, nome: str, fone: str, email: str):
         self.__nome = nome
         self.fone = fone  # Usando o setter
