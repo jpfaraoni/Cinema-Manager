@@ -5,10 +5,10 @@ class FilmeControlador:
 
     def adicionar_filme(self, titulo: str, duracao: str, genero: str, classificacao_etaria: int, sinopse: str):
         # Adiciona um novo filme se ele ainda não estiver cadastrado
-        for filme in FilmeControlador.filmes_db:
+        for filme in Filme.filmes_db:
             if filme.titulo == titulo:
                 return f"Filme {titulo} já está cadastrado."
-        novo_filme = FilmeModelo(titulo, duracao, genero, classificacao_etaria, sinopse)
+        novo_filme = Filme(titulo, duracao, genero, classificacao_etaria, sinopse)
         FilmeControlador.filmes_db.append(novo_filme)
         return f"Filme {titulo} foi adicionado com sucesso!"
 
@@ -43,4 +43,4 @@ class FilmeControlador:
         if not FilmeControlador.filmes_db:
             return "Nenhum filme cadastrado."
 
-        return FilmeControlador.filmes_db  # Retorna a lista de objetos FilmeModelo
+        return FilmeControlador.filmes_db  # Retorna a lista de objetos filme
