@@ -1,4 +1,4 @@
-class FilmeModelo:    
+class Filme:    
     def __init__(self, titulo: str, duracao: str, genero: str, classificacao_etaria: int, sinopse: str):
         self.__titulo = titulo
         self.__duracao = duracao
