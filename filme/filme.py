@@ -1,10 +1,10 @@
 class Filme:    
     def __init__(self, titulo: str, duracao: str, genero: str, classificacao_etaria: int, sinopse: str):
-        self.__titulo = titulo
-        self.__duracao = duracao
-        self.__genero = genero
-        self.__classificacao_etaria = classificacao_etaria
-        self.__sinopse = sinopse
+        self.titulo = titulo
+        self.duracao = duracao
+        self.genero = genero
+        self.classificacao_etaria = classificacao_etaria
+        self.sinopse = sinopse
 
     @property
     def titulo(self):
@@ -12,6 +12,8 @@ class Filme:
 
     @titulo.setter
     def titulo(self, titulo: str):
+        if not titulo or not isinstance(titulo, str):
+            raise ValueError("Título inválido.")
         self.__titulo = titulo
 
     @property
@@ -20,6 +22,8 @@ class Filme:
 
     @duracao.setter
     def duracao(self, duracao: str):
+        if not duracao or not isinstance(duracao, str):
+            raise ValueError("Duração inválida.")
         self.__duracao = duracao
 
     @property
@@ -28,6 +32,8 @@ class Filme:
 
     @genero.setter
     def genero(self, genero: str):
+        if not genero or not isinstance(genero, str):
+            raise ValueError("Gênero inválido.")
         self.__genero = genero
 
     @property
@@ -36,6 +42,8 @@ class Filme:
 
     @classificacao_etaria.setter
     def classificacao_etaria(self, classificacao_etaria: int):
+        if not isinstance(classificacao_etaria, int) or classificacao_etaria < 0:
+            raise ValueError("Classificação etária inválida.")
         self.__classificacao_etaria = classificacao_etaria
 
     @property
@@ -44,4 +52,6 @@ class Filme:
 
     @sinopse.setter
     def sinopse(self, sinopse: str):
+        if not sinopse or not isinstance(sinopse, str):
+            raise ValueError("Sinopse inválida.")
         self.__sinopse = sinopse
