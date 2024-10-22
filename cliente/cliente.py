@@ -1,12 +1,18 @@
 class Cliente:
     def __init__(self, nome: str, fone: str, email: str):
-        self.__nome = nome
-        self.fone = fone  # Usando o setter
-        self.email = email  # Usando o setter
+        self.nome = nome
+        self.fone = fone
+        self.email = email
 
     @property
     def nome(self):
         return self.__nome
+
+    @nome.setter
+    def nome(self, nome: str):
+        if not nome or not isinstance(nome, str):
+            raise ValueError("Digite um nome válido.")
+        self.__nome = nome
 
     @property
     def fone(self):
@@ -14,7 +20,7 @@ class Cliente:
 
     @fone.setter
     def fone(self, fone: str):
-        if not fone or len(fone) < 10:  # Validação simples
+        if not fone or len(fone) < 10:
             raise ValueError("Telefone deve ter pelo menos 10 caracteres.")
         self.__fone = fone
 
