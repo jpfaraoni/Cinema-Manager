@@ -14,14 +14,12 @@ def main():
             break
         elif opcao == 1:
             # Adicionar sala
-            dados_sala = visao.pega_dados_sala()
-            resultado = visao.controlador.adicionar_sala(dados_sala['numero'], dados_sala['capacidade'], dados_sala['tipo'])
-            visao.mostra_mensagem(resultado)
+            visao.pega_dados_sala()  # A lógica de adicionar a sala e mostrar mensagens já está na visão
         elif opcao == 2:
             # Atualizar sala
-            numero = visao.seleciona_sala()
-            dados_atualizados = visao.pega_dados_sala()  # Pede novos dados
-            resultado = visao.controlador.atualizar_sala(numero, capacidade=dados_atualizados['capacidade'], tipo=dados_atualizados['tipo'])
+            numero = visao.seleciona_sala()  # Seleciona a sala pelo número
+            nova_capacidade = visao.pega_nova_capacidade()  # Solicita a nova capacidade
+            resultado = visao.controlador.atualizar_sala(numero, capacidade=nova_capacidade)
             visao.mostra_mensagem(resultado)
         elif opcao == 3:
             # Remover sala
@@ -31,9 +29,10 @@ def main():
         elif opcao == 4:
             # Listar salas
             resultado = visao.controlador.listar_salas()  # Chama o método do controlador
-            visao.listar_salas(resultado)  # Passa o resultado para a visão
+            visao.exibe_lista_salas(resultado)  # Passa o resultado para a visão
         else:
             visao.mostra_mensagem("Opção inválida.")
 
 if __name__ == "__main__":
     main()
+
