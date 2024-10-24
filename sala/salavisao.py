@@ -1,5 +1,4 @@
 from salacontrolador import SalaControlador
-from salacontrolador import TipoSala
 
 class SalaVisao:
     """
@@ -35,23 +34,34 @@ class SalaVisao:
         """
         Solicita os dados de uma sala ao usuário e retorna um dicionário com esses dados.
         """
-        print("-------- DADOS DA SALA ----------")
-        try:
-            numero = int(input("Número da sala: "))
-            capacidade = int(input("Capacidade da sala: "))
-            tipo_str = input("Tipo da sala (2D, 3D, IMAX): ").strip().upper()
-
-            # Converte a entrada para o tipo de enumeração TipoSala
+        while True:  # Loop para garantir que o usuário digite dados válidos
+            print("-------- DADOS DA SALA ----------")
             try:
-                tipo = TipoSala[f"_{tipo_str}"]
-            except KeyError:
-                raise ValueError("Tipo de sala inválido. Deve ser '2D', '3D' ou 'IMAX'.")
+                numero = int(input("Número da sala: "))
+                capacidade = int(input("Capacidade da sala: "))
 
+                # Tenta adicionar a sala. Se der erro, é tratado.
+                resultado = self.controlador.adicionar_sala(numero, capacidade)
+                print(resultado)  # Exibe a mensagem de sucesso
+                return {"numero": numero, "capacidade": capacidade}  # Retorna os dados da sala após sucesso
+
+            except ValueError as e:
+                # Captura o erro de sala já cadastrada
+                print(f"Erro: {e}. Tente novamente.")
+            except Exception as e:
+                # Captura outros erros de entrada de dados
+                print(f"Erro: {e}. Por favor, insira os dados corretamente.")
+
+    def pega_nova_capacidade(self):
+        """
+        Solicita ao usuário a nova capacidade para atualizar a sala.
+        """
+        try:
+            capacidade = int(input("Digite a nova capacidade da sala: "))
         except ValueError as e:
-            print(f"Erro: {e}. Por favor, insira os dados corretamente.")
-            return self.pega_dados_sala()  # Chama novamente para uma entrada correta
-
-        return {"numero": numero, "capacidade": capacidade, "tipo": tipo}  # Retorna os dados com tipo convertid
+            print(f"Erro: {e}. Por favor, insira um número válido.")
+            return self.pega_nova_capacidade()  # Chama novamente para uma entrada correta
+        return capacidade
 
     def mostra_sala(self, dados_sala):
         """
@@ -60,7 +70,6 @@ class SalaVisao:
         print("-------- SALA ----------")
         print(f"NÚMERO: {dados_sala.numero}")
         print(f"CAPACIDADE: {dados_sala.capacidade}")
-        print(f"TIPO: {dados_sala.tipo}")
         print("\n")
 
     def seleciona_sala(self):
@@ -81,7 +90,7 @@ class SalaVisao:
         """
         print(msg)
 
-    def listar_salas(self, salas):
+    def exibe_lista_salas(self, salas):
         """
         Exibe a lista de salas cadastradas.
 
@@ -94,6 +103,9 @@ class SalaVisao:
                 self.mostra_mensagem("Nenhuma sala cadastrada.")
                 return
 
+            print("\nSalas cadastradas:")
+            for sala in salas:
+                self.mostra_sala(sala)
             print("\nSalas cadastradas:")
             for sala in salas:
                 self.mostra_sala(sala)
