@@ -1,15 +1,5 @@
 from sala import Sala
-from enum import Enum
-
-
-class TipoSala(Enum):#TODO implementar um versão melhor do enum(com numeros).
-    """
-    Enumeração para representar os tipos de sala possíveis.
-    """
-    _2D = "2D"
-    _3D = "3D"
-    _IMAX = "IMAX"
-
+from salanaoencontrada import SalaNaoEncontrada
 
 class SalaControlador:
     """
@@ -21,7 +11,7 @@ class SalaControlador:
 
     salas_db = [] # Simulação do banco de dados em memória
 
-    def adicionar_sala(self, numero, capacidade, tipo):
+    def adicionar_sala(self, numero, capacidade):#TODO implementar uma versão mais parecida com o codigo do exemplo de aula.
         """
         Adiciona uma nova sala se ela ainda não estiver cadastrada.
 
@@ -30,39 +20,46 @@ class SalaControlador:
         :param tipo: Tipo da sala (deve ser do tipo TipoSala).
         :return: Mensagem de sucesso ou erro.
         """
-        # Verifica se o tipo de sala é válido usando o Enum TipoSala
-        if not isinstance(tipo, TipoSala):
-            return "Tipo de sala inválido. Deve ser '2D', '3D' ou 'IMAX'."
-
-        # Adiciona uma nova sala se ela ainda não estiver cadastrada
         for sala in SalaControlador.salas_db:
             if sala.numero == numero:
-                return f"Sala {numero} já está cadastrada."
+                return f"Erro: Sala {numero} já está cadastrada."
 
-        nova_sala = Sala(numero, capacidade, tipo.value)
+        nova_sala = Sala(numero, capacidade)
         SalaControlador.salas_db.append(nova_sala)
-        return f"Sala {numero} foi adicionada com sucesso!"
+        return None  # Indica que o cadastro foi bem-sucedido
 
-    def atualizar_sala(self, numero, capacidade=None, tipo=None):
+    def atualizar_sala(self, numero, capacidade=None):
         # Procura a sala pelo número e, se encontrada, atualiza seus atributos
+        try:
+            sala = self.busca_sala(numero)  # Chama o método busca_sala para encontrar a sala
+            if capacidade is not None:
+                sala.capacidade = capacidade  # Atualiza a capacidade
+            return f"Sala {numero} atualizada com sucesso!"
+        except SalaNaoEncontrada as e:
+            return str(e)
+
+    def busca_sala(self, numero):
+        """
+        Busca uma sala pelo número no banco de dados de salas.
+
+        :param numero: Número da sala a ser buscada.
+        :return: Objeto Sala se encontrado, senão levanta a exceção SalaNaoEncontrada.
+        """
         for sala in SalaControlador.salas_db:
             if sala.numero == numero:
-                if capacidade is not None:
-                    sala.capacidade = capacidade
-                if tipo is not None:
-                    sala.tipo = tipo
-                return f"Sala {numero} atualizada com sucesso!"
-        return f"Sala {numero} não encontrada."
+                return sala
+        # Se a sala não for encontrada, levanta a exceção SalaNaoEncontrada
+        raise SalaNaoEncontrada(numero)
 
     def remover_sala(self, numero):
-        # Remove a sala do sistema, caso esteja cadastrada
-        for sala in SalaControlador.salas_db:
-            if sala.numero == numero:
-                SalaControlador.salas_db.remove(sala)
-                return f"Sala {numero} foi removida com sucesso."
-        return f"Sala {numero} não encontrada."
+        try:
+            sala = self.busca_sala(numero)
+            SalaControlador.salas_db.remove(sala)
+            return f"Sala {numero} foi removida com sucesso."
+        except SalaNaoEncontrada as e:
+            return str(e)
 
-    def listar_salas(self): #TODO mudar o nome dessa classe e deixar apenas a listar_salas do visao.
+    def listar_salas(self):
         """
         Retorna a lista de salas cadastradas.
         Se a lista estiver vazia, retorna uma mensagem de aviso.
