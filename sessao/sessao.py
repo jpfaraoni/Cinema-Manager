@@ -4,16 +4,26 @@
 
 from filme import Filme
 from sala import Sala
-from datetime import time
+from enum import Enum
+
+class TipoSessao(Enum):
+    _2D = 1
+    _3D = 2
+    _IMAX = 3
 
 
-class SessaoModelo:
+class Sessao:
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: time):
-        self.__filme = filme
-        self.__sala = sala
-        self.__horario = time
+    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= None):
+        if isinstance(filme, Filme):
+            self.__filme = filme
+        if isinstance(sala, Sala):
+            self.__sala = sala
+        if isinstance(capacidade_maxima, int):
+            self.__capacidade_maxima = capacidade_maxima
+        self.tipo = tipo
+        self.__ingressos = []
 
     @property
     def filme(self) -> Filme:
@@ -21,7 +31,8 @@ class SessaoModelo:
 
     @filme.setter
     def filme(self, filme: filme):
-        self.__filme = filme
+        if isinstance(filme, Filme):
+            self.__filme = filme
 
     @property
     def sala(self) -> Sala:
@@ -29,7 +40,8 @@ class SessaoModelo:
 
     @sala.setter
     def sala(self, sala: Sala):
-        self.__sala = sala
+        if isinstance(sala, Sala):
+            self.__sala = sala
 
     @property
     def horario(self):
@@ -39,14 +51,21 @@ class SessaoModelo:
     def horario(self, horario: str):
         self.__horario = horario
 
-    # def __str__(self):
-    #     return (f"Filme: {self.__filme}\n"
-    #             f"Sala: {self.__sala}\n"
-    #             f"Horário: {self.__horario}\n"
-    #             f"ingressos_disponiveis: {self.__ingressos_disponiveis}\n")
+    @property
+    def ingressos_disponiveis(self) -> int:
+        return self.__capacidade_maxima - len(self.__ingressos)
 
-    #TODO transformar essa funcao em uma matriz com os filmes organizados por horario.
-    def infoSessoes(self):
-        for sessao in sessoes_db:
-            print(
-                f"Filme: {sessao.filme.titulo}, Sala: {sessao.sala.tipo}, Horário: {sessao.horario}, Ingressos disponíveis: {sessao.ingressos_disponiveis}")
+    @ingressos_disponiveis.setter
+    def ingressos_disponiveis(self, ingressos_disponiveis):
+        self.__ingressos_disponiveis = ingressos_disponiveis
+
+    @property
+    def tipo(self):
+        return self.__tipo
+
+    @tipo.setter
+    def tipo(self, tipo: str):
+        self.__tipo = tipo
+
+    def adicionar_ingresso(self, ingresso):
+        self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
