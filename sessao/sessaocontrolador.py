@@ -1,4 +1,4 @@
-from sessao import Sessao
+from sessao import Sessao, TipoSessao
 from sessaonaoencontrada import SessaoNaoEncontrada
 
 
@@ -12,19 +12,43 @@ class SessaoControlador:
 
     sessoes_db = []
 
-    def adicionar_sessao(self, filme, sala, horario, ingressos_disponiveis, tipo):
-        nova_sessao = Sessao(filme, sala, horario, ingressos_disponiveis, tipo)
-        SessaoControlador.sessoes_db.append(nova_sessao)
-        return f"Sessão do filme '{filme.titulo}' foi adicionada com sucesso!"
+    def adicionar_sessao(self, filme, sala, horario, capacidade_maxima, tipo):
+        if not isinstance(capacidade_maxima, int) or capacidade_maxima <= 0:
+            raise ValueError("Capacidade máxima inválida.")
 
-    def atualizar_sessao(self, filme, sala, horario, ingressos_disponiveis=None, tipo=None):
-        try:
-            sessao = self.busca_sessao(filme, sala, horario)
-            sessao.atualizarSessao(filme=filme, sala=sala, horario=horario,
-                                   ingressos_disponiveis=ingressos_disponiveis, tipo=tipo)
-            return f"Sessão do filme '{filme.titulo}' foi atualizada com sucesso!"
-        except SessaoNaoEncontrada as e:
-            return str(e)
+        if not isinstance(sala.tipo, TipoSala):
+            raise ValueError("Tipo de sala inválido.")
+
+        if tipo is not None and not isinstance(tipo, TipoSala):
+            raise ValueError("Tipo de sessão inválido.")
+
+        nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
+        SessaoControlador.sessoes_db.append(nova_sessao)
+        return f"Sessão do filme '{filme}' foi adicionada com sucesso!"
+
+    def atualizar_sessao(self, sessao, filme=None, sala=None, horario=None, capacidade_maxima=None, tipo=None):
+        if filme is not None:
+            sessao.filme = filme
+
+        if sala is not None and isinstance(sala.tipo, TipoSala):
+            sessao.sala = sala
+
+        if horario is not None:
+            sessao.horario = horario
+
+        if capacidade_maxima is not None:
+            if isinstance(capacidade_maxima, int) and capacidade_maxima > 0:
+                sessao.capacidade_maxima = capacidade_maxima
+            else:
+                raise ValueError("Capacidade máxima inválida.")
+
+        if tipo is not None:
+            if isinstance(tipo, TipoSala):
+                sessao.tipo = tipo
+            else:
+                raise ValueError("Tipo de sessão inválido.")
+
+        return f"Sessão do filme '{sessao.filme}' foi atualizada com sucesso!"
 
     def remover_sessao(self, filme, sala, horario):
         try:
@@ -44,3 +68,12 @@ class SessaoControlador:
         if not SessaoControlador.sessoes_db:
             return "Nenhuma sessão cadastrada."
         return SessaoControlador.sessoes_db
+
+    def vender_ingresso(self, filme, sala, horario, cliente):
+        sessao = self.busca_sessao(filme, sala, horario)
+        if sessao.ingressos_disponiveis > 0:
+            ingresso = Ingresso(sessao, cliente)
+            sessao.adicionar_ingresso(ingresso)  # Adiciona o ingresso à sessão
+            return "Ingresso vendido com sucesso!"
+        else:
+            return "Capacidade máxima atingida, ingresso não pode ser vendido."
