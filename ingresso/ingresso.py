@@ -12,9 +12,8 @@ class Ingresso:
 
     ingressos_db = []
 
-    def __init__(self, sessao: Sessao, assento: str, preco: float):
+    def __init__(self, sessao: Sessao, preco: float):
         self.__sessao = sessao
-        self.__assento = assento
         self.__preco = preco
 
     @property
@@ -32,7 +31,6 @@ class Ingresso:
     @preco.setter
     def preco(self, preco: float):
         self.__preco = preco
-
 
     def emitirIngresso(self):
         """Marca o ingresso como vendido, se disponível."""
