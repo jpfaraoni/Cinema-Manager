@@ -23,7 +23,7 @@ class Sessao:
         if isinstance(capacidade_maxima, int):
             self.__capacidade_maxima = capacidade_maxima
         self.tipo = tipo
-        self.__ingressos = []
+        self.__ingressos = ingressos_db.list()
 
     @property
     def filme(self) -> Filme:
