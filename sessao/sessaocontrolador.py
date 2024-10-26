@@ -74,7 +74,7 @@ class SessaoControlador:
         sessao = self.busca_sessao(filme, sala, horario)
         if sessao.ingressos_disponiveis > 0:
             ingresso = Ingresso(sessao, cliente)
-            sessao.Ingresso.ingressos_db.append(ingresso)  # Adiciona o ingresso à sessão
+            sessao.ingressos_db.append(ingresso)  # Adiciona o ingresso à sessão
             return "Ingresso vendido com sucesso!"
         else:
             return "Capacidade máxima atingida, ingresso não pode ser vendido."
