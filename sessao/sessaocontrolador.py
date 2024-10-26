@@ -1,5 +1,6 @@
 from sessao import Sessao, TipoSessao
 from sessaonaoencontrada import SessaoNaoEncontrada
+from ingresso import Ingresso
 
 
 class SessaoControlador:
@@ -73,7 +74,26 @@ class SessaoControlador:
         sessao = self.busca_sessao(filme, sala, horario)
         if sessao.ingressos_disponiveis > 0:
             ingresso = Ingresso(sessao, cliente)
-            sessao.adicionar_ingresso(ingresso)  # Adiciona o ingresso à sessão
+            sessao.Ingresso.ingressos_db.append(ingresso)  # Adiciona o ingresso à sessão
             return "Ingresso vendido com sucesso!"
         else:
             return "Capacidade máxima atingida, ingresso não pode ser vendido."
+
+    def cancelarIngresso(self):
+        """Cancela o ingresso, se vendido."""
+        self.__sessao.__ingressos_disponiveis += 1
+        self.ingressos_db.remove(self)
+        print(f"Ingresso para o filme {self.__sessao.__filme} foi cancelado e está disponível novamente.")
+        
+    def emitirIngresso(self):
+        """Marca o ingresso como vendido, se disponível."""
+        if self.__sessao.__horario > time.now():
+            if self.__sessao.__ingressos_diponiveis > 0:
+                self.ingressos_db.append(self)
+                self.__sessao.__ingresso_diponiveis -= 1
+                print(f"Ingresso para o filme {self.__sessao.__filme} foi vendido.")
+            else:
+                print(f"Ingresso para o assento {self.__assento} já foi vendido.")
+        else:
+            print("Horário indisponível. Volte amanhã!")
+
