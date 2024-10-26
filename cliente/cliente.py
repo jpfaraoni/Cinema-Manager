@@ -36,3 +36,7 @@ class Cliente:
 
     def __str__(self):
         return f"Cliente: {self.nome}, Telefone: {self.fone}, Email: {self.email}"
+
+
+
+### Fazer tratamento de excessao na entrada de dados
