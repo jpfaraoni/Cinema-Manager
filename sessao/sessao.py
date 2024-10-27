@@ -20,10 +20,12 @@ class Sessao:
             self.__filme = filme
         if isinstance(sala, Sala):
             self.__sala = sala
+        if isinstance(horario, str):
+            self.__horario = horario
         if isinstance(capacidade_maxima, int):
             self.__capacidade_maxima = capacidade_maxima
         self.tipo = tipo
-        self.__ingressos = ingressos_db.list()
+        #self.__ingressos = []
 
     @property
     def filme(self) -> Filme:
