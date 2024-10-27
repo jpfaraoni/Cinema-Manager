@@ -41,13 +41,47 @@ class SessaoVisao:
         print(mensagem)
 
     def exibe_lista_sessoes(self, lista_sessoes):
-        print("\n-- Lista de Sessões --")
+        """
+        Exibe a lista de sessões cadastradas.
+
+        :param lista_sessoes: Lista de sessões a serem exibidas.
+        """
         if isinstance(lista_sessoes, str):
-            print(lista_sessoes)
+            self.mostra_mensagem(lista_sessoes)  # Exibe mensagem de erro, se for uma string
         else:
+            if not lista_sessoes:  # Verifica se a lista de sessões está vazia
+                self.mostra_mensagem("Nenhuma sessão cadastrada.")
+                return
+
+            print("\n-- Lista de Sessões --")
             for sessao in lista_sessoes:
-                print(f"Filme: {sessao.filme}, Sala: {sessao.sala}, Horário: {sessao.horario}, "
-                      f"Ingressos Disponíveis: {sessao.ingressos_disponiveis}, Tipo: {sessao.tipo.name}")
+                # Acessa os atributos da sessão e imprime suas informações
+                print(f"Filme: {sessao.filme.titulo}, "
+                      f"Sala: {sessao.sala}, "
+                      f"Horário: {sessao.horario}, "
+                      f"Ingressos Disponíveis: {sessao.ingressos_disponiveis}, "
+                      f"Tipo: {sessao.tipo.name}")
+
+    def exibe_lista_ingressos(self, ingressos):
+        """
+        Exibe a lista de ingressos vendidos.
+
+        :param ingressos: Lista de ingressos a serem exibidos.
+        """
+        if isinstance(ingressos, str):
+            self.mostra_mensagem(ingressos)  # Exibe mensagem de erro, se for uma string
+        else:
+            if not ingressos:  # Verifica se a lista de ingressos está vazia
+                self.mostra_mensagem("Nenhum ingresso vendido.")
+                return
+
+            print("\nIngressos vendidos:")
+            for ingresso in ingressos:
+                # Assume que o ingresso possui atributos 'sessao' e 'cliente'
+                print(f"Filme: {ingresso.sessao.filme.titulo}, "
+                      f"Sala: {ingresso.sessao.sala}, "
+                      f"Horário: {ingresso.sessao.horario}, "
+                      f"Cliente: {ingresso.cliente.nome}")
 
     def seleciona_sessao(self):
         filme = input("Digite o nome do filme da sessão: ")
@@ -55,7 +89,7 @@ class SessaoVisao:
         horario = input("Digite o horário da sessão (HH:MM): ")
         return {"filme": filme, "sala": sala, "horario": horario}
 
-    def pega_novos_dados_sessao(self):
+    def pega_novos_dados_sessao(self):#TODO implementaçao esta errada, é necessario atualizar todos os atributos de sessao.
         # Permite atualizar os dados da sessão
         ingressos_disponiveis = int(input("Digite a nova quantidade de ingressos disponíveis ou -1 para manter: "))
 
