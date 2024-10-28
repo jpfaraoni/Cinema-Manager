@@ -1,5 +1,16 @@
+from datetime import time
+from enum import Enum
+
+class ClassificacaoEtaria(Enum):
+    LIVRE = 0
+    DEZ = 10
+    DOZE = 12
+    CATORZE = 14
+    DEZESSEIS = 16
+    DEZOITO = 18
+
 class Filme:    
-    def __init__(self, titulo: str, duracao: str, genero: str, classificacao_etaria: int, sinopse: str):
+    def __init__(self, titulo: str, duracao: time, genero: str, classificacao_etaria: ClassificacaoEtaria, sinopse: str):
         self.titulo = titulo
         self.duracao = duracao
         self.genero = genero
@@ -21,9 +32,9 @@ class Filme:
         return self.__duracao
 
     @duracao.setter
-    def duracao(self, duracao: str):
-        if not duracao or not isinstance(duracao, str):
-            raise ValueError("Duração inválida.")
+    def duracao(self, duracao: time):
+        if not isinstance(duracao, time):
+            raise ValueError("Duração inválida. Use um objeto do tipo datetime.time.")
         self.__duracao = duracao
 
     @property
@@ -41,8 +52,8 @@ class Filme:
         return self.__classificacao_etaria
 
     @classificacao_etaria.setter
-    def classificacao_etaria(self, classificacao_etaria: int):
-        if not isinstance(classificacao_etaria, int) or classificacao_etaria < 0:
+    def classificacao_etaria(self, classificacao_etaria: ClassificacaoEtaria):
+        if not isinstance(classificacao_etaria, ClassificacaoEtaria):
             raise ValueError("Classificação etária inválida.")
         self.__classificacao_etaria = classificacao_etaria
 
