@@ -1,5 +1,6 @@
 from sessaocontrolador import SessaoControlador
 from sessaovisao import SessaoVisao
+from sala import Sala
 
 def main():
     # Instanciando a visão
@@ -18,19 +19,20 @@ def main():
         elif opcao == 2:
             # Atualizar sessao
             dados_sessao = visao.seleciona_sessao()  # Seleciona a sessão pelo filme, sala e horário
-            sessao = controlador.busca_sessao(dados_sessao["filme"], dados_sessao["sala"], dados_sessao["horario"])
-            novos_dados = visao.pega_novos_dados_sessao()  # Obtém novos dados para atualizar
-            resultado = controlador.atualizar_sessao(sessao, **novos_dados)  # Atualiza a sessão
+            dados_atualizados_sessao = visao.pega_dados_sessao()
+            resultado = visao.controlador.atualizar_sessao(dados_atualizados_sessao["sessao"], dados_atualizados_sessao["filme"],
+                                                           dados_atualizados_sessao["sala"], dados_atualizados_sessao["horario"],
+                                                           dados_atualizados_sessao["capacidade_maxima"], dados_atualizados_sessao["tipo"])
             visao.mostra_mensagem(resultado)  # Mostra o resultado da operação
         elif opcao == 3:
-            # Remover sala
-            numero = visao.seleciona_sala()
-            resultado = visao.controlador.remover_sala(numero)
-            visao.mostra_mensagem(resultado)
+            # Remover sessão
+            dados_sessao = visao.seleciona_sessao()  # Seleciona a sessão a ser removida
+            resultado = visao.controlador.remover_sessao(dados_sessao["filme"], dados_sessao["sala"], dados_sessao["horario"])
+            visao.mostra_mensagem(resultado)  # Mostra o resultado da operação
         elif opcao == 4:
-            # Listar salas
-            resultado = visao.controlador.listar_salas()  # Chama o método do controlador
-            visao.exibe_lista_salas(resultado)  # Passa o resultado para a visão
+            # Listar sessões
+            resultado = visao.controlador.listar_sessoes()  # Chama o método do controlador
+            visao.exibe_lista_sessoes(resultado)  # Passa o resultado para a visão
         else:
             visao.mostra_mensagem("Opção inválida.")
 
