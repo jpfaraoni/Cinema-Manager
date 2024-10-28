@@ -27,13 +27,15 @@ class ClienteVisao:
         nome = input("Nome do Cliente: ")
         fone = input("Telefone para Contato: ")
         email = input("Email: ").strip()  # Não converte para maiúsculas
-        return {"nome": nome, "fone": fone, "email": email}
+        idade = input("Idade do Cliente: ")
+        return {"nome": nome, "fone": fone, "email": email, "idade": idade}
 
     def mostra_cliente(self, cliente):
         print("-------- CLIENTE ----------")
         print(f"NOME: {cliente.nome}")
         print(f"TELEFONE: {cliente.fone}")
         print(f"EMAIL: {cliente.email}")
+        print(f"IDADE: {cliente.idade}")
         print("\n")
 
     def seleciona_cliente(self):
