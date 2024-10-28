@@ -18,8 +18,7 @@ Atributos:
         self.nome = nome
         self.email = email
         self.telefone = telefone
-        self.historico_compras: List['Venda'] = []  # Lista para armazenar o histórico de vendas.
-
+        self.idade = idade
 
    @property
     def nome(self):
@@ -44,6 +43,14 @@ Atributos:
     @email.setter
     def email(self, email: str):
         self.__email = email
+
+    @property
+    def idade(self):
+        return self.__idade
+
+    @idade.setter
+    def idade(self, idade: int):
+        self.__idade = idade
 
 def cadastrar_cliente(self):
     """
