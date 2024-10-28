@@ -12,12 +12,12 @@ def main():
             break
         elif opcao == 1:
             dados_cliente = visao.pega_dados_cliente()
-            resultado = visao.controlador.cadastrarCliente(dados_cliente['nome'], dados_cliente['fone'], dados_cliente['email'])
+            resultado = visao.controlador.cadastrarCliente(dados_cliente['nome'], dados_cliente['fone'], dados_cliente['email'], dados_cliente['idade'])
             visao.mostra_mensagem(resultado)
         elif opcao == 2:
             nome = visao.seleciona_cliente()
             dados_atualizados = visao.pega_dados_cliente()
-            resultado = visao.controlador.atualizarCliente(nome, fone=dados_atualizados['fone'], email=dados_atualizados['email'])
+            resultado = visao.controlador.atualizarCliente(nome, fone=dados_atualizados['fone'], email=dados_atualizados['email'], idade=dados_atualizados['idade'])
             visao.mostra_mensagem(resultado)
         elif opcao == 3:
             nome = visao.seleciona_cliente()
