@@ -1,5 +1,8 @@
+from horarioinvalido import HorarioInvalido
 from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
 from sessaocontrolador import SessaoControlador
+from filme import Filme
+from sala import Sala
 
 
 class SessaoVisao:
@@ -7,8 +10,8 @@ class SessaoVisao:
     Classe de visão para gerenciar as interações com o usuário relacionadas às sessões.
     """
 
-    def __init__(self, controlador: SessaoControlador):
-        self.controlador = controlador  # Associação com o controlador de sessões
+    def __init__(self):
+        self.controlador = SessaoControlador()  # Associação com o controlador de sessões
 
     def tela_opcoes(self):
         print("\n-- Menu Sessão --")
@@ -17,47 +20,109 @@ class SessaoVisao:
         print("3. Remover sessão")
         print("4. Listar sessões")
         print("0. Sair")
-        opcao = int(input("Escolha uma opção: "))
+        try:
+            opcao = int(input("Escolha a opção: "))
+            if opcao not in [0, 1, 2, 3, 4]:
+                raise ValueError("Opção inválida.")
+        except ValueError as e:
+            print(f"Erro: {e}. Por favor, digite um número válido.")
+            return self.tela_opcoes()  # Chama novamente para uma entrada correta
+
         return opcao
 
     def pega_dados_sessao(self):
-        filme = input("Digite o nome do filme: ")
-        sala = int(input("Digite o número da sala: "))
-        horario = input("Digite o horário da sessão (HH:MM): ")
-        ingressos_disponiveis = int(input("Digite a quantidade de ingressos disponíveis: "))
+        while True:
+            try:
+                # Entrada e validação do título e duração do filme
+                titulo = input("Digite o título do filme: ")
+                duracao = int(input("Digite a duração do filme (em minutos): "))
+                classificacao_etaria = int(input("Classificação etária: "))
+                if duracao <= 0:
+                    raise ValueError("A duração deve ser um valor positivo.")
+                filme = Filme(titulo, duracao, classificacao_etaria)
 
-        # Exibe opções do Enum TipoSessao e captura a escolha do usuário
-        print("Escolha o tipo de sessão:")
-        for tipo in TipoSessao:
-            print(f"{tipo.value}. {tipo.name}")
+                # Entrada e validação da sala
+                numero_sala = int(input("Digite o número da sala: "))
+                capacidade_sala = int(input("Digite a capacidade da sala: "))
+                if capacidade_sala <= 0:
+                    raise ValueError("A capacidade da sala deve ser um valor positivo.")
+                sala = Sala(numero_sala, capacidade_sala)
 
-        tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-        tipo = TipoSessao(tipo_escolhido)  # Converte a escolha para o tipo Enum
+                # Entrada e validação do horário utilizando validar_horario
+                horario = input("Digite o horário da sessão (HH:MM): ")
+                self.controlador.validar_horario(horario)  # Verificação do horário
 
-        return {"filme": filme, "sala": sala, "horario": horario,
-                "ingressos_disponiveis": ingressos_disponiveis, "tipo": tipo}
+                # Entrada e validação da capacidade máxima de ingressos
+                capacidade_maxima = int(input("Digite a capacidade máxima de ingressos para esta sessão: "))
+                if capacidade_maxima <= 0:
+                    raise ValueError("A capacidade máxima deve ser um valor positivo.")
+
+                # Escolha do tipo de sessão
+                print("Escolha o tipo de sessão:")
+                for tipo in TipoSessao:
+                    print(f"{tipo.value}. {tipo.name}")
+
+                tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
+                if tipo_escolhido not in [tipo.value for tipo in TipoSessao]:
+                    raise ValueError("Tipo de sessão inválido.")
+                tipo = TipoSessao(tipo_escolhido)
+
+                resultado = self.controlador.adicionar_sessao(filme, sala, horario, capacidade_maxima, tipo)
+                print(resultado)  # Exibe a mensagem de sucesso
+                return {"filme": filme, "sala": sala, "horario": horario, "capacidade_maxima": capacidade_maxima, "tipo": tipo}  # Retorna os dados da sala após sucesso
+
+            except HorarioInvalido:
+                print("Horário inválido. Use o formato HH:MM.")
+            except ValueError as ve:
+                print(f"Erro de valor: {ve}. Tente novamente.")
+            # except Exception as e:
+            #     print(f"Ocorreu um erro inesperado: {e}. Tente novamente.")
+
+    # def pega_dados_sessao(self):
+    #     filme = input("Digite o nome do filme: ")
+    #     sala = int(input("Digite o número da sala: "))
+    #     horario = input("Digite o horário da sessão (HH:MM): ")
+    #     ingressos_disponiveis = int(input("Digite a quantidade de ingressos disponíveis: "))
+    #
+    #     # Exibe opções do Enum TipoSessao e captura a escolha do usuário
+    #     print("Escolha o tipo de sessão:")
+    #     try:
+    #         for tipo in TipoSessao:
+    #             print(f"{tipo.value}. {tipo.name}")
+    #
+    #         tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
+    #         tipo = TipoSessao(tipo_escolhido)  # Converte a escolha para o tipo Enum
+    #
+    #         return {"filme": filme, "sala": sala, "horario": horario,
+    #                 "ingressos_disponiveis": ingressos_disponiveis, "tipo": tipo}
+    #     except ValueError as e:
+    #         print(f"Erro: {e}. Tente novamente.")
+
+        # except Exception as e:
+        # # Captura outros erros de entrada de dados
+        #     print(f"Erro: {e}. Por favor, insira os dados corretamente.")
 
     def mostra_mensagem(self, mensagem):
         print(mensagem)
 
-    def exibe_lista_sessoes(self, lista_sessoes):
+    def exibe_lista_sessoes(self, sessoes_db):
         """
         Exibe a lista de sessões cadastradas.
 
         :param lista_sessoes: Lista de sessões a serem exibidas.
         """
-        if isinstance(lista_sessoes, str):
-            self.mostra_mensagem(lista_sessoes)  # Exibe mensagem de erro, se for uma string
+        if isinstance(sessoes_db, str):
+            self.mostra_mensagem(sessoes_db)  # Exibe mensagem de erro, se for uma string
         else:
-            if not lista_sessoes:  # Verifica se a lista de sessões está vazia
+            if not sessoes_db:  # Verifica se a lista de sessões está vazia
                 self.mostra_mensagem("Nenhuma sessão cadastrada.")
                 return
 
             print("\n-- Lista de Sessões --")
-            for sessao in lista_sessoes:
+            for sessao in sessoes_db:
                 # Acessa os atributos da sessão e imprime suas informações
                 print(f"Filme: {sessao.filme.titulo}, "
-                      f"Sala: {sessao.sala}, "
+                      f"Sala: {sessao.sala.numero}, "
                       f"Horário: {sessao.horario}, "
                       f"Ingressos Disponíveis: {sessao.ingressos_disponiveis}, "
                       f"Tipo: {sessao.tipo.name}")
@@ -88,18 +153,3 @@ class SessaoVisao:
         sala = int(input("Digite o número da sala: "))
         horario = input("Digite o horário da sessão (HH:MM): ")
         return {"filme": filme, "sala": sala, "horario": horario}
-
-    def pega_novos_dados_sessao(self):#TODO implementaçao esta errada, é necessario atualizar todos os atributos de sessao.
-        # Permite atualizar os dados da sessão
-        ingressos_disponiveis = int(input("Digite a nova quantidade de ingressos disponíveis ou -1 para manter: "))
-
-        # Exibe novamente as opções do Enum para escolha do tipo
-        print("Escolha o novo tipo de sessão ou -1 para manter o atual:")
-        for tipo in TipoSessao:
-            print(f"{tipo.value}. {tipo.name}")
-
-        tipo_escolhido = int(input("Digite o número correspondente ao novo tipo de sessão: "))
-        tipo = TipoSessao(tipo_escolhido) if tipo_escolhido != -1 else None  # Ajusta para None se manter
-
-        return {"ingressos_disponiveis": ingressos_disponiveis if ingressos_disponiveis != -1 else None,
-                "tipo": tipo}
