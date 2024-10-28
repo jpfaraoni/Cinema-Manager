@@ -1,9 +1,9 @@
 class Cliente:
     def __init__(self, nome: str, fone: str, email: str, idade: int):
-        self.__nome = nome
-        self.__fone = fone
-        self.__email = email
-        self.__idade = idade
+        self.nome = nome
+        self.fone = fone
+        self.email = email
+        self.idade = idade
 
     @property
     def nome(self):
@@ -11,9 +11,12 @@ class Cliente:
 
     @nome.setter
     def nome(self, nome: str):
-        if not nome or not isinstance(nome, str):
-            raise ValueError("Digite um nome válido.")
-        self.__nome = nome
+        try:
+            if not nome or not isinstance(nome, str):
+                raise ValueError("Nome inválido. O nome não pode estar vazio e deve ser uma string.")
+            self.__nome = nome
+        except ValueError as e:
+            print(f"Erro ao definir nome: {e}")
 
     @property
     def fone(self):
@@ -21,9 +24,12 @@ class Cliente:
 
     @fone.setter
     def fone(self, fone: str):
-        if not fone or len(fone) < 10:
-            raise ValueError("Telefone deve ter pelo menos 10 caracteres.")
-        self.__fone = fone
+        try:
+            if not fone or len(fone) < 10:
+                raise ValueError("Telefone inválido. O telefone deve ter pelo menos 10 caracteres.")
+            self.__fone = fone
+        except ValueError as e:
+            print(f"Erro ao definir telefone: {e}")
 
     @property
     def email(self):
@@ -31,12 +37,12 @@ class Cliente:
 
     @email.setter
     def email(self, email: str):
-        if '@' not in email or '.' not in email.split('@')[-1]:
-            raise ValueError("Email inválido.")
-        self.__email = email
-
-    def __str__(self):
-        return f"Cliente: {self.nome}, Telefone: {self.fone}, Email: {self.email}"
+        try:
+            if '@' not in email or '.' not in email.split('@')[-1]:
+                raise ValueError("Email inválido. Certifique-se de que o email contém '@' e um domínio válido.")
+            self.__email = email
+        except ValueError as e:
+            print(f"Erro ao definir email: {e}")
 
     @property
     def idade(self):
@@ -44,10 +50,12 @@ class Cliente:
 
     @idade.setter
     def idade(self, idade: int):
-        if not idade or not isinstance(idade, int):
-            raise ValueError("Digite uma idade válida.")
-        self.__idade = idade
+        try:
+            if not isinstance(idade, int) or idade <= 0:
+                raise ValueError("Idade inválida. A idade deve ser um número inteiro positivo.")
+            self.__idade = idade
+        except ValueError as e:
+            print(f"Erro ao definir idade: {e}")
 
-
-
-### Fazer tratamento de excessao na entrada de dados
+    def __str__(self):
+        return f"Cliente: {self.nome}, Telefone: {self.fone}, Email: {self.email}, Idade: {self.idade}"
