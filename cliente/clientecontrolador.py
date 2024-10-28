@@ -4,7 +4,7 @@ from cliente import Cliente
 class ClienteControlador:
     clientes_db = []  # Simulação do banco de dados em memória
 
-    def cadastrarCliente(self, nome, fone, email):
+    def cadastrarCliente(self, nome, fone, email, idade):
         for cliente in ClienteControlador.clientes_db:
             if cliente.nome == nome:
                 return f"Cliente {nome} já está cadastrado(a)."
