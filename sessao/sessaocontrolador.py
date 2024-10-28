@@ -1,106 +1,145 @@
-from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
-from sessaocontrolador import SessaoControlador
+from sessao import Sessao, TipoSessao
+from sessaonaoencontrada import SessaoNaoEncontrada
+#from ingresso import Ingresso
+from datetime import datetime, timedelta
 
 
-class SessaoVisao:
+class SessaoControlador:
     """
-    Classe de visão para gerenciar as interações com o usuário relacionadas às sessões.
+    Controlador responsável por gerenciar as Sessões.
+
+    Atributos:
+    - sessoes_db: Simula o banco de dados em memória para as sessões.
     """
 
-    def __init__(self, controlador: SessaoControlador):
-        self.controlador = controlador  # Associação com o controlador de sessões
+    sessoes_db = []
+    ingressos = []
 
-    def tela_opcoes(self):
-        print("\n-- Menu Sessão --")
-        print("1. Adicionar sessão")
-        print("2. Atualizar sessão")
-        print("3. Remover sessão")
-        print("4. Listar sessões")
-        print("0. Sair")
-        opcao = int(input("Escolha uma opção: "))
-        return opcao
-
-    def pega_dados_sessao(self):
-        filme = input("Digite o nome do filme: ")
-        sala = int(input("Digite o número da sala: "))
-        horario = input("Digite o horário da sessão (HH:MM): ")
-        ingressos_disponiveis = int(input("Digite a quantidade de ingressos disponíveis: "))
-
-        # Exibe opções do Enum TipoSessao e captura a escolha do usuário
-        print("Escolha o tipo de sessão:")
-        for tipo in TipoSessao:
-            print(f"{tipo.value}. {tipo.name}")
-
-        tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-        tipo = TipoSessao(tipo_escolhido)  # Converte a escolha para o tipo Enum
-
-        return {"filme": filme, "sala": sala, "horario": horario,
-                "ingressos_disponiveis": ingressos_disponiveis, "tipo": tipo}
-
-    def mostra_mensagem(self, mensagem):
-        print(mensagem)
-
-    def exibe_lista_sessoes(self, lista_sessoes):
+    def horario_disponivel(self, nova_sessao):
         """
-        Exibe a lista de sessões cadastradas.
-
-        :param lista_sessoes: Lista de sessões a serem exibidas.
+        Verifica se há conflito entre o horário da nova sessão e as sessões já cadastradas,
+        calculando o horário de término da sessão ao mesmo tempo.
         """
-        if isinstance(lista_sessoes, str):
-            self.mostra_mensagem(lista_sessoes)  # Exibe mensagem de erro, se for uma string
-        else:
-            if not lista_sessoes:  # Verifica se a lista de sessões está vazia
-                self.mostra_mensagem("Nenhuma sessão cadastrada.")
-                return
+        # Valida o horário da nova sessão
+        if not self.validar_horario(nova_sessao.horario):
+            raise HorarioInvalido(nova_sessao.horario)
 
-            print("\n-- Lista de Sessões --")
-            for sessao in lista_sessoes:
-                # Acessa os atributos da sessão e imprime suas informações
-                print(f"Filme: {sessao.filme.titulo}, "
-                      f"Sala: {sessao.sala}, "
-                      f"Horário: {sessao.horario}, "
-                      f"Ingressos Disponíveis: {sessao.ingressos_disponiveis}, "
-                      f"Tipo: {sessao.tipo.name}")
+        novo_horario_inicio = datetime.strptime(nova_sessao.horario, "%H:%M")
+        novo_horario_termino = novo_horario_inicio + timedelta(minutes=int(nova_sessao.filme.duracao))
 
-    def exibe_lista_ingressos(self, ingressos):
+        for sessao in SessaoControlador.sessoes_db:
+            if sessao.sala == nova_sessao.sala:
+                horario_inicio_existente = datetime.strptime(sessao.horario, "%H:%M")
+                horario_termino_existente = horario_inicio_existente + timedelta(minutes=int(sessao.filme.duracao))
+
+                # Verifica se há sobreposição de horários entre as sessões
+                if (novo_horario_inicio < horario_termino_existente and
+                        novo_horario_termino > horario_inicio_existente):
+                    return False  # Conflito de horário
+        return True  # Horário disponível
+
+    def validar_horario(self, horario):
         """
-        Exibe a lista de ingressos vendidos.
-
-        :param ingressos: Lista de ingressos a serem exibidos.
+        Valida se o horário está no formato HH:MM.
+        Retorna True se o horário for válido, caso contrário, False.
         """
-        if isinstance(ingressos, str):
-            self.mostra_mensagem(ingressos)  # Exibe mensagem de erro, se for uma string
-        else:
-            if not ingressos:  # Verifica se a lista de ingressos está vazia
-                self.mostra_mensagem("Nenhum ingresso vendido.")
-                return
+        try:
+            datetime.strptime(horario, "%H:%M")
+            return True
+        except ValueError:
+            return False
 
-            print("\nIngressos vendidos:")
-            for ingresso in ingressos:
-                # Assume que o ingresso possui atributos 'sessao' e 'cliente'
-                print(f"Filme: {ingresso.sessao.filme.titulo}, "
-                      f"Sala: {ingresso.sessao.sala}, "
-                      f"Horário: {ingresso.sessao.horario}, "
-                      f"Cliente: {ingresso.cliente.nome}")
+    def adicionar_ingresso(self, ingresso):
+        SessaoControlador.ingressos.append(ingresso)  # Método para adicionar um ingresso
 
-    def seleciona_sessao(self):
-        filme = input("Digite o nome do filme da sessão: ")
-        sala = int(input("Digite o número da sala: "))
-        horario = input("Digite o horário da sessão (HH:MM): ")
-        return {"filme": filme, "sala": sala, "horario": horario}
+    def adicionar_sessao(self, filme, sala, horario, capacidade_maxima, tipo):
+        if not isinstance(capacidade_maxima, int) or capacidade_maxima <= 0:
+            raise ValueError("Capacidade máxima inválida.")
 
-    def pega_novos_dados_sessao(self):#TODO implementaçao esta errada, é necessario atualizar todos os atributos de sessao.
-        # Permite atualizar os dados da sessão
-        ingressos_disponiveis = int(input("Digite a nova quantidade de ingressos disponíveis ou -1 para manter: "))
+        # if sala is None or not isinstance(Sessao.tipo, TipoSessao):
+        #     raise ValueError("Tipo de sala inválido.")
 
-        # Exibe novamente as opções do Enum para escolha do tipo
-        print("Escolha o novo tipo de sessão ou -1 para manter o atual:")
-        for tipo in TipoSessao:
-            print(f"{tipo.value}. {tipo.name}")
+        # if tipo is not None and not isinstance(tipo, TipoSala):
+        #     raise ValueError("Tipo de sessão inválido.")
 
-        tipo_escolhido = int(input("Digite o número correspondente ao novo tipo de sessão: "))
-        tipo = TipoSessao(tipo_escolhido) if tipo_escolhido != -1 else None  # Ajusta para None se manter
+        if not self.validar_horario(horario):
+            raise HorarioInvalido(horario)
 
-        return {"ingressos_disponiveis": ingressos_disponiveis if ingressos_disponiveis != -1 else None,
-                "tipo": tipo}
+        # Se não houver conflito, adiciona a sessão ao "banco de dados"
+        nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
+
+        # Verifica se o horário é disponível
+        if not self.horario_disponivel(nova_sessao):
+            return f"Erro: Conflito de horário na sala {sala} para o horário {horario}."
+
+        SessaoControlador.sessoes_db.append(nova_sessao)
+        print(f"Sessão adicionada: {nova_sessao}")
+        return f"Sessão do filme '{filme.titulo}' adicionada com sucesso!"
+
+    def atualizar_sessao(self, sessao, filme=None, sala=None, horario=None, capacidade_maxima=None, tipo=None):
+        if filme is not None:
+            sessao.filme = filme
+
+        if sala is not None and isinstance(sala.tipo, TipoSala):
+            sessao.sala = sala
+
+        if horario is not None:
+            sessao.horario = horario
+
+        if capacidade_maxima is not None:
+            if isinstance(capacidade_maxima, int) and capacidade_maxima > 0:
+                sessao.capacidade_maxima = capacidade_maxima
+            else:
+                raise ValueError("Capacidade máxima inválida.")
+
+        if tipo is not None:
+            if isinstance(tipo, TipoSala):
+                sessao.tipo = tipo
+            else:
+                raise ValueError("Tipo de sessão inválido.")
+
+        return f"Sessão do filme '{sessao.filme}' foi atualizada com sucesso!"
+
+    def remover_sessao(self, filme, sala, horario):
+        try:
+            sessao = self.busca_sessao(filme, sala, horario)
+            SessaoControlador.sessoes_db.remove(sessao)
+            return f"Sessão do filme '{filme.titulo}' foi removida com sucesso."
+        except SessaoNaoEncontrada as e:
+            return str(e)
+
+    def busca_sessao(self, filme, sala, horario):
+        for sessao in SessaoControlador.sessoes_db:
+            if sessao.filme == filme and sessao.sala == sala and sessao.horario == horario:
+                return sessao
+        raise SessaoNaoEncontrada(filme.titulo, sala, horario)
+
+    def listar_sessoes(self):
+        print("Sessoes cadastradas atualmente:", SessaoControlador.sessoes_db)
+        if not SessaoControlador.sessoes_db:
+            return "Nenhuma sessão cadastrada."
+        return SessaoControlador.sessoes_db
+
+    def vender_ingresso(self, filme, sala, horario, cliente):
+        try:
+            sessao = self.busca_sessao(filme, sala, horario)
+            if sessao.ingressos_disponiveis > 0: #diminuir 1 de ingressos disponiveis
+                ingresso = Ingresso(sessao, cliente)
+                sessao.adicionar_ingresso(ingresso) # Adiciona o ingresso à sessão
+                return "Ingresso vendido com sucesso!"
+            else:
+                return "Capacidade máxima atingida, ingresso não pode ser vendido."
+        except SessaoNaoEncontrada as e:
+            return str(e)
+
+    def listar_ingressos(self):
+        if not SessaoControlador.ingressos:
+            return "Nenhum ingresso cadastrado."
+        return SessaoControlador.ingressos
+    #adicionar funçao que printa todos os ingressos.
+    #biblioteca datetime import time.
+    #nao deixar criar sessao na mesma sala e no mesmo horario.
+    #so pode cancelar venda, nao cada ingresso individual.
+    #horario + duracao = horario disponivel para o proximo filme.
+    #sessao.lista.ingresso.cliente remover ingresso
 
