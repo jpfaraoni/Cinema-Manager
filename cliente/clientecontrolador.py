@@ -9,17 +9,19 @@ class ClienteControlador:
             if cliente.nome == nome:
                 return f"Cliente {nome} já está cadastrado(a)."
 
-        novo_cliente = ClienteModelo(nome, fone, email)
+        novo_cliente = Cliente(nome, fone, email, idade)
         ClienteControlador.clientes_db.append(novo_cliente)
         return f"Cliente {nome} foi adicionado(a) com sucesso!"
 
-    def atualizarCliente(self, nome, fone=None, email=None):
+    def atualizarCliente(self, nome, fone=None, email=None, idade=None):
         for cliente in ClienteControlador.clientes_db:
             if cliente.nome == nome:
                 if fone is not None:
                     cliente.fone = fone
                 if email is not None:
                     cliente.email = email
+                if idade is not None:
+                    cliente.idade = idade
                 return f"Cliente {nome} atualizado com sucesso."
         return f"Cliente {nome} não encontrado."
 
