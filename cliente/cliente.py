@@ -1,8 +1,9 @@
 class Cliente:
-    def __init__(self, nome: str, fone: str, email: str):
-        self.nome = nome
-        self.fone = fone
-        self.email = email
+    def __init__(self, nome: str, fone: str, email: str, idade: int):
+        self.__nome = nome
+        self.__fone = fone
+        self.__email = email
+        self.__idade = idade
 
     @property
     def nome(self):
@@ -36,6 +37,16 @@ class Cliente:
 
     def __str__(self):
         return f"Cliente: {self.nome}, Telefone: {self.fone}, Email: {self.email}"
+
+    @property
+    def idade(self):
+        return self.__idade
+
+    @idade.setter
+    def idade(self, idade: int):
+        if not idade or not isinstance(idade, int):
+            raise ValueError("Digite uma idade válida.")
+        self.__idade = idade
 
 
 
