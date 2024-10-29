@@ -3,6 +3,7 @@ from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
 from sessaocontrolador import SessaoControlador
 from filme import Filme
 from sala import Sala
+from datetime import time
 
 
 class SessaoVisao:
@@ -35,11 +36,12 @@ class SessaoVisao:
             try:
                 # Entrada e validação do título e duração do filme
                 titulo = input("Digite o título do filme: ")
-                duracao = int(input("Digite a duração do filme (em minutos): "))
+                duracao = int(input("Digite a duração do filme: "))
+                genero = input("Digite o gênero do filme: ")
                 classificacao_etaria = int(input("Classificação etária: "))
                 if duracao <= 0:
                     raise ValueError("A duração deve ser um valor positivo.")
-                filme = Filme(titulo, duracao, classificacao_etaria)
+                filme = Filme(titulo, duracao, genero, classificacao_etaria)
 
                 # Entrada e validação da sala
                 numero_sala = int(input("Digite o número da sala: "))
