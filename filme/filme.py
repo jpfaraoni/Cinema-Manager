@@ -1,13 +1,5 @@
 from datetime import time
-from enum import Enum
-
-class ClassificacaoEtaria(Enum):
-    LIVRE = 0
-    DEZ = 10
-    DOZE = 12
-    CATORZE = 14
-    DEZESSEIS = 16
-    DEZOITO = 18
+from classificacao_etaria import ClassificacaoEtaria
 
 class Filme:    
     def __init__(self, titulo: str, duracao: time, genero: str, classificacao_etaria: ClassificacaoEtaria, sinopse: str):
