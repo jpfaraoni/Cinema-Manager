@@ -16,13 +16,13 @@ def main():
         elif opcao == 1:
             # Adicionar filme
             dados_filme = visao.pega_dados_filme()
-            resultado = visao.controlador.adicionar_filme(dados_filme['titulo'], dados_filme['duracao'], dados_filme['genero'], dados_filme['classificacao_etaria'], dados_filme['sinopse'])
+            resultado = visao.controlador.adicionar_filme(dados_filme['titulo'], dados_filme['duracao'], dados_filme['genero'], dados_filme['classificacao_etaria'])
             visao.mostra_mensagem(resultado)
         elif opcao == 2:
             # Atualizar filme
             titulo = visao.seleciona_filme()
             dados_atualizados = visao.pega_dados_filme()  # Pede novos dados
-            resultado = visao.controlador.atualizar_filme(titulo, duracao=dados_atualizados['duracao'], genero=dados_atualizados['genero'], classificacao_etaria=['classificacao_etaria'], sinopse=['sinopse'])
+            resultado = visao.controlador.atualizar_filme(titulo, duracao=dados_atualizados['duracao'], genero=dados_atualizados['genero'], classificacao_etaria=['classificacao_etaria'])
             visao.mostra_mensagem(resultado)
         elif opcao == 3:
             # Remover filme
