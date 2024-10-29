@@ -1,4 +1,5 @@
-from sessao import Sessao, TipoSessao
+from filme import Filme
+from sessao import Sessao
 from sessaonaoencontrada import SessaoNaoEncontrada
 #from ingresso import Ingresso
 from datetime import datetime, timedelta
@@ -108,7 +109,7 @@ class SessaoControlador:
         except SessaoNaoEncontrada as e:
             return str(e)
 
-    def busca_sessao(self, filme, sala, horario):
+    def busca_sessao(self, filme:Filme, sala, horario):
         for sessao in SessaoControlador.sessoes_db:
             if sessao.filme == filme and sessao.sala == sala and sessao.horario == horario:
                 return sessao
@@ -132,14 +133,7 @@ class SessaoControlador:
         except SessaoNaoEncontrada as e:
             return str(e)
 
-    def listar_ingressos(self):
-        if not SessaoControlador.ingressos:
-            return "Nenhum ingresso cadastrado."
-        return SessaoControlador.ingressos
-    #adicionar funçao que printa todos os ingressos.
-    #biblioteca datetime import time.
-    #nao deixar criar sessao na mesma sala e no mesmo horario.
-    #so pode cancelar venda, nao cada ingresso individual.
-    #horario + duracao = horario disponivel para o proximo filme.
-    #sessao.lista.ingresso.cliente remover ingresso
-
+    # def listar_ingressos(self):
+    #     if not SessaoControlador.ingressos:
+    #         return "Nenhum ingresso cadastrado."
+    #     return SessaoControlador.ingressos
