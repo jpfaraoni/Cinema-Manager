@@ -2,12 +2,11 @@ class Filme:
 
     filmes_db = []  # Simula um banco de dados de filmes
 
-    def __init__(self, titulo: str, duracao: str, genero: str, classificacao_etaria: int, sinopse: str):
+    def __init__(self, titulo: str, duracao: str, genero: str, classificacao_etaria: ClassificacaoEtaria):
         self.__titulo = titulo
         self.__duracao = duracao
         self.__genero = genero
         self.__classificacao_etaria = classificacao_etaria
-        self.__sinopse = sinopse
 
     @property
     def titulo(self):
