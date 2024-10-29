@@ -25,7 +25,7 @@ class Sessao:
         if isinstance(capacidade_maxima, int):
             self.__capacidade_maxima = capacidade_maxima
         self.tipo = tipo
-        #self.__ingressos = []
+        self.__ingressos = []
 
     @property
     def filme(self) -> Filme:
@@ -69,5 +69,5 @@ class Sessao:
     def tipo(self, tipo: str):
         self.__tipo = tipo
 
-    # def adicionar_ingresso(self, ingresso):
-    #     self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
+    def adicionar_ingresso(self, ingresso):
+         self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
