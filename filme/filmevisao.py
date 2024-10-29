@@ -33,16 +33,14 @@ class FilmeVisao:
         duracao = input("Duração do filme: ")
         genero = input("Gênero do filme: ").strip().upper()
         classificacao_etaria = input("Classificação etária do filme: ")
-        sinopse = input("Sinopse do filme: ")
-
-        return {"titulo": titulo, "duracao": duracao, "genero": genero, "classificacao_etaria": classificacao_etaria, "sinopse": sinopse}
+        
+        return {"titulo": titulo, "duracao": duracao, "genero": genero, "classificacao_etaria": classificacao_etaria}
 
     def mostra_filme(self, dados_filme):
         print("-------- FILME ----------")
         print(f"TÍTULO: {dados_filme.titulo}")
         print(f"DURAÇÃO: {dados_filme.duracao}")
         print(f"CLASSIFICAÇÃO: {dados_filme.classificacao_etaria}")
-        print(f"SINOPSE: {dados_filme.sinopse}")
         print("\n")
 
     def seleciona_filme(self):
