@@ -8,19 +8,26 @@ from datetime import datetime
 class VendaControlador:
     vendas_db = []
 
-    def vender_ingresso(self, filme, sala, horario, cliente):
-        try:
-            sessao = self.busca_sessao(filme, sala, horario)
-            if sessao.ingressos_disponiveis > 0: #diminuir 1 de ingressos disponiveis
-                ingresso = Ingresso(sessao, cliente)
-                sessao.adicionar_ingresso(ingresso) # Adiciona o ingresso à sessão
-                nova_venda = Venda(cliente, ingressos, metodo_de_pagamento)
-                VendaControlador.vendas_db.append(nova_venda)
-                return f"Venda de ingresso realizada para {cliente.nome} em {nova_venda.data.strftime('%d/%m/%Y %H:%M:%S')}."
-            else:
-                return "Capacidade máxima atingida, ingresso não pode ser vendido."
-        except SessaoNaoEncontrada as e:
-            return str(e)
+    def vender_ingresso(self, filme, sala, horario, cliente, metodo_de_pagamento):
+    try:
+        sessao = self.busca_sessao(filme, sala, horario)
+
+        if cliente.idade < sessao.filme.classificacao_etaria:
+            return f"A idade do cliente ({cliente.idade} anos) é insuficiente para assistir a este filme (Classificação: {sessao.filme.classificacao_etaria} anos)."
+
+        if sessao.ingressos_disponiveis > 0:
+            ingresso = Ingresso(sessao, cliente)
+            sessao.adicionar_ingresso(ingresso)
+            nova_venda = Venda(cliente, [ingresso], metodo_de_pagamento)
+            VendaControlador.vendas_db.append(nova_venda)
+
+            return f"Venda de ingresso realizada para {cliente.nome} em {nova_venda.data.strftime('%d/%m/%Y %H:%M:%S')}."
+        else:
+            return "Capacidade máxima atingida, ingresso não pode ser vendido."
+
+    except SessaoNaoEncontrada as e:
+        return str(e)
+
 
     def listar_vendas(self):
         if not VendaControlador.vendas_db:
