@@ -1,34 +1,31 @@
 from venda import Venda
 from cliente import Cliente
 from ingresso import Ingresso
+from sessao import Sessao
 from metodo_de_pagamento import MetodoDePagamento
 from datetime import datetime
 
 class VendaControlador:
     vendas_db = []
 
-    def adicionar_venda(self, cliente: Cliente, ingressos: list[Ingresso], metodo_de_pagamento: MetodoDePagamento):
-        nova_venda = Venda(cliente, ingressos, metodo_de_pagamento)
-        VendaControlador.vendas_db.append(nova_venda)
-        return f"Venda realizada para {cliente.nome} em {nova_venda.data.strftime('%d/%m/%Y %H:%M:%S')}."
-
-    def listar_vendas(self):
-        if not VendaControlador.vendas_db:
-            return "Nenhuma venda realizada."
-        return VendaControlador.vendas_db
-
-    ###Juntar com "adicionar_venda"
     def vender_ingresso(self, filme, sala, horario, cliente):
         try:
             sessao = self.busca_sessao(filme, sala, horario)
             if sessao.ingressos_disponiveis > 0: #diminuir 1 de ingressos disponiveis
                 ingresso = Ingresso(sessao, cliente)
                 sessao.adicionar_ingresso(ingresso) # Adiciona o ingresso à sessão
-                return "Ingresso vendido com sucesso!"
+                nova_venda = Venda(cliente, ingressos, metodo_de_pagamento)
+                VendaControlador.vendas_db.append(nova_venda)
+                return f"Venda de ingresso realizada para {cliente.nome} em {nova_venda.data.strftime('%d/%m/%Y %H:%M:%S')}."
             else:
                 return "Capacidade máxima atingida, ingresso não pode ser vendido."
         except SessaoNaoEncontrada as e:
             return str(e)
+
+    def listar_vendas(self):
+        if not VendaControlador.vendas_db:
+            return "Nenhuma venda realizada."
+        return VendaControlador.vendas_db
 
     def atualizar_metodo_pagamento(self, venda_id: int, novo_metodo: MetodoDePagamento):
         try:
