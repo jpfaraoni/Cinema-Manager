@@ -17,6 +17,7 @@ class VendaControlador:
             return "Nenhuma venda realizada."
         return VendaControlador.vendas_db
 
+    ###Juntar com "adicionar_venda"
     def vender_ingresso(self, filme, sala, horario, cliente):
         try:
             sessao = self.busca_sessao(filme, sala, horario)
