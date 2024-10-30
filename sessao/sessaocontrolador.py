@@ -121,18 +121,6 @@ class SessaoControlador:
             return "Nenhuma sessão cadastrada."
         return SessaoControlador.sessoes_db
 
-    def vender_ingresso(self, filme, sala, horario, cliente):
-        try:
-            sessao = self.busca_sessao(filme, sala, horario)
-            if sessao.ingressos_disponiveis > 0: #diminuir 1 de ingressos disponiveis
-                ingresso = Ingresso(sessao, cliente)
-                sessao.adicionar_ingresso(ingresso) # Adiciona o ingresso à sessão
-                return "Ingresso vendido com sucesso!"
-            else:
-                return "Capacidade máxima atingida, ingresso não pode ser vendido."
-        except SessaoNaoEncontrada as e:
-            return str(e)
-
     # def listar_ingressos(self):
     #     if not SessaoControlador.ingressos:
     #         return "Nenhum ingresso cadastrado."
