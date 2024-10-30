@@ -17,6 +17,18 @@ class VendaControlador:
             return "Nenhuma venda realizada."
         return VendaControlador.vendas_db
 
+    def vender_ingresso(self, filme, sala, horario, cliente):
+        try:
+            sessao = self.busca_sessao(filme, sala, horario)
+            if sessao.ingressos_disponiveis > 0: #diminuir 1 de ingressos disponiveis
+                ingresso = Ingresso(sessao, cliente)
+                sessao.adicionar_ingresso(ingresso) # Adiciona o ingresso à sessão
+                return "Ingresso vendido com sucesso!"
+            else:
+                return "Capacidade máxima atingida, ingresso não pode ser vendido."
+        except SessaoNaoEncontrada as e:
+            return str(e)
+
     def atualizar_metodo_pagamento(self, venda_id: int, novo_metodo: MetodoDePagamento):
         try:
             venda = VendaControlador.vendas_db[venda_id]
