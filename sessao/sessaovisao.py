@@ -50,7 +50,7 @@ class SessaoVisao:
 
                 # Entrada e validação do horário utilizando validar_horario
                 horario = input("Digite o horário da sessão (HH:MM): ")
-                self.controlador.validar_horario(horario):
+                self.controlador.validar_horario(horario)
 
                 # Entrada e validação da capacidade máxima de ingressos
                 capacidade_maxima = int(input("Digite a capacidade máxima de ingressos para esta sessão: "))
