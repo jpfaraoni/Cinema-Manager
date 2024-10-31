@@ -3,8 +3,7 @@ from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
 from sessaocontrolador import SessaoControlador
 from filme import Filme
 from sala import Sala
-from datetime import time
-
+from sessao import Sessao
 
 class SessaoVisao:
     """
@@ -36,12 +35,11 @@ class SessaoVisao:
             try:
                 # Entrada e validação do título e duração do filme
                 titulo = input("Digite o título do filme: ")
-                duracao = int(input("Digite a duração do filme: "))
-                genero = input("Digite o gênero do filme: ")
+                duracao = int(input("Digite a duração do filme (em minutos): "))
                 classificacao_etaria = int(input("Classificação etária: "))
                 if duracao <= 0:
                     raise ValueError("A duração deve ser um valor positivo.")
-                filme = Filme(titulo, duracao, genero, classificacao_etaria)
+                filme = Filme(titulo, duracao, classificacao_etaria)
 
                 # Entrada e validação da sala
                 numero_sala = int(input("Digite o número da sala: "))
@@ -52,7 +50,8 @@ class SessaoVisao:
 
                 # Entrada e validação do horário utilizando validar_horario
                 horario = input("Digite o horário da sessão (HH:MM): ")
-                self.controlador.validar_horario(horario)  # Verificação do horário
+                if not self.controlador.validar_horario(horario):
+                    raise ValueError("Formato de horário inválido. Use o formato HH:MM.")
 
                 # Entrada e validação da capacidade máxima de ingressos
                 capacidade_maxima = int(input("Digite a capacidade máxima de ingressos para esta sessão: "))
@@ -69,16 +68,25 @@ class SessaoVisao:
                     raise ValueError("Tipo de sessão inválido.")
                 tipo = TipoSessao(tipo_escolhido)
 
+                    # Cria a sessão e verifica disponibilidade do horário
+                nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
+
+                # Verifica se o horário está disponível
+                if not self.controlador.horario_disponivel(nova_sessao):
+                    print(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
+                    continue  # Retorna ao início para nova entrada
+
+                # Se chegarmos aqui, significa que o horário está disponível
                 resultado = self.controlador.adicionar_sessao(filme, sala, horario, capacidade_maxima, tipo)
                 print(resultado)  # Exibe a mensagem de sucesso
-                return {"filme": filme, "sala": sala, "horario": horario, "capacidade_maxima": capacidade_maxima, "tipo": tipo}  # Retorna os dados da sala após sucesso
+                return {"filme": filme, "sala": sala, "horario": horario, "capacidade_maxima": capacidade_maxima,
+                        "tipo": tipo}
+
+            except ValueError as ve:
+                print(f"Erro de valor: {ve}. Tente novamente.")
 
             except HorarioInvalido:
                 print("Horário inválido. Use o formato HH:MM.")
-            except ValueError as ve:
-                print(f"Erro de valor: {ve}. Tente novamente.")
-            # except Exception as e:
-            #     print(f"Ocorreu um erro inesperado: {e}. Tente novamente.")
 
     # def pega_dados_sessao(self):
     #     filme = input("Digite o nome do filme: ")
