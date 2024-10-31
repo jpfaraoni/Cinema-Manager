@@ -10,7 +10,7 @@ class SessaoControlador:
     Controlador responsável por gerenciar as Sessões.
 
     Atributos:
-    - sessoes_db: Simula o banco de dados em memória para as sessões.
+    - sessoes_db: Simula o banco de dados emr memória para as sessões.
     """
 
     sessoes_db = []
@@ -105,23 +105,18 @@ class SessaoControlador:
         try:
             sessao = self.busca_sessao(filme, sala, horario)
             SessaoControlador.sessoes_db.remove(sessao)
-            return f"Sessão do filme '{filme.titulo}' foi removida com sucesso."
+            return f"Sessão do filme '{sessao.filme.titulo}' foi removida com sucesso."
         except SessaoNaoEncontrada as e:
             return str(e)
 
     def busca_sessao(self, filme:Filme, sala, horario):
         for sessao in SessaoControlador.sessoes_db:
-            if sessao.filme == filme and sessao.sala == sala and sessao.horario == horario:
+            if sessao.filme.titulo == filme and sessao.sala.numero == sala and sessao.horario == horario:
                 return sessao
-        raise SessaoNaoEncontrada(filme.titulo, sala, horario)
+        raise SessaoNaoEncontrada(filme, sala, horario)
 
     def listar_sessoes(self):
         print("Sessoes cadastradas atualmente:", SessaoControlador.sessoes_db)
         if not SessaoControlador.sessoes_db:
             return "Nenhuma sessão cadastrada."
         return SessaoControlador.sessoes_db
-
-    # def listar_ingressos(self):
-    #     if not SessaoControlador.ingressos:
-    #         return "Nenhum ingresso cadastrado."
-    #     return SessaoControlador.ingressos
