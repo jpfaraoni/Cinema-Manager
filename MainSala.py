@@ -1,7 +1,7 @@
 from salacontrolador import SalaControlador
 from salavisao import SalaVisao
 
-def SalaMain():
+def salaMain():
     # Instanciando a visão
     visao = SalaVisao()  # Cria uma instância da visão
 
@@ -33,6 +33,6 @@ def SalaMain():
         else:
             visao.mostra_mensagem("Opção inválida.")
 
-if __name__ == "__main__":
-    SalaMain()
+if __name__ == "__salaMain__":
+    salaMain()
 

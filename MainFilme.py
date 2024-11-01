@@ -2,7 +2,7 @@
 from filmecontrolador import FilmeControlador
 from filmevisao import FilmeVisao
 
-def FilmeMain():
+def filmeMain():
     # Instanciando a visão
     visao = FilmeVisao()  # Cria uma instância da visão
 
@@ -37,4 +37,4 @@ def FilmeMain():
             visao.mostra_mensagem("Opção inválida.")
 
 if __name__ == "__main__":
-    main()
+    filmeMain()

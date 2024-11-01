@@ -1,7 +1,7 @@
 from clientecontrolador import ClienteControlador
 from clientevisao import ClienteVisao
 
-def ClienteMain():
+def clienteMain():
     visao = ClienteVisao()
 
     while True:
@@ -27,5 +27,5 @@ def ClienteMain():
             resultado = visao.controlador.listar_clientes()
             visao.listar_clientes(resultado)
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__clienteMain__":
+    clienteMain()

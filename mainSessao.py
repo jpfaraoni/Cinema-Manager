@@ -1,7 +1,7 @@
 from sessaovisao import SessaoVisao
 from sessaocontrolador import SessaoControlador
 
-def SessaoMain():
+def sessaoMain():
     # Instanciando a visão
     visao = SessaoVisao()  # Cria uma instância da visão
     controlador = SessaoControlador
@@ -36,5 +36,5 @@ def SessaoMain():
         else:
             visao.mostra_mensagem("Opção inválida.")
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__mainSessao__":
+    sessaoMain()

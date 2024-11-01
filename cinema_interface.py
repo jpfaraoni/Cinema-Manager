@@ -1,17 +1,17 @@
-from mainFilme import FilmeMain
-from mainCliente import ClienteMain
-from mainSala import SalaMain
-from mainSessao import SessaoMain
+from mainFilme import filmeMain
+from mainCliente import clienteMain
+from mainSala import salaMain
+from mainSessao import sessaoMain
 
 class CinemaInterface:
     """
     Classe que representa a interface principal do sistema de gerenciamento de cinema.
     """
     def __init__(self):
-        self.main_filme = FilmeMain()
-        self.main_cliente = ClienteMain()
-        self.main_sessao = SessaoMain()
-        self.main_sala = SalaMain()
+        self.main_filme = filmeMain()
+        self.main_cliente = clienteMain()
+        self.main_sessao = sessaoMain()
+        self.main_sala = salaMain()
         
     def menu_principal(self):
         while True:
@@ -82,6 +82,6 @@ class CinemaInterface:
                 print("Opção inválida, tente novamente.")
 
 # Para iniciar o sistema
-if __name__ == "__main__":
+if __name__ == "__mainPrincipal__":
     interface = CinemaInterface()
     interface.menu_principal()
