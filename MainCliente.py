@@ -1,7 +1,7 @@
 from clientecontrolador import ClienteControlador
 from clientevisao import ClienteVisao
 
-def main():
+def ClienteMain():
     visao = ClienteVisao()
 
     while True:
