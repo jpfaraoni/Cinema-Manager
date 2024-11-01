@@ -1,7 +1,7 @@
 from salacontrolador import SalaControlador
 from salavisao import SalaVisao
 
-def main():
+def SalaMain():
     # Instanciando a visão
     visao = SalaVisao()  # Cria uma instância da visão
 
