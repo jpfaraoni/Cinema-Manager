@@ -54,12 +54,12 @@ class Sessao:
         self.__horario = horario
 
     @property
-    def ingressos_disponiveis(self) -> int:
-        return self.__capacidade_maxima - len(self.__ingressos)
+    def capacidade_maxima(self) -> int:
+        return self.__capacidade_maxima
 
-    @ingressos_disponiveis.setter
-    def ingressos_disponiveis(self, ingressos_disponiveis):
-        self.__ingressos_disponiveis = ingressos_disponiveis
+    @capacidade_maxima.setter
+    def capacidade_maxima(self, capacidade_maxima):
+        self.__capacidade_maxima = capacidade_maxima
 
     @property
     def tipo(self):
@@ -71,3 +71,4 @@ class Sessao:
 
     def adicionar_ingresso(self, ingresso):
          self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
+
