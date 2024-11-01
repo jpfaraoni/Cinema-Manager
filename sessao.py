@@ -1,16 +1,6 @@
-# Sessão
-# Atributos: filme, sala, horário, data, ingressosDisponíveis.
-# Métodos: criarSessão(), atualizarSessão(), cancelarSessão().
-
 from filme import Filme
 from sala import Sala
-from enum import Enum
-
-class TipoSessao(Enum):
-    _2D = 1
-    _3D = 2
-    _IMAX = 3
-
+from tiposessao import TipoSessao
 
 class Sessao:
     sessoes_db = []
