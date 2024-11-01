@@ -2,7 +2,7 @@
 from filmecontrolador import FilmeControlador
 from filmevisao import FilmeVisao
 
-def main():
+def FilmeMain():
     # Instanciando a visão
     visao = FilmeVisao()  # Cria uma instância da visão
 
