@@ -1,13 +1,4 @@
 class Sala:
-    """
-    Classe que representa o modelo de uma Sala no sistema.
-
-    Atributos:
-    - numero: Número da sala.
-    - capacidade: Capacidade máxima de pessoas na sala.
-    - tipo: Tipo da sala (ex: '2D', '3D', 'IMAX').
-    """
-
     def __init__(self, numero:int, capacidade:int, tipo:str):
         if isinstance(numero, int):
             self.__numero = numero
