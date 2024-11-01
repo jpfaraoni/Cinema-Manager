@@ -1,7 +1,7 @@
 from sessaovisao import SessaoVisao
 from sessaocontrolador import SessaoControlador
 
-def main():
+def SessaoMain():
     # Instanciando a visão
     visao = SessaoVisao()  # Cria uma instância da visão
     controlador = SessaoControlador
