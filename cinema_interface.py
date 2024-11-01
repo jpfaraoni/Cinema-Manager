@@ -1,19 +1,17 @@
-from filmevisao import FilmeVisao
-from sessaovisao import SessaoVisao
-from clientevisao import ClienteVisao
-from salavisao import SalaVisao
-from vendavisao import VendaVisao
+from mainFilme import FilmeMain
+from mainCliente import ClienteMain
+from mainSala import SalaMain
+from mainSessao import SessaoMain
 
 class CinemaInterface:
     """
     Classe que representa a interface principal do sistema de gerenciamento de cinema.
     """
     def __init__(self):
-        self.filme_visao = FilmeVisao()
-        self.sessao_visao = SessaoVisao()
-        self.cliente_visao = ClienteVisao()
-        self.sala_visao = SalaVisao()
-        self.venda_visao = VendaVisao()
+        self.main_filme = FilmeMain()
+        self.main_cliente = ClienteMain()
+        self.main_sessao = SessaoMain()
+        self.main_sala = SalaMain()
         
     def menu_principal(self):
         while True:
@@ -46,97 +44,17 @@ class CinemaInterface:
                 print("Erro: por favor, insira um número válido.")
 
     def menu_filmes(self):
-        while True:
-            print("\n--- Gerenciamento de Filmes ---")
-            print("1. Adicionar Filme")
-            print("2. Atualizar Filme")
-            print("3. Remover Filme")
-            print("4. Listar Filmes")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.filme_visao.adicionar_filme()
-            elif opcao == "2":
-                self.filme_visao.atualizar_filme()
-            elif opcao == "3":
-                self.filme_visao.remover_filme()
-            elif opcao == "4":
-                self.filme_visao.listar_filmes()
-            elif opcao == "0":
-                break
-            else:
-                print("Opção inválida, tente novamente.")
-
+        self.main_filme()
+        
     def menu_sessoes(self):
-        while True:
-            print("\n--- Gerenciamento de Sessões ---")
-            print("1. Adicionar Sessão")
-            print("2. Atualizar Sessão")
-            print("3. Remover Sessão")
-            print("4. Listar Sessões")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.sessao_visao.adicionar_sessao()
-            elif opcao == "2":
-                self.sessao_visao.atualizar_sessao()
-            elif opcao == "3":
-                self.sessao_visao.remover_sessao()
-            elif opcao == "4":
-                self.sessao_visao.listar_sessoes()
-            elif opcao == "0":
-                break
-            else:
-                print("Opção inválida, tente novamente.")
-
+        self.main_sessao()
+        
     def menu_clientes(self):
-        while True:
-            print("\n--- Gerenciamento de Clientes ---")
-            print("1. Adicionar Cliente")
-            print("2. Atualizar Cliente")
-            print("3. Remover Cliente")
-            print("4. Listar Clientes")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.cliente_visao.adicionar_cliente()
-            elif opcao == "2":
-                self.cliente_visao.atualizar_cliente()
-            elif opcao == "3":
-                self.cliente_visao.remover_cliente()
-            elif opcao == "4":
-                self.cliente_visao.listar_clientes()
-            elif opcao == "0":
-                break
-            else:
-                print("Opção inválida, tente novamente.")
-
+        self.main_cliente()
+    
     def menu_salas(self):
-        while True:
-            print("\n--- Gerenciamento de Salas ---")
-            print("1. Adicionar Sala")
-            print("2. Atualizar Sala")
-            print("3. Remover Sala")
-            print("4. Listar Salas")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.sala_visao.adicionar_sala()
-            elif opcao == "2":
-                self.sala_visao.atualizar_sala()
-            elif opcao == "3":
-                self.sala_visao.remover_sala()
-            elif opcao == "4":
-                self.sala_visao.listar_salas()
-            elif opcao == "0":
-                break
-            else:
-                print("Opção inválida, tente novamente.")
-
+        self.main_sala()
+    
     def menu_vendas(self):
         while True:
             print("\n--- Gerenciamento de Vendas ---")

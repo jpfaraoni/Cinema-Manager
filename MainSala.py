@@ -34,5 +34,5 @@ def SalaMain():
             visao.mostra_mensagem("Opção inválida.")
 
 if __name__ == "__main__":
-    main()
+    SalaMain()
 

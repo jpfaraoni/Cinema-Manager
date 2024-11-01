@@ -1,7 +1,13 @@
+from mainSessao import SessaoMain
+from mainCliente import ClienteMain
+from mainFilme import FilmeMain
+from mainSala import SalaMain
 class ClienteInterface:
     def __init__(self):
-        self.sessao_visao = SessaoVisao()  # Importa a visão de sessões
-        self.venda_visao = VendaVisao()  # Importa a visão de vendas
+        self.main_sessao = SessaoMain()
+        self.main_cliente = ClienteMain()
+        self.main_filme = FilmeMain()
+        self.main_sala = SalaMain()
     
     def menu_cliente(self):
         while True:
