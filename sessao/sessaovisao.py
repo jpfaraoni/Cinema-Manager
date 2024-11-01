@@ -133,7 +133,7 @@ class SessaoVisao:
                 print(f"Filme: {sessao.filme.titulo}, "
                       f"Sala: {sessao.sala.numero}, "
                       f"Horário: {sessao.horario}, "
-                      f"Ingressos Disponíveis: {sessao.ingressos_disponiveis}, "
+                      f"Capacidade: {sessao.capacidade_maxima}, "
                       f"Tipo: {sessao.tipo.name}")
 
     def exibe_lista_ingressos(self, ingressos):
@@ -162,3 +162,18 @@ class SessaoVisao:
         sala = int(input("Digite o número da sala: "))
         horario = input("Digite o horário da sessão (HH:MM): ")
         return {"filme": filme, "sala": sala, "horario": horario}
+
+    def pega_novos_dados_sessao(self):
+        """
+        Solicita ao usuário novos dados para a sessão.
+        """
+        try:
+            capacidade_maxima = int(input("Digite a nova capacidade máxima: "))
+            tipo = int(input("Digite o novo tipo (1 - 2D, 2 - 3D, 3 - IMAX): "))  # Exemplo de opções de tipo
+            if tipo not in [t.value for t in TipoSessao]:  # Supondo que TipoSessao seja um Enum
+                raise ValueError("Tipo inválido. Escolha um número correspondente ao tipo de sessão.")
+        except ValueError as e:
+            print(f"Erro: {e}. Por favor, insira valores válidos.")
+            return self.pega_novos_dados_sessao()  # Chama novamente para uma entrada correta
+
+        return {"capacidade_maxima": capacidade_maxima, "tipo": TipoSessao(tipo)}
