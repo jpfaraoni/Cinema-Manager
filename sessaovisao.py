@@ -41,33 +41,45 @@ class SessaoVisao:
                 filme = self.filme_visao.pega_dados_filme()
 
                 # Entrada e validação da sala
+<<<<<<< HEAD
                 sala = self.sala_visao.pega_dados_sala()
                 if self.sala.capacidade <= 0:
                     raise ValueError("A capacidade da sala deve ser um valor positivo.")
+=======
+                numero_sala = int(input("Digite o número da sala: "))
+                capacidade = int(input("Digite a capacidade da sala: "))
+                if capacidade <= 0:
+                    raise ValueError("A capacidade deve ser um valor positivo.")
+                sala = Sala(numero_sala, capacidade)
+>>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
 
                 # Entrada e validação do horário utilizando validar_horario
                 horario = input("Digite o horário da sessão (HH:MM): ")
                 self.controlador.validar_horario(horario)
 
+<<<<<<< HEAD
                 # Entrada e validação da capacidade máxima de ingressos
                 capacidade_maxima = self.sala.capacidade
                 if capacidade_maxima <= 0:
                     raise ValueError("A capacidade máxima deve ser um valor positivo.")
 
                 tipo = Sessao.sala.tipo
+=======
+                # Escolha do tipo de sessão
+                print("Escolha o tipo de sessão:")
+                for tipo in TipoSessao:
+                    print(f"{tipo.value}. {tipo.name}")
 
-                    # Cria a sessão e verifica disponibilidade do horário
-                nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
-
-                # Verifica se o horário está disponível
-                if not self.controlador.horario_disponivel(nova_sessao):
-                    print(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
-                    continue  # Retorna ao início para nova entrada
+                tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
+                if tipo_escolhido not in [tipo.value for tipo in TipoSessao]:
+                    raise ValueError("Tipo de sessão inválido.")
+                tipo = TipoSessao(tipo_escolhido)
+>>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
 
                 # Se chegarmos aqui, significa que o horário está disponível
-                resultado = self.controlador.adicionar_sessao(filme, sala, horario, capacidade_maxima, tipo)
+                resultado = self.controlador.adicionar_sessao(filme, sala, horario, tipo)
                 print(resultado)  # Exibe a mensagem de sucesso
-                return {"filme": filme, "sala": sala, "horario": horario, "capacidade_maxima": capacidade_maxima,
+                return {"filme": filme, "sala": sala, "horario": horario,
                         "tipo": tipo}
 
             except ValueError as ve:
@@ -122,7 +134,7 @@ class SessaoVisao:
                 print(f"Filme: {sessao.filme.titulo}, "
                       f"Sala: {sessao.sala.numero}, "
                       f"Horário: {sessao.horario}, "
-                      f"Capacidade: {sessao.capacidade_maxima}, "
+                      f"Capacidade: {sessao.sala.capacidade}, "
                       f"Tipo: {sessao.tipo.name}")
 
     def exibe_lista_ingressos(self, ingressos):
@@ -157,13 +169,23 @@ class SessaoVisao:
         Solicita ao usuário novos dados para a sessão.
         """
         try:
+<<<<<<< HEAD
             capacidade_maxima = int(input("Digite a nova capacidade máxima: "))
             tipo = int(input("Digite o novo tipo (2D, 3D, ou IMAX): "))  # Exemplo de opções de tipo
             if tipo not in ["3D", "2D", "IMAX"]:
+=======
+            capacidade = int(input("Digite a nova capacidade máxima: "))
+            tipo = int(input("Digite o novo tipo (1 - 2D, 2 - 3D, 3 - IMAX): "))  # Exemplo de opções de tipo
+            if tipo not in [t.value for t in TipoSessao]:  # Supondo que TipoSessao seja um Enum
+>>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
                 raise ValueError("Tipo inválido. Escolha um número correspondente ao tipo de sessão.")
 
         except ValueError as e:
             print(f"Erro: {e}. Por favor, insira valores válidos.")
             return self.pega_novos_dados_sessao()  # Chama novamente para uma entrada correta
 
+<<<<<<< HEAD
         return {"capacidade_maxima": capacidade_maxima, "tipo": tipo}
+=======
+        return {"capacidade": capacidade, "tipo": TipoSessao(tipo)}
+>>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
