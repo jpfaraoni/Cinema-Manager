@@ -1,7 +1,7 @@
 from filme import Filme
 from sessao import Sessao
 from sessaonaoencontrada import SessaoNaoEncontrada
-#from ingresso import Ingresso
+from ingresso import Ingresso
 from datetime import datetime, timedelta
 from sala import Sala
 
