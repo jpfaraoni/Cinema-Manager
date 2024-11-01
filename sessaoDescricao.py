@@ -1,10 +1,5 @@
-# Sessão
-# Atributos: filme, sala, horário, data, ingressosDisponíveis.
-# Métodos: criarSessão(), atualizarSessão(), cancelarSessão().
-
 from filme import Filme
 from sala import Sala
-
 
 class Sessao:
     sessoes_db = []
