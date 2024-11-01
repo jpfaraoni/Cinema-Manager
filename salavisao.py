@@ -1,10 +1,6 @@
 from salacontrolador import SalaControlador
 
 class SalaVisao:
-    """
-    Classe que representa a interface com o usuário para gerenciar as salas.
-    """
-
     def __init__(self):
         self.controlador = SalaControlador()  # Instancia do controlador
 
