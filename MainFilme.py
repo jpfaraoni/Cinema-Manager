@@ -1,6 +1,7 @@
 
 from filmecontrolador import FilmeControlador
 from filmevisao import FilmeVisao
+from cinema_interface import CinemaInterface
 
 def filmeMain():
     # Instanciando a visão
@@ -11,8 +12,8 @@ def filmeMain():
         opcao = visao.tela_opcoes()  # Exibe as opções e obtém a escolha do usuário
 
         if opcao == 0:
-            print("Saindo do sistema.")
-            break
+            print("Saindo do gerenciamento de filmes.")
+            CinemaInterface.menu_principal()
         elif opcao == 1:
             # Adicionar filme
             dados_filme = visao.pega_dados_filme()

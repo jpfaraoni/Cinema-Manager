@@ -1,5 +1,5 @@
 from datetime import datetime, time
-from filme import Filme, ClassificacaoEtaria
+from filme import Filme
 
 class FilmeControlador:
     filmes_db = []  # Simulação do banco de dados em memória
@@ -18,7 +18,7 @@ class FilmeControlador:
                 return f"Filme {titulo} já está cadastrado."
 
         # Cria e adiciona o novo filme
-        novo_filme = Filme(titulo, duracao_time, genero, ClassificacaoEtaria(classificacao_etaria))
+        novo_filme = Filme(titulo, duracao_time, genero, classificacao_etaria)
         FilmeControlador.filmes_db.append(novo_filme)
         return f"Filme {titulo} foi adicionado com sucesso!"
 
@@ -35,7 +35,7 @@ class FilmeControlador:
                 if genero is not None:
                     filme.genero = genero
                 if classificacao_etaria is not None:
-                    filme.classificacao_etaria = ClassificacaoEtaria(classificacao_etaria)
+                    filme.classificacao_etaria = classificacao_etaria
                 return f"Filme {titulo} atualizado com sucesso!"
         return f"Filme {titulo} não encontrado."
 

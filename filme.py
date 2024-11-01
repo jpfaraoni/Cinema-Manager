@@ -1,8 +1,7 @@
 from datetime import time
-from classificacao_etaria import ClassificacaoEtaria
 
 class Filme:    
-    def __init__(self, titulo: str, duracao: time, genero: str, classificacao_etaria: ClassificacaoEtaria):
+    def __init__(self, titulo: str, duracao: time, genero: str, classificacao_etaria: int):
         self.titulo = titulo
         self.duracao = duracao
         self.genero = genero
@@ -43,7 +42,5 @@ class Filme:
         return self.__classificacao_etaria
 
     @classificacao_etaria.setter
-    def classificacao_etaria(self, classificacao_etaria: ClassificacaoEtaria):
-        if not isinstance(classificacao_etaria, ClassificacaoEtaria):
-            raise ValueError("Classificação etária inválida.")
+    def classificacao_etaria(self, classificacao_etaria: int):
         self.__classificacao_etaria = classificacao_etaria

@@ -32,7 +32,7 @@ class FilmeVisao:
         titulo = input("Título do filme: ")
         duracao = input("Duração do filme: ")
         genero = input("Gênero do filme: ").strip().upper()
-        classificacao_etaria = input("Classificação etária do filme: ")
+        classificacao_etaria = int(input("Classificação etária do filme: "))
         
         return {"titulo": titulo, "duracao": duracao, "genero": genero, "classificacao_etaria": classificacao_etaria}
 
