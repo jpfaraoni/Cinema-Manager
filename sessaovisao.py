@@ -1,9 +1,8 @@
 from horarioinvalido import HorarioInvalido
+from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
 from sessaocontrolador import SessaoControlador
 from filme import Filme
-from filmevisao import FilmeVisao
 from sala import Sala
-from salavisao import SalaVisao
 from sessao import Sessao
 
 class SessaoVisao:
@@ -13,9 +12,6 @@ class SessaoVisao:
 
     def __init__(self):
         self.controlador = SessaoControlador()  # Associação com o controlador de sessões
-        self.filme_visao = FilmeVisao()
-        self.sala_visao = SalaVisao()
-        self.sala = Sala(numero=None, capacidade=None, tipo=None)
 
     def tela_opcoes(self):
         print("\n-- Menu Sessão --")
@@ -38,33 +34,24 @@ class SessaoVisao:
         while True:
             try:
                 # Entrada e validação do título e duração do filme
-                filme = self.filme_visao.pega_dados_filme()
+                titulo = input("Digite o título do filme: ")
+                duracao = int(input("Digite a duração do filme (em minutos): "))
+                classificacao_etaria = int(input("Classificação etária: "))
+                if duracao <= 0:
+                    raise ValueError("A duração deve ser um valor positivo.")
+                filme = Filme(titulo, duracao, classificacao_etaria)
 
                 # Entrada e validação da sala
-<<<<<<< HEAD
-                sala = self.sala_visao.pega_dados_sala()
-                if self.sala.capacidade <= 0:
-                    raise ValueError("A capacidade da sala deve ser um valor positivo.")
-=======
                 numero_sala = int(input("Digite o número da sala: "))
                 capacidade = int(input("Digite a capacidade da sala: "))
                 if capacidade <= 0:
                     raise ValueError("A capacidade deve ser um valor positivo.")
                 sala = Sala(numero_sala, capacidade)
->>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
 
                 # Entrada e validação do horário utilizando validar_horario
                 horario = input("Digite o horário da sessão (HH:MM): ")
                 self.controlador.validar_horario(horario)
 
-<<<<<<< HEAD
-                # Entrada e validação da capacidade máxima de ingressos
-                capacidade_maxima = self.sala.capacidade
-                if capacidade_maxima <= 0:
-                    raise ValueError("A capacidade máxima deve ser um valor positivo.")
-
-                tipo = Sessao.sala.tipo
-=======
                 # Escolha do tipo de sessão
                 print("Escolha o tipo de sessão:")
                 for tipo in TipoSessao:
@@ -74,7 +61,6 @@ class SessaoVisao:
                 if tipo_escolhido not in [tipo.value for tipo in TipoSessao]:
                     raise ValueError("Tipo de sessão inválido.")
                 tipo = TipoSessao(tipo_escolhido)
->>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
 
                 # Se chegarmos aqui, significa que o horário está disponível
                 resultado = self.controlador.adicionar_sessao(filme, sala, horario, tipo)
@@ -169,23 +155,12 @@ class SessaoVisao:
         Solicita ao usuário novos dados para a sessão.
         """
         try:
-<<<<<<< HEAD
-            capacidade_maxima = int(input("Digite a nova capacidade máxima: "))
-            tipo = int(input("Digite o novo tipo (2D, 3D, ou IMAX): "))  # Exemplo de opções de tipo
-            if tipo not in ["3D", "2D", "IMAX"]:
-=======
             capacidade = int(input("Digite a nova capacidade máxima: "))
             tipo = int(input("Digite o novo tipo (1 - 2D, 2 - 3D, 3 - IMAX): "))  # Exemplo de opções de tipo
             if tipo not in [t.value for t in TipoSessao]:  # Supondo que TipoSessao seja um Enum
->>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
                 raise ValueError("Tipo inválido. Escolha um número correspondente ao tipo de sessão.")
-
         except ValueError as e:
             print(f"Erro: {e}. Por favor, insira valores válidos.")
             return self.pega_novos_dados_sessao()  # Chama novamente para uma entrada correta
 
-<<<<<<< HEAD
-        return {"capacidade_maxima": capacidade_maxima, "tipo": tipo}
-=======
         return {"capacidade": capacidade, "tipo": TipoSessao(tipo)}
->>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
