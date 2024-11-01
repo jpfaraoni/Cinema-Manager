@@ -13,7 +13,7 @@ class Sala:
 
     @numero.setter
     def numero(self, numero: int):
-        if isinstance(numer, int):
+        if isinstance(numero, int):
             self.__numero = numero
 
     @property
@@ -24,3 +24,12 @@ class Sala:
     def capacidade(self, capacidade: int):
         if isinstance(capacidade, int):
             self.__capacidade = capacidade
+    
+    @property
+    def tipo(self):
+        return self.__tipo
+    
+    @tipo.setter
+    def tipo(self, tipo: str):
+        if isinstance(tipo, str):
+            self.__tipo = tipo

@@ -35,9 +35,10 @@ class SalaVisao:
             try:
                 numero = int(input("Número da sala: "))
                 capacidade = int(input("Capacidade da sala: "))
+                tipo = input("Tipo da Sala: ")
 
                 # Tenta adicionar a sala. Se der erro, é tratado.
-                resultado = self.controlador.adicionar_sala(numero, capacidade)
+                resultado = self.controlador.adicionar_sala(numero, capacidade, tipo)
                 print(resultado)  # Exibe a mensagem de sucesso
                 return {"numero": numero, "capacidade": capacidade}  # Retorna os dados da sala após sucesso
 

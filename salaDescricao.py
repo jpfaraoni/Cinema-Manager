@@ -1,8 +1,8 @@
-class Sala:
+class SalaDescricao:
 
     salas_db = []
 
-    def __init__(self, numero: int, capacidadnt: int, tipo: str): #Fazer o isIntance do tipos de dados
+    def __init__(self, numero: int, capacidade: int, tipo: str): #Fazer o isIntance do tipos de dados
         self.__numero = numero
         self.__capacidade = capacidade
         self.__tipo = tipo

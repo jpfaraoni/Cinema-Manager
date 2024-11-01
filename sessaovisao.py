@@ -1,8 +1,9 @@
 from horarioinvalido import HorarioInvalido
-from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
 from sessaocontrolador import SessaoControlador
 from filme import Filme
+from filmevisao import FilmeVisao
 from sala import Sala
+from salavisao import SalaVisao
 from sessao import Sessao
 
 class SessaoVisao:
@@ -12,6 +13,9 @@ class SessaoVisao:
 
     def __init__(self):
         self.controlador = SessaoControlador()  # Associação com o controlador de sessões
+        self.filme_visao = FilmeVisao()
+        self.sala_visao = SalaVisao()
+        self.sala = Sala(numero=None, capacidade=None, tipo=None)
 
     def tela_opcoes(self):
         print("\n-- Menu Sessão --")
@@ -34,38 +38,23 @@ class SessaoVisao:
         while True:
             try:
                 # Entrada e validação do título e duração do filme
-                titulo = input("Digite o título do filme: ")
-                duracao = int(input("Digite a duração do filme (em minutos): "))
-                classificacao_etaria = int(input("Classificação etária: "))
-                if duracao <= 0:
-                    raise ValueError("A duração deve ser um valor positivo.")
-                filme = Filme(titulo, duracao, classificacao_etaria)
+                filme = self.filme_visao.pega_dados_filme()
 
                 # Entrada e validação da sala
-                numero_sala = int(input("Digite o número da sala: "))
-                capacidade_sala = int(input("Digite a capacidade da sala: "))
-                if capacidade_sala <= 0:
+                sala = self.sala_visao.pega_dados_sala()
+                if self.sala.capacidade <= 0:
                     raise ValueError("A capacidade da sala deve ser um valor positivo.")
-                sala = Sala(numero_sala, capacidade_sala)
 
                 # Entrada e validação do horário utilizando validar_horario
                 horario = input("Digite o horário da sessão (HH:MM): ")
                 self.controlador.validar_horario(horario)
 
                 # Entrada e validação da capacidade máxima de ingressos
-                capacidade_maxima = int(input("Digite a capacidade máxima de ingressos para esta sessão: "))
+                capacidade_maxima = self.sala.capacidade
                 if capacidade_maxima <= 0:
                     raise ValueError("A capacidade máxima deve ser um valor positivo.")
 
-                # Escolha do tipo de sessão
-                print("Escolha o tipo de sessão:")
-                for tipo in TipoSessao:
-                    print(f"{tipo.value}. {tipo.name}")
-
-                tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-                if tipo_escolhido not in [tipo.value for tipo in TipoSessao]:
-                    raise ValueError("Tipo de sessão inválido.")
-                tipo = TipoSessao(tipo_escolhido)
+                tipo = Sessao.sala.tipo
 
                     # Cria a sessão e verifica disponibilidade do horário
                 nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
@@ -169,11 +158,12 @@ class SessaoVisao:
         """
         try:
             capacidade_maxima = int(input("Digite a nova capacidade máxima: "))
-            tipo = int(input("Digite o novo tipo (1 - 2D, 2 - 3D, 3 - IMAX): "))  # Exemplo de opções de tipo
-            if tipo not in [t.value for t in TipoSessao]:  # Supondo que TipoSessao seja um Enum
+            tipo = int(input("Digite o novo tipo (2D, 3D, ou IMAX): "))  # Exemplo de opções de tipo
+            if tipo not in ["3D", "2D", "IMAX"]:
                 raise ValueError("Tipo inválido. Escolha um número correspondente ao tipo de sessão.")
+
         except ValueError as e:
             print(f"Erro: {e}. Por favor, insira valores válidos.")
             return self.pega_novos_dados_sessao()  # Chama novamente para uma entrada correta
 
-        return {"capacidade_maxima": capacidade_maxima, "tipo": TipoSessao(tipo)}
+        return {"capacidade_maxima": capacidade_maxima, "tipo": tipo}

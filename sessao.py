@@ -1,11 +1,10 @@
 from filme import Filme
 from sala import Sala
-from tiposessao import TipoSessao
 
 class Sessao:
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= TipoSessao):
+    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= str):
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):

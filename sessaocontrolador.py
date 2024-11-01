@@ -4,6 +4,7 @@ from sessaonaoencontrada import SessaoNaoEncontrada
 from ingresso import Ingresso
 from datetime import datetime, timedelta
 from sala import Sala
+from horarioinvalido import HorarioInvalido
 
 
 class SessaoControlador:

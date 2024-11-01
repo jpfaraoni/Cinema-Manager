@@ -11,30 +11,25 @@ class SalaControlador:
 
     salas_db = [] # Simulação do banco de dados em memória
 
-    def adicionar_sala(self, numero, capacidade):
-        """
-        Adiciona uma nova sala se ela ainda não estiver cadastrada.
-
-        :param numero: Número da sala.
-        :param capacidade: Capacidade da sala.
-        :return: Mensagem de sucesso ou erro.
-        """
+    def adicionar_sala(self, numero, capacidade, tipo):
         # Verifica se a sala já existe
         for sala in SalaControlador.salas_db:
             if sala.numero == numero:
                 raise ValueError(f"Sala {numero} já está cadastrada.")  # Levanta o erro
 
         # Caso não exista, adiciona a nova sala
-        nova_sala = Sala(numero, capacidade)
+        nova_sala = Sala(numero, capacidade, tipo)
         SalaControlador.salas_db.append(nova_sala)
         return f"Sala {numero} foi adicionada com sucesso!"
 
-    def atualizar_sala(self, numero, capacidade=None):
+    def atualizar_sala(self, numero, capacidade=None, tipo=None):
         # Procura a sala pelo número e, se encontrada, atualiza seus atributos
         try:
             sala = self.busca_sala(numero)  # Chama o método busca_sala para encontrar a sala
             if capacidade is not None:
                 sala.capacidade = capacidade  # Atualiza a capacidade
+            if tipo is not None:
+                sala.tipo = tipo
             return f"Sala {numero} atualizada com sucesso!"
         except SalaNaoEncontrada as e:
             return str(e)

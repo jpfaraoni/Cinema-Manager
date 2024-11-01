@@ -1,17 +1,17 @@
-from mainCliente import clienteMain
-from mainFilme import filmeMain
-from mainSessao import sessaoMain
-from mainSala import salaMain
+from clientevisao import ClienteVisao
+from filmevisao import FilmeVisao
+from clientevisao import ClienteVisao
+from salavisao import SalaVisao
+from sessaovisao import SessaoVisao
+from sessaocontrolador import SessaoControlador 
+
 
 class CinemaInterface:
     """
     Classe que representa a interface principal do sistema de gerenciamento de cinema.
     """
     def __init__(self):
-        self.main_filme = filmeMain()
-        self.main_cliente = clienteMain()
-        self.main_sessao = sessaoMain()
-        self.main_sala = salaMain()
+        self.cinema_interface = None
 
     def menu_principal(self):
         while True:
@@ -44,97 +44,127 @@ class CinemaInterface:
                 print("Erro: por favor, insira um número válido.")
 
     def menu_filmes(self):
+        filme_visao = FilmeVisao()
         while True:
-            print("\n--- Gerenciamento de Filmes ---")
-            print("1. Adicionar Filme")
-            print("2. Remover Filme")
-            print("3. Atualizar Filme")
-            print("4. Listar Filmes")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.main_filme.adicionar_filme()
-            elif opcao == "2":
-                self.main_filme.remover_filme()
-            elif opcao == "3":
-                self.main_filme.atualizar_filme()
-            elif opcao == "4":
-                self.main_filme.listar_filmes()
-            elif opcao == "0":
+            opcao = filme_visao.tela_opcoes()  # Exibe as opções e obtém a escolha do usuário
+
+            if opcao == 0:
+                print("Saindo do gerenciamento de filmes.")
                 break
+            elif opcao == 1:
+                # Adicionar filme
+                dados_filme = filme_visao.pega_dados_filme()
+                resultado = filme_visao.controlador.adicionar_filme(dados_filme['titulo'], dados_filme['duracao'], dados_filme['genero'], dados_filme['classificacao_etaria'])
+                filme_visao.mostra_mensagem(resultado)
+            elif opcao == 2:
+                # Atualizar filme
+                titulo = filme_visao.seleciona_filme()
+                dados_atualizados = filme_visao.pega_dados_filme()  # Pede novos dados
+                resultado = filme_visao.controlador.atualizar_filme(titulo, duracao=dados_atualizados['duracao'], genero=dados_atualizados['genero'], classificacao_etaria=['classificacao_etaria'])
+                filme_visao.mostra_mensagem(resultado)
+            elif opcao == 3:
+                # Remover filme
+                numero = filme_visao.seleciona_filme()
+                resultado = filme_visao.controlador.remover_filme(titulo)
+                filme_visao.mostra_mensagem(resultado)
+            elif opcao == 4:
+                # Listar filmes
+                resultado = filme_visao.controlador.listar_filmes()  # Chama o método do controlador
+                filme_visao.listar_filmes(resultado)  # Passa o resultado para a visão
             else:
-                print("Opção inválida, tente novamente.")
+                filme_visao.mostra_mensagem("Opção inválida.")
 
     def menu_sessoes(self):
+        visao = SessaoVisao()  # Cria uma instância da visão
+        controlador = SessaoControlador
+
+        # Loop principal para o menu da visão
         while True:
-            print("\n--- Gerenciamento de Sessões ---")
-            print("1. Adicionar Sessão")
-            print("2. Remover Sessão")
-            print("3. Atualizar Sessão")
-            print("4. Listar Sessões")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.main_sessao.adicionar_sessao()
-            elif opcao == "2":
-                self.main_sessao.remover_sessao()
-            elif opcao == "3":
-                self.main_sessao.atualizar_sessao()
-            elif opcao == "4":
-                self.main_sessao.listar_sessoes()
-            elif opcao == "0":
+            opcao = visao.tela_opcoes()  # Exibe as opções e obtém a escolha do usuário
+
+            if opcao == 0:
+                print("Saindo do sistema.")
                 break
+            elif opcao == 1:
+                # Adicionar sala
+                visao.pega_dados_sessao()  # A lógica de adicionar a sala e mostrar mensagens já está na visão
+            elif opcao == 2:
+                # Atualizar sessão
+                dados_sessao = visao.seleciona_sessao()
+                novos_dados = visao.pega_novos_dados_sessao()# Seleciona a sessão a ser removida
+                resultado = visao.controlador.atualizar_sessao(filme = dados_sessao["filme"], sala = dados_sessao["sala"], horario = dados_sessao["horario"],
+                                                            capacidade_maxima = novos_dados["capacidade_maxima"], tipo=novos_dados["tipo"])
+                visao.mostra_mensagem(resultado)  # Mostra o resultado da operação
+
+            elif opcao == 3:
+                # Remover sessão
+                dados_sessao = visao.seleciona_sessao()  # Seleciona a sessão a ser removida
+                resultado = visao.controlador.remover_sessao(dados_sessao["filme"], dados_sessao["sala"], dados_sessao["horario"])
+                visao.mostra_mensagem(resultado)  # Mostra o resultado da operação
+            elif opcao == 4:
+                # Listar sessões
+                resultado = visao.controlador.listar_sessoes()  # Chama o método do controlador
+                visao.exibe_lista_sessoes(resultado)  # Passa o resultado para a visão
             else:
-                print("Opção inválida, tente novamente.")
+                visao.mostra_mensagem("Opção inválida.")
+
 
     def menu_clientes(self):
+        cliente_visao = ClienteVisao()
+
         while True:
-            print("\n--- Gerenciamento de Clientes ---")
-            print("1. Adicionar Cliente")
-            print("2. Remover Cliente")
-            print("3. Atualizar Cliente")
-            print("4. Listar Clientes")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.main_cliente.adicionar_cliente()
-            elif opcao == "2":
-                self.main_cliente.remover_cliente()
-            elif opcao == "3":
-                self.main_cliente.atualizar_cliente()
-            elif opcao == "4":
-                self.main_cliente.listar_clientes()
-            elif opcao == "0":
+            opcao = cliente_visao.tela_opcoes()
+
+            if opcao == 0:
+                print("Saindo do sistema.")
                 break
-            else:
-                print("Opção inválida, tente novamente.")
+            elif opcao == 1:
+                dados_cliente = cliente_visao.pega_dados_cliente()
+                resultado = cliente_visao.controlador.cadastrarCliente(dados_cliente['nome'], dados_cliente['fone'], dados_cliente['email'], dados_cliente['idade'])
+                cliente_visao.mostra_mensagem(resultado)
+            elif opcao == 2:
+                nome = cliente_visao.seleciona_cliente()
+                dados_atualizados = cliente_visao.pega_dados_cliente()
+                resultado = cliente_visao.controlador.atualizarCliente(nome, fone=dados_atualizados['fone'], email=dados_atualizados['email'], idade=dados_atualizados['idade'])
+                cliente_visao.mostra_mensagem(resultado)
+            elif opcao == 3:
+                nome = cliente_visao.seleciona_cliente()
+                resultado = cliente_visao.controlador.removerCliente(nome)
+                cliente_visao.mostra_mensagem(resultado)
+            elif opcao == 4:
+                resultado = cliente_visao.controlador.listar_clientes()
+                cliente_visao.listar_clientes(resultado)
 
     def menu_salas(self):
-        while True:
-            print("\n--- Gerenciamento de Salas ---")
-            print("1. Adicionar Sala")
-            print("2. Remover Sala")
-            print("3. Atualizar Sala")
-            print("4. Listar Salas")
-            print("0. Voltar")
-            
-            opcao = input("Escolha uma opção: ")
-            if opcao == "1":
-                self.main_sala.adicionar_sala()
-            elif opcao == "2":
-                self.main_sala.remover_sala()
-            elif opcao == "3":
-                self.main_sala.atualizar_sala()
-            elif opcao == "4":
-                self.main_sala.listar_salas()
-            elif opcao == "0":
-                break
-            else:
-                print("Opção inválida, tente novamente.")
+        sala_visao = SalaVisao()  # Cria uma instância da visão
 
+        while True:
+            opcao = sala_visao.tela_opcoes()  # Exibe as opções e obtém a escolha do usuário
+
+            if opcao == 0:
+                print("Saindo do sistema.")
+                break
+            elif opcao == 1:
+                # Adicionar sala
+                sala_visao.pega_dados_sala()  # A lógica de adicionar a sala e mostrar mensagens já está na visão
+            elif opcao == 2:
+                # Atualizar sala
+                numero = sala_visao.seleciona_sala()  # Seleciona a sala pelo número
+                nova_capacidade = sala_visao.pega_nova_capacidade()  # Solicita a nova capacidade
+                resultado = sala_visao.controlador.atualizar_sala(numero, capacidade=nova_capacidade)
+                sala_visao.mostra_mensagem(resultado)
+            elif opcao == 3:
+                # Remover sala
+                numero = sala_visao.seleciona_sala()
+                resultado = sala_visao.controlador.remover_sala(numero)
+                sala_visao.mostra_mensagem(resultado)
+            elif opcao == 4:
+                # Listar salas
+                resultado = sala_visao.controlador.listar_salas()  # Chama o método do controlador
+                sala_visao.exibe_lista_salas(resultado)  # Passa o resultado para a visão
+            else:
+                sala_visao.mostra_mensagem("Opção inválida.")
+        
     def menu_vendas(self):
         while True:
             print("\n--- Gerenciamento de Vendas ---")
