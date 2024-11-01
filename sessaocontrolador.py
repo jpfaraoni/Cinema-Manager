@@ -1,9 +1,11 @@
 from filme import Filme
 from sessao import Sessao
+from sessao import TipoSessao
 from sessaonaoencontrada import SessaoNaoEncontrada
-from ingresso import Ingresso
+#from ingresso import Ingresso
 from datetime import datetime, timedelta
 from sala import Sala
+from horarioinvalido import HorarioInvalido
 
 
 class SessaoControlador:
@@ -16,8 +18,9 @@ class SessaoControlador:
 
     sessoes_db = []
     ingressos = []
+    filmes_db = []
 
-    def horario_disponivel(self, nova_sessao):
+    def horario_disponivel(self, nova_sessao: Sessao):
         """
         Verifica se há conflito entre o horário da nova sessão e as sessões já cadastradas,
         calculando o horário de término da sessão ao mesmo tempo.
@@ -30,7 +33,7 @@ class SessaoControlador:
         novo_horario_termino = novo_horario_inicio + timedelta(minutes=int(nova_sessao.filme.duracao))
 
         for sessao in SessaoControlador.sessoes_db:
-            if sessao.sala == nova_sessao.sala:
+            if sessao.sala.numero == nova_sessao.sala.numero:
                 horario_inicio_existente = datetime.strptime(sessao.horario, "%H:%M")
                 horario_termino_existente = horario_inicio_existente + timedelta(minutes=int(sessao.filme.duracao))
 
@@ -51,43 +54,46 @@ class SessaoControlador:
         except ValueError:
             return False
 
-    def adicionar_ingresso(self, ingresso):
-        SessaoControlador.ingressos.append(ingresso)  # Método para adicionar um ingresso
+    # def adicionar_ingresso(self, ingresso):
+    #     if ingresso is not None:
+    #         self.ingressos.append(ingresso)  # Método para adicionar um ingresso
 
-    def adicionar_sessao(self, filme, sala, horario, capacidade_maxima, tipo):
-        if not isinstance(capacidade_maxima, int) or capacidade_maxima <= 0:
-            raise ValueError("Capacidade máxima inválida.")
+    def adicionar_sessao(self, filme: Filme, sala: Sala, horario: str, tipo: TipoSessao):
 
-        # if sala is None or not isinstance(Sessao.tipo, TipoSessao):
-        #     raise ValueError("Tipo de sala inválido.")
+        if sala is None or not isinstance(sala, Sala):
+             raise ValueError("Tipo de sala inválido.")
 
-        # if tipo is not None and not isinstance(tipo, TipoSala):
-        #     raise ValueError("Tipo de sessão inválido.")
+        if tipo is not None and not isinstance(tipo, TipoSessao):
+             raise ValueError("Tipo de sessão inválido.")
 
         if not self.validar_horario(horario):
             raise HorarioInvalido(horario)
 
         # Se não houver conflito, adiciona a sessão ao "banco de dados"
-        nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
+        nova_sessao = Sessao(filme, sala, horario, tipo)
 
         # Verifica se o horário é disponível
         if not self.horario_disponivel(nova_sessao):
-            return f"Erro: Conflito de horário na sala {sala} para o horário {horario}."
+            return f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}."
 
         SessaoControlador.sessoes_db.append(nova_sessao)
-        print(f"Sessão adicionada: {nova_sessao}")
+        self.filmes_db.append(nova_sessao.filme)
+
         return f"Sessão do filme '{filme.titulo}' adicionada com sucesso!"
 
-    def atualizar_sessao(self, filme, sala, horario, capacidade_maxima=None, tipo=None):
+    def atualizar_sessao(self, filme_titulo: str, sala_numero: int, horario: str, nova_capacidade: int = None, tipo: TipoSessao= None):
         try:
-            sessao = self.busca_sessao(filme, sala, horario)
+            sessao = self.busca_sessao(filme_titulo, sala_numero, horario)
             if sessao is not None:
-                if capacidade_maxima is not None:
-                    sessao.capacidade_maxima = capacidade_maxima
+                if nova_capacidade is not None:
+                    if nova_capacidade > 0:
+                        sessao.sala.capacidade = nova_capacidade
+                    else:
+                        raise ValueError("Capacidade deve ser um valor positivo.")
+
                 if tipo is not None:
                     sessao.tipo = tipo  # Atualiza o tipo
-                print(sessao.tipo)
-                print(sessao.capacidade_maxima)
+
                 return f"Sessão de {sessao.filme.titulo} atualizada com sucesso!"
         except SessaoNaoEncontrada as e:
             return str(e)
@@ -100,17 +106,22 @@ class SessaoControlador:
         except SessaoNaoEncontrada as e:
             return str(e)
 
-    def busca_sessao(self, filme_titulo, sala_numero, horario):
+    def busca_sessao(self, filme_titulo: str, sala_numero: int, horario: str) -> Sessao:
         for sessao in SessaoControlador.sessoes_db:
             if sessao.filme.titulo == filme_titulo and sessao.sala.numero == sala_numero and sessao.horario == horario:
                 return sessao
         raise SessaoNaoEncontrada(filme_titulo, sala_numero, horario)
 
     def listar_sessoes(self):
-        print("Sessoes cadastradas atualmente:", SessaoControlador.sessoes_db)
         if not SessaoControlador.sessoes_db:
             return "Nenhuma sessão cadastrada."
         return SessaoControlador.sessoes_db
+
+    def listar_filmes(self):
+        print(*self.filmes_db)
+        if not SessaoControlador.filmes_db:
+            return "Nenhuma sessão cadastrada."
+        return self.filmes_db
 
     # def listar_ingressos(self):
     #     if not SessaoControlador.ingressos:
