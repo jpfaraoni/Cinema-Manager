@@ -1,10 +1,10 @@
 from sessaovisao import SessaoVisao
 from sessaocontrolador import SessaoControlador
 
-def SessaoMain():
+def main():
     # Instanciando a visão
     visao = SessaoVisao()  # Cria uma instância da visão
-    controlador = SessaoControlador
+    controlador = SessaoControlador()
 
     # Loop principal para o menu da visão
     while True:
@@ -20,8 +20,8 @@ def SessaoMain():
             # Atualizar sessão
             dados_sessao = visao.seleciona_sessao()
             novos_dados = visao.pega_novos_dados_sessao()# Seleciona a sessão a ser removida
-            resultado = visao.controlador.atualizar_sessao(filme = dados_sessao["filme"], sala = dados_sessao["sala"], horario = dados_sessao["horario"],
-                                                           capacidade_maxima = novos_dados["capacidade_maxima"], tipo=novos_dados["tipo"])
+            resultado = visao.controlador.atualizar_sessao(filme_titulo = dados_sessao["filme"], sala_numero = dados_sessao["sala"], horario = dados_sessao["horario"],
+                                                           nova_capacidade = novos_dados["capacidade"], tipo=novos_dados["tipo"])
             visao.mostra_mensagem(resultado)  # Mostra o resultado da operação
 
         elif opcao == 3:
