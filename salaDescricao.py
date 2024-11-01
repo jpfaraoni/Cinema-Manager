@@ -1,8 +1,3 @@
-#Sala
-#Atributos: número, capacidade, tipo (2D, 3D, IMAX).
-#Métodos: adicionarSala(), atualizarSala(), removerSala().
-
-
 class Sala:
 
     salas_db = []
