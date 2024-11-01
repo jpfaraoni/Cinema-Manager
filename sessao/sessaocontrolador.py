@@ -3,6 +3,7 @@ from sessao import Sessao
 from sessaonaoencontrada import SessaoNaoEncontrada
 #from ingresso import Ingresso
 from datetime import datetime, timedelta
+from sala import Sala
 
 
 class SessaoControlador:
@@ -77,29 +78,19 @@ class SessaoControlador:
         print(f"Sessão adicionada: {nova_sessao}")
         return f"Sessão do filme '{filme.titulo}' adicionada com sucesso!"
 
-    def atualizar_sessao(self, sessao, filme=None, sala=None, horario=None, capacidade_maxima=None, tipo=None):
-        if filme is not None:
-            sessao.filme = filme
-
-        if sala is not None and isinstance(sala.tipo, TipoSala):
-            sessao.sala = sala
-
-        if horario is not None:
-            sessao.horario = horario
-
-        if capacidade_maxima is not None:
-            if isinstance(capacidade_maxima, int) and capacidade_maxima > 0:
-                sessao.capacidade_maxima = capacidade_maxima
-            else:
-                raise ValueError("Capacidade máxima inválida.")
-
-        if tipo is not None:
-            if isinstance(tipo, TipoSala):
-                sessao.tipo = tipo
-            else:
-                raise ValueError("Tipo de sessão inválido.")
-
-        return f"Sessão do filme '{sessao.filme}' foi atualizada com sucesso!"
+    def atualizar_sessao(self, filme, sala, horario, capacidade_maxima=None, tipo=None):
+        try:
+            sessao = self.busca_sessao(filme, sala, horario)
+            if sessao is not None:
+                if capacidade_maxima is not None:
+                    sessao.capacidade_maxima = capacidade_maxima
+                if tipo is not None:
+                    sessao.tipo = tipo  # Atualiza o tipo
+                print(sessao.tipo)
+                print(sessao.capacidade_maxima)
+                return f"Sessão de {sessao.filme.titulo} atualizada com sucesso!"
+        except SessaoNaoEncontrada as e:
+            return str(e)
 
     def remover_sessao(self, filme, sala, horario):
         try:
@@ -109,14 +100,19 @@ class SessaoControlador:
         except SessaoNaoEncontrada as e:
             return str(e)
 
-    def busca_sessao(self, filme:Filme, sala, horario):
+    def busca_sessao(self, filme_titulo, sala_numero, horario):
         for sessao in SessaoControlador.sessoes_db:
-            if sessao.filme.titulo == filme and sessao.sala.numero == sala and sessao.horario == horario:
+            if sessao.filme.titulo == filme_titulo and sessao.sala.numero == sala_numero and sessao.horario == horario:
                 return sessao
-        raise SessaoNaoEncontrada(filme, sala, horario)
+        raise SessaoNaoEncontrada(filme_titulo, sala_numero, horario)
 
     def listar_sessoes(self):
         print("Sessoes cadastradas atualmente:", SessaoControlador.sessoes_db)
         if not SessaoControlador.sessoes_db:
             return "Nenhuma sessão cadastrada."
         return SessaoControlador.sessoes_db
+
+    # def listar_ingressos(self):
+    #     if not SessaoControlador.ingressos:
+    #         return "Nenhum ingresso cadastrado."
+    #     return SessaoControlador.ingressos
