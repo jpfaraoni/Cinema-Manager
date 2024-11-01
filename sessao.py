@@ -1,19 +1,24 @@
+
 from filme import Filme
 from sala import Sala
-from tiposessao import TipoSessao
+from enum import Enum
+
+class TipoSessao(Enum):
+    _2D = 1
+    _3D = 2
+    _IMAX = 3
+
 
 class Sessao:
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= TipoSessao):
+    def __init__(self, filme: Filme, sala: Sala, horario: str, tipo= TipoSessao):
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):
             self.__sala = sala
         if isinstance(horario, str):
             self.__horario = horario
-        if isinstance(capacidade_maxima, int):
-            self.__capacidade_maxima = capacidade_maxima
         self.tipo = tipo
         self.__ingressos = []
 
@@ -44,14 +49,6 @@ class Sessao:
         self.__horario = horario
 
     @property
-    def capacidade_maxima(self) -> int:
-        return self.__capacidade_maxima
-
-    @capacidade_maxima.setter
-    def capacidade_maxima(self, capacidade_maxima):
-        self.__capacidade_maxima = capacidade_maxima
-
-    @property
     def tipo(self):
         return self.__tipo
 
@@ -60,5 +57,9 @@ class Sessao:
         self.__tipo = tipo
 
     def adicionar_ingresso(self, ingresso):
-         self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
+        if ingresso is not None:
+            self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
+
+    def ingressos_disponiveis(self) -> int:
+        return self.sala.capacidade - len(self.__ingressos)
 
