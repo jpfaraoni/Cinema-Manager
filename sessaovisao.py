@@ -43,19 +43,14 @@ class SessaoVisao:
 
                 # Entrada e validação da sala
                 numero_sala = int(input("Digite o número da sala: "))
-                capacidade_sala = int(input("Digite a capacidade da sala: "))
-                if capacidade_sala <= 0:
-                    raise ValueError("A capacidade da sala deve ser um valor positivo.")
-                sala = Sala(numero_sala, capacidade_sala)
+                capacidade = int(input("Digite a capacidade da sala: "))
+                if capacidade <= 0:
+                    raise ValueError("A capacidade deve ser um valor positivo.")
+                sala = Sala(numero_sala, capacidade)
 
                 # Entrada e validação do horário utilizando validar_horario
                 horario = input("Digite o horário da sessão (HH:MM): ")
                 self.controlador.validar_horario(horario)
-
-                # Entrada e validação da capacidade máxima de ingressos
-                capacidade_maxima = int(input("Digite a capacidade máxima de ingressos para esta sessão: "))
-                if capacidade_maxima <= 0:
-                    raise ValueError("A capacidade máxima deve ser um valor positivo.")
 
                 # Escolha do tipo de sessão
                 print("Escolha o tipo de sessão:")
@@ -67,18 +62,10 @@ class SessaoVisao:
                     raise ValueError("Tipo de sessão inválido.")
                 tipo = TipoSessao(tipo_escolhido)
 
-                    # Cria a sessão e verifica disponibilidade do horário
-                nova_sessao = Sessao(filme, sala, horario, capacidade_maxima, tipo)
-
-                # Verifica se o horário está disponível
-                if not self.controlador.horario_disponivel(nova_sessao):
-                    print(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
-                    continue  # Retorna ao início para nova entrada
-
                 # Se chegarmos aqui, significa que o horário está disponível
-                resultado = self.controlador.adicionar_sessao(filme, sala, horario, capacidade_maxima, tipo)
+                resultado = self.controlador.adicionar_sessao(filme, sala, horario, tipo)
                 print(resultado)  # Exibe a mensagem de sucesso
-                return {"filme": filme, "sala": sala, "horario": horario, "capacidade_maxima": capacidade_maxima,
+                return {"filme": filme, "sala": sala, "horario": horario,
                         "tipo": tipo}
 
             except ValueError as ve:
@@ -133,7 +120,7 @@ class SessaoVisao:
                 print(f"Filme: {sessao.filme.titulo}, "
                       f"Sala: {sessao.sala.numero}, "
                       f"Horário: {sessao.horario}, "
-                      f"Capacidade: {sessao.capacidade_maxima}, "
+                      f"Capacidade: {sessao.sala.capacidade}, "
                       f"Tipo: {sessao.tipo.name}")
 
     def exibe_lista_ingressos(self, ingressos):
@@ -168,7 +155,7 @@ class SessaoVisao:
         Solicita ao usuário novos dados para a sessão.
         """
         try:
-            capacidade_maxima = int(input("Digite a nova capacidade máxima: "))
+            capacidade = int(input("Digite a nova capacidade máxima: "))
             tipo = int(input("Digite o novo tipo (1 - 2D, 2 - 3D, 3 - IMAX): "))  # Exemplo de opções de tipo
             if tipo not in [t.value for t in TipoSessao]:  # Supondo que TipoSessao seja um Enum
                 raise ValueError("Tipo inválido. Escolha um número correspondente ao tipo de sessão.")
@@ -176,4 +163,4 @@ class SessaoVisao:
             print(f"Erro: {e}. Por favor, insira valores válidos.")
             return self.pega_novos_dados_sessao()  # Chama novamente para uma entrada correta
 
-        return {"capacidade_maxima": capacidade_maxima, "tipo": TipoSessao(tipo)}
+        return {"capacidade": capacidade, "tipo": TipoSessao(tipo)}
