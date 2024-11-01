@@ -1,8 +1,7 @@
 
 from filme import Filme
 from sala import Sala
-<<<<<<< HEAD
-=======
+
 from enum import Enum
 
 class TipoSessao(Enum):
@@ -10,16 +9,10 @@ class TipoSessao(Enum):
     _3D = 2
     _IMAX = 3
 
->>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
-
 class Sessao:
     sessoes_db = []
 
-<<<<<<< HEAD
-    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= str):
-=======
     def __init__(self, filme: Filme, sala: Sala, horario: str, tipo= TipoSessao):
->>>>>>> 749178d8ec62e7324d97a220842dd5b11bc18c75
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):

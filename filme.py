@@ -1,10 +1,9 @@
 from datetime import time
 
 class Filme:    
-    def __init__(self, titulo: str, duracao: time, genero: str, classificacao_etaria: int):
+    def __init__(self, titulo: str, duracao: int, classificacao_etaria: int):
         self.titulo = titulo
         self.duracao = duracao
-        self.genero = genero
         self.classificacao_etaria = classificacao_etaria
 
     @property
@@ -22,20 +21,10 @@ class Filme:
         return self.__duracao
 
     @duracao.setter
-    def duracao(self, duracao: time):
-        if not isinstance(duracao, time):
-            raise ValueError("Duração inválida. Use um objeto do tipo datetime.time.")
+    def duracao(self, duracao: int):
+        if not isinstance(duracao, int):
+            raise ValueError("Duração inválida. Valor de tempo deve estar em minutos.")
         self.__duracao = duracao
-
-    @property
-    def genero(self):
-        return self.__genero
-
-    @genero.setter
-    def genero(self, genero: str):
-        if not genero or not isinstance(genero, str):
-            raise ValueError("Gênero inválido.")
-        self.__genero = genero
 
     @property
     def classificacao_etaria(self):

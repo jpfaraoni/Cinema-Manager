@@ -1,9 +1,11 @@
 from horarioinvalido import HorarioInvalido
-from sessao import TipoSessao  # Importa o Enum TipoSessao para uso
 from sessaocontrolador import SessaoControlador
 from filme import Filme
+from filmevisao import FilmeVisao
 from sala import Sala
 from sessao import Sessao
+from sessao import TipoSessao
+from datetime import time
 
 class SessaoVisao:
     """
@@ -12,6 +14,7 @@ class SessaoVisao:
 
     def __init__(self):
         self.controlador = SessaoControlador()  # Associação com o controlador de sessões
+        self.filme = Filme
 
     def tela_opcoes(self):
         print("\n-- Menu Sessão --")
@@ -34,14 +37,17 @@ class SessaoVisao:
         while True:
             try:
                 # Entrada e validação do título e duração do filme
-                titulo = input("Digite o título do filme: ")
-                duracao = int(input("Digite a duração do filme (em minutos): "))
-                classificacao_etaria = int(input("Classificação etária: "))
+                print("==== ADICIONAR FILME ====")
+                titulo = input("TÍTULO: ")
+                duracao = int(input("DURAÇÃO (em minutos): "))
+                classificacao_etaria = int(input("CLASSIFICAÇÃO ETÃRIA: "))
+                
                 if duracao <= 0:
                     raise ValueError("A duração deve ser um valor positivo.")
                 filme = Filme(titulo, duracao, classificacao_etaria)
-
-                # Entrada e validação da sala
+                
+                # Entrada e validação da sala2
+                print("==== ADICIONAR SALA ====")
                 numero_sala = int(input("Digite o número da sala: "))
                 capacidade = int(input("Digite a capacidade da sala: "))
                 if capacidade <= 0:
@@ -117,11 +123,11 @@ class SessaoVisao:
             print("\n-- Lista de Sessões --")
             for sessao in sessoes_db:
                 # Acessa os atributos da sessão e imprime suas informações
-                print(f"Filme: {sessao.filme.titulo}, "
-                      f"Sala: {sessao.sala.numero}, "
-                      f"Horário: {sessao.horario}, "
-                      f"Capacidade: {sessao.sala.capacidade}, "
-                      f"Tipo: {sessao.tipo.name}")
+                print(f"Filme: {sessao.filme.titulo},\n "
+                      f"Sala: {sessao.sala.numero},\n "
+                      f"Horário: {sessao.horario},\n "
+                      f"Capacidade: {sessao.sala.capacidade},\n "
+                      f"Tipo: {sessao.tipo.name}\n")
 
     def exibe_lista_ingressos(self, ingressos):
         """

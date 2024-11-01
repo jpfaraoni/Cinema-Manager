@@ -1,6 +1,5 @@
 from filme import Filme
-from sessao import Sessao
-from sessao import TipoSessao
+from sessao import Sessao, TipoSessao
 from sessaonaoencontrada import SessaoNaoEncontrada
 #from ingresso import Ingresso
 from datetime import datetime, timedelta

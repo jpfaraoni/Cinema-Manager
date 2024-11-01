@@ -1,4 +1,5 @@
 from filmecontrolador import FilmeControlador
+from datetime import time
 
 class FilmeVisao:
     def __init__(self):
@@ -23,18 +24,31 @@ class FilmeVisao:
 
         return opcao
 
+    from datetime import time
+
     def pega_dados_filme(self):
         """
-        Solicita os dados de uma sala ao usuário e retorna um dicionário com esses dados.
+        Solicita os dados de um filme ao usuário e retorna um dicionário com esses dados.
         """
         print("-------- DADOS DO FILME ----------")
 
         titulo = input("Título do filme: ")
-        duracao = input("Duração do filme: ")
-        genero = input("Gênero do filme: ").strip().upper()
+        
+        # Solicita a duração no formato HH:MM
+        duracao_str = input("Duração do filme (HH:MM): ")
+        try:
+            horas, minutos = map(int, duracao_str.split(":"))
+            duracao = time(horas, minutos)
+        except ValueError:
+            raise ValueError("Formato de duração inválido. Use HH:MM.")
         classificacao_etaria = int(input("Classificação etária do filme: "))
         
-        return {"titulo": titulo, "duracao": duracao, "genero": genero, "classificacao_etaria": classificacao_etaria}
+        return {
+            "titulo": titulo,
+            "duracao": duracao,
+            "classificacao_etaria": classificacao_etaria
+        }
+
 
     def mostra_filme(self, dados_filme):
         print("-------- FILME ----------")

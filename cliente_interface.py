@@ -1,7 +1,10 @@
-
+from sessaovisao import SessaoVisao
+from vendavisao import VendaVisao
 class ClienteInterface:
     def __init__(self):
        self.cliente_interface = None
+       self.sessao_visao = SessaoVisao()
+       self.venda_visao = VendaVisao()
     
     def menu_cliente(self):
         while True:
