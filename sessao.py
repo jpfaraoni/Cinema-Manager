@@ -1,13 +1,12 @@
-
-from filme import Filme
-from sala import Sala
-
+from entidade.filme import Filme
+from entidade.sala import Sala
 from enum import Enum
 
 class TipoSessao(Enum):
     _2D = 1
     _3D = 2
     _IMAX = 3
+
 
 class Sessao:
     sessoes_db = []
@@ -58,8 +57,7 @@ class Sessao:
 
     def adicionar_ingresso(self, ingresso):
         if ingresso is not None:
-            self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
+            self.__ingressos.append(ingresso)  # Método para adicionar um entidade
 
     def ingressos_disponiveis(self) -> int:
         return self.sala.capacidade - len(self.__ingressos)
-
