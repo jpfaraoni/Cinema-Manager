@@ -1,58 +1,85 @@
-from datetime import datetime, time
-from filme import Filme
+from entidade.filme import Filme
+from exception.filmenaoencontrado import FilmeNaoEncontrado
+from visao.filmevisao import FilmeVisao
+from controlador.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 
-class FilmeControlador:
-    filmes_db = []  # Simulação do banco de dados em memória
+class FilmeControlador(ControladorEntidadeAbstrata):
+    def __init__(self, controlador_sistema):
+        super().__init__(controlador_sistema)
+        self.__filmes_db = []
+        self.__filmevisao = FilmeVisao()
 
-    def adicionar_filme(self, titulo: str, duracao: str, genero: str, classificacao_etaria: int):
-        # Converte a duração para datetime.time
+
+    def adicionar_filme(self):
         try:
-            horas, minutos = map(int, duracao.split(":"))
-            duracao_time = time(horas, minutos)
-        except ValueError:
-            return "Formato de duração inválido. Use HH:MM."
+            dados_filme = self.__filmevisao.pega_dados_filme()
+            titulo = dados_filme["titulo"]
+            duracao = dados_filme["duracao"]
 
-        # Verifica se o filme já está cadastrado
-        for filme in FilmeControlador.filmes_db:
+            # if not isinstance(duracao, int):
+            #     raise ValueError("Duração deve ser em minutos.")
+
+            # Verifica se o filme já está cadastrado
+            for filme in self.__filmes_db:
+                if filme.titulo == titulo:
+                    raise ValueError(f"Filme '{titulo}' já está cadastrado.")
+
+            novo_filme = Filme(dados_filme["titulo"], dados_filme["duracao"], dados_filme["genero"], dados_filme["classificacao_etaria"])
+            self.__filmes_db.append(novo_filme)
+            self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi adicionado com sucesso!")
+
+        except ValueError as e:
+            self.__filmevisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
+
+    def atualizar_filme(self):
+        try:
+            self.listar_filmes()
+            titulo = self.__filmevisao.seleciona_filme()
+            filme = self.busca_filme(titulo)
+
+            novos_dados = self.__filmevisao.pega_novos_dados_filme()
+            filme.duracao = novos_dados["duracao"]
+            filme.genero = novos_dados["genero"]
+            filme.classificacao_etaria = novos_dados["classificacao_etaria"]
+
+            self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' atualizado com sucesso!")
+        except FilmeNaoEncontrado as e:
+            self.__filmevisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
+
+    def busca_filme(self, titulo):
+        for filme in self.__filmes_db:
             if filme.titulo == titulo:
-                return f"Filme {titulo} já está cadastrado."
+                return filme
+        raise FilmeNaoEncontrado(titulo)
 
-        # Cria e adiciona o novo filme
-        novo_filme = Filme(titulo, duracao_time, genero, classificacao_etaria)
-        FilmeControlador.filmes_db.append(novo_filme)
-        return f"Filme {titulo} foi adicionado com sucesso!"
+    def remover_filme(self):
+        try:
+            self.listar_filmes()
+            titulo = self.__filmevisao.seleciona_filme()
+            filme = self.busca_filme(titulo)
 
-    def atualizar_filme(self, titulo: str, duracao: str = None, genero: str = None, classificacao_etaria: int = None):
-        # Procura o filme pelo título e, se encontrado, atualiza seus atributos
-        for filme in FilmeControlador.filmes_db:
-            if filme.titulo == titulo:
-                if duracao is not None:
-                    try:
-                        horas, minutos = map(int, duracao.split(":"))
-                        filme.duracao = time(horas, minutos)
-                    except ValueError:
-                        return "Formato de duração inválido. Use HH:MM."
-                if genero is not None:
-                    filme.genero = genero
-                if classificacao_etaria is not None:
-                    filme.classificacao_etaria = classificacao_etaria
-                return f"Filme {titulo} atualizado com sucesso!"
-        return f"Filme {titulo} não encontrado."
-
-    def remover_filme(self, titulo: str):
-        # Remove o filme do sistema, caso esteja cadastrado
-        for filme in FilmeControlador.filmes_db:
-            if filme.titulo == titulo:
-                FilmeControlador.filmes_db.remove(filme)
-                return f"Filme {titulo} foi removido com sucesso."
-        return f"Filme {titulo} não encontrado."
+            self.__filmes_db.remove(filme)
+            self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi removido com sucesso.")
+        except FilmeNaoEncontrado as e:
+            self.__filmevisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
     def listar_filmes(self):
-        """
-        Retorna a lista de filmes cadastrados.
-        Se a lista estiver vazia, retorna uma mensagem de aviso.
-        """
-        if not FilmeControlador.filmes_db:
-            return "Nenhum filme cadastrado."
-        
-        return FilmeControlador.filmes_db  # Retorna a lista de objetos filme
+        if not self.__filmes_db:
+            self.__filmevisao.mostra_mensagem("Nenhum filme cadastrado.")
+            return
+
+        filmes_info = [{"titulo": filme.titulo, "duracao": filme.duracao, "genero": filme.genero, "classificacao_etaria": filme.classificacao_etaria} for filme in self.__filmes_db]
+        self.__filmevisao.listar_filmes(filmes_info)
+
+    def abre_tela(self):
+        lista_opcoes = {1: self.adicionar_filme, 2: self.atualizar_filme, 3: self.remover_filme, 4: self.listar_filmes, 0: self.retornar}
+
+        continua = True
+        while continua:
+            lista_opcoes[self.__filmevisao.tela_opcoes()]()
