@@ -1,4 +1,12 @@
 class Sala:
+    """
+    Classe que representa o modelo de uma Sala no sistema.
+
+    Atributos:
+    - numero: Número da visao.
+    - capacidade: Capacidade máxima de pessoas na visao.
+    """
+
     def __init__(self, numero:int, capacidade:int):
         if isinstance(numero, int):
             self.__numero = numero
@@ -11,7 +19,7 @@ class Sala:
 
     @numero.setter
     def numero(self, numero: int):
-        if isinstance(numero, int):
+        if isinstance(numer, int):
             self.__numero = numero
 
     @property
