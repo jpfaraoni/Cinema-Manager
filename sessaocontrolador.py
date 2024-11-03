@@ -1,23 +1,31 @@
-from filme import Filme
-from sessao import Sessao, TipoSessao
-from sessaonaoencontrada import SessaoNaoEncontrada
-#from ingresso import Ingresso
+from entidade.filme import Filme
+from entidade.sessao import Sessao
+from entidade.sessao import TipoSessao
+from exception.sessaonaoencontrada import SessaoNaoEncontrada
+#from entidade import Ingresso
 from datetime import datetime, timedelta
-from sala import Sala
-from horarioinvalido import HorarioInvalido
+from exception.horarioinvalido import HorarioInvalido
+from visao.sessaovisao import SessaoVisao
+from entidade.sessao import Sessao
+from controlador.controlador_entidade_abstrata import ControladorEntidadeAbstrata
+from entidade.sala import Sala
+
+class SessaoControlador(ControladorEntidadeAbstrata):
+
+    def __init__(self, controlador_sistema):
+        super().__init__(controlador_sistema)
+        self.__sessoes_db = []
+        self.__ingressos = []
+        #ingressos = []
+        self.__sessaovisao = SessaoVisao()
 
 
-class SessaoControlador:
-    """
-    Controlador responsável por gerenciar as Sessões.
-
-    Atributos:
-    - sessoes_db: Simula o banco de dados emr memória para as sessões.
-    """
-
-    sessoes_db = []
-    ingressos = []
-    filmes_db = []
+        """
+        Controlador responsável por gerenciar as Sessões.
+    
+        Atributos:
+        - sessoes_db: Simula o banco de dados emr memória para as sessões.
+        """
 
     def horario_disponivel(self, nova_sessao: Sessao):
         """
@@ -31,7 +39,7 @@ class SessaoControlador:
         novo_horario_inicio = datetime.strptime(nova_sessao.horario, "%H:%M")
         novo_horario_termino = novo_horario_inicio + timedelta(minutes=int(nova_sessao.filme.duracao))
 
-        for sessao in SessaoControlador.sessoes_db:
+        for sessao in self.__sessoes_db:
             if sessao.sala.numero == nova_sessao.sala.numero:
                 horario_inicio_existente = datetime.strptime(sessao.horario, "%H:%M")
                 horario_termino_existente = horario_inicio_existente + timedelta(minutes=int(sessao.filme.duracao))
@@ -53,76 +61,165 @@ class SessaoControlador:
         except ValueError:
             return False
 
-    # def adicionar_ingresso(self, ingresso):
-    #     if ingresso is not None:
-    #         self.ingressos.append(ingresso)  # Método para adicionar um ingresso
-
-    def adicionar_sessao(self, filme: Filme, sala: Sala, horario: str, tipo: TipoSessao):
-
-        if sala is None or not isinstance(sala, Sala):
-             raise ValueError("Tipo de sala inválido.")
-
-        if tipo is not None and not isinstance(tipo, TipoSessao):
-             raise ValueError("Tipo de sessão inválido.")
-
-        if not self.validar_horario(horario):
-            raise HorarioInvalido(horario)
-
-        # Se não houver conflito, adiciona a sessão ao "banco de dados"
-        nova_sessao = Sessao(filme, sala, horario, tipo)
-
-        # Verifica se o horário é disponível
-        if not self.horario_disponivel(nova_sessao):
-            return f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}."
-
-        SessaoControlador.sessoes_db.append(nova_sessao)
-        self.filmes_db.append(nova_sessao.filme)
-
-        return f"Sessão do filme '{filme.titulo}' adicionada com sucesso!"
-
-    def atualizar_sessao(self, filme_titulo: str, sala_numero: int, horario: str, nova_capacidade: int = None, tipo: TipoSessao= None):
+    def adicionar_sessao(self):
         try:
-            sessao = self.busca_sessao(filme_titulo, sala_numero, horario)
-            if sessao is not None:
+            # Listar filmes e salas para auxiliar o usuário na escolha
+            self._controlador_sistema.filmecontrolador.listar_filmes()
+            self._controlador_sistema.salacontrolador.lista_salas()
+
+            # Obter dados da sessão a partir da visão
+            dados_sessao = self.__sessaovisao.pega_dados_sessao()
+
+            # Extrair dados para variáveis locais
+            horario = dados_sessao["horario"]
+            tipo = dados_sessao["tipo"]
+
+            # Buscar o filme e a sala pelos dados fornecidos
+            filme = self._controlador_sistema.filmecontrolador.busca_filme(dados_sessao["titulo"])
+            if filme is None:
+                print("Erro: Filme não encontrado.")
+                return
+
+            sala = self._controlador_sistema.salacontrolador.busca_sala(dados_sessao["sala_numero"])
+            if sala is None:
+                print("Erro: Sala não encontrada.")
+                return
+
+            # Validar o tipo de sala
+            if not isinstance(sala, Sala):
+                print("Erro: Tipo de sala inválido.")
+                return
+
+            # Validar o tipo de sessão
+            if tipo is not None and not isinstance(tipo, TipoSessao):
+                print("Erro: Tipo de sessão inválido.")
+                return
+
+            # Validar o horário manualmente (ou use sua função de validação se preferir)
+            if not self.validar_horario(horario):
+                raise HorarioInvalido(horario)
+
+            # Criar uma nova sessão e verificar conflitos de horário
+            nova_sessao = Sessao(filme, sala, horario, tipo)
+            if not self.horario_disponivel(nova_sessao):
+                print(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
+                return
+
+            # Adicionar a sessão ao banco de dados
+            self.__sessoes_db.append(nova_sessao)
+            print(f"Sessão do filme '{filme.titulo}' adicionada com sucesso!")
+
+        except HorarioInvalido as e:
+            print(f"Erro: {e}")
+        except ValueError as ve:
+            print(f"Erro de valor: {ve}")
+        except Exception as ex:
+            print(f"Erro inesperado: {ex}")
+
+    # def adicionar_sessao(self):
+    #
+    #     self._controlador_sistema.filmecontrolador.listar_filmes()
+    #     self._controlador_sistema.salacontrolador.lista_salas()
+    #     dados_sessao = self.__sessaovisao.pega_dados_sessao()
+    #
+    #     horario = dados_sessao["horario"]
+    #     tipo = dados_sessao["tipo"]
+    #
+    #     filme = self._controlador_sistema.filmecontrolador.busca_filme(dados_sessao["titulo"])
+    #     sala = self._controlador_sistema.salacontrolador.busca_sala(dados_sessao["sala_numero"])
+    #
+    #     if sala is None or not isinstance(sala, Sala):
+    #          raise ValueError("Tipo de sala inválida.")
+    #
+    #     if tipo is not None and not isinstance(tipo, TipoSessao):
+    #          raise ValueError("Tipo de sessão inválido.")
+    #
+    #     if not self.validar_horario(horario):
+    #         raise HorarioInvalido(horario)
+    #
+    #     # Se não houver conflito, adiciona a sessão ao "banco de dados"
+    #     nova_sessao = Sessao(filme, sala, horario, tipo)
+    #
+    #     # Verifica se o horário é disponível
+    #     if not self.horario_disponivel(nova_sessao):
+    #         return f"Erro: Conflito de horário na visao {sala.numero} para o horário {horario}."
+    #
+    #     self.__sessoes_db.append(nova_sessao)
+    #     #self.filmes_db.append(nova_sessao.filme)
+    #
+    #     return f"Sessão do filme '{filme.titulo}' adicionada com sucesso!"
+
+
+    def atualizar_sessao(self):
+        try:
+            self.listar_sessoes()
+            dados_sessao = self.__sessaovisao.seleciona_sessao()
+            sessao = self.busca_sessao(dados_sessao["titulo"], dados_sessao["sala_numero"], dados_sessao["horario"])
+
+            novos_dados_sessao = self.__sessaovisao.pega_novos_dados_sessao()
+            nova_capacidade = novos_dados_sessao["capacidade"]
+            novo_tipo = novos_dados_sessao["tipo"]
+
+            if novos_dados_sessao is not None:
                 if nova_capacidade is not None:
                     if nova_capacidade > 0:
                         sessao.sala.capacidade = nova_capacidade
                     else:
                         raise ValueError("Capacidade deve ser um valor positivo.")
 
-                if tipo is not None:
-                    sessao.tipo = tipo  # Atualiza o tipo
+                if novo_tipo is not None:
+                    sessao.tipo = novo_tipo  # Atualiza o tipo
 
                 return f"Sessão de {sessao.filme.titulo} atualizada com sucesso!"
         except SessaoNaoEncontrada as e:
             return str(e)
 
-    def remover_sessao(self, filme, sala, horario):
+    def remover_sessao(self):
+        #    def remover_sessao(self, filme, sala, horario):
         try:
-            sessao = self.busca_sessao(filme, sala, horario)
-            SessaoControlador.sessoes_db.remove(sessao)
-            return f"Sessão do filme '{sessao.filme.titulo}' foi removida com sucesso."
+            self.listar_sessoes()
+            dados_sessao = self.__sessaovisao.seleciona_sessao()
+            sessao = self.busca_sessao(dados_sessao["titulo"], dados_sessao["sala_numero"],
+                                           dados_sessao["horario"])
+
+            if (sessao is not None):
+                self.__sessoes_db.remove(sessao)
+                self.listar_sessoes()
+
         except SessaoNaoEncontrada as e:
             return str(e)
 
     def busca_sessao(self, filme_titulo: str, sala_numero: int, horario: str) -> Sessao:
-        for sessao in SessaoControlador.sessoes_db:
+        for sessao in self.__sessoes_db:
             if sessao.filme.titulo == filme_titulo and sessao.sala.numero == sala_numero and sessao.horario == horario:
                 return sessao
         raise SessaoNaoEncontrada(filme_titulo, sala_numero, horario)
 
     def listar_sessoes(self):
-        if not SessaoControlador.sessoes_db:
-            return "Nenhuma sessão cadastrada."
-        return SessaoControlador.sessoes_db
+        for e in self.__sessoes_db:
+            ingressos_disponiveis = e.ingressos_disponiveis()
+            self.__sessaovisao.mostra_sessao({"titulo": e.filme.titulo,
+                                                    "numero_sala": e.sala.numero,
+                                                    "horario": e.horario,
+                                                    "tipo": e.tipo,
+                                                    "ingressos_disponiveis": ingressos_disponiveis})
+    # def listar_sessoes(self):
+    #     if not self.__sessoes_db:
+    #         return "Nenhuma sessão cadastrada."
+    #     return self.__sessoes_db
 
-    def listar_filmes(self):
-        print(*self.filmes_db)
-        if not SessaoControlador.filmes_db:
-            return "Nenhuma sessão cadastrada."
-        return self.filmes_db
+    def listar_ingressos(self):
+        for e in self.__ingressos:
+            self.__sessaovisao.mostra_ingressos({"titulo": e.filme.titulo,
+                                                "numero_sala": e.sala.numero,
+                                                "horario": e.horario,
+                                                "tipo": e.tipo,})
 
-    # def listar_ingressos(self):
-    #     if not SessaoControlador.ingressos:
-    #         return "Nenhum ingresso cadastrado."
-    #     return SessaoControlador.ingressos
+
+    def abre_tela(self):
+        lista_opcoes = {1: self.adicionar_sessao, 2: self.atualizar_sessao, 3: self.remover_sessao, 4: self.listar_sessoes,
+                        5: self.listar_ingressos, 0: self.retornar}
+
+        continua = True
+        while continua:
+            lista_opcoes[self.__sessaovisao.tela_opcoes()]()
