@@ -1,66 +1,84 @@
-from sala import Sala
-from salanaoencontrada import SalaNaoEncontrada
+from controlador.controlador_entidade_abstrata import ControladorEntidadeAbstrata
+from entidade.sala import Sala
+from exception.salanaoencontrada import SalaNaoEncontrada
+from visao.salavisao import SalaVisao
 
-class SalaControlador:
-    """
-    Classe que controla as operações sobre o modelo Sala.
+class SalaControlador(ControladorEntidadeAbstrata):
+    def __init__(self, controlador_sistema):
+        super().__init__(controlador_sistema)
+        self.__salas_db = []
+        self.__salavisao = SalaVisao()
 
-    Atributos:
-    - salas_db: Lista que simula um banco de dados em memória para as salas.
-    """
 
-    salas_db = [] # Simulação do banco de dados em memória
-
-    def adicionar_sala(self, numero, capacidade, tipo):
-        # Verifica se a sala já existe
-        for sala in SalaControlador.salas_db:
-            if sala.numero == numero:
-                raise ValueError(f"Sala {numero} já está cadastrada.")  # Levanta o erro
-
-        # Caso não exista, adiciona a nova sala
-        nova_sala = Sala(numero, capacidade, tipo)
-        SalaControlador.salas_db.append(nova_sala)
-        return f"Sala {numero} foi adicionada com sucesso!"
-
-    def atualizar_sala(self, numero, capacidade=None, tipo=None):
-        # Procura a sala pelo número e, se encontrada, atualiza seus atributos
+    def adicionar_sala(self):
         try:
-            sala = self.busca_sala(numero)  # Chama o método busca_sala para encontrar a sala
-            if capacidade is not None:
-                sala.capacidade = capacidade  # Atualiza a capacidade
-            if tipo is not None:
-                sala.tipo = tipo
-            return f"Sala {numero} atualizada com sucesso!"
+            dados_sala = self.__salavisao.pega_dados_sala()
+            numero = dados_sala["numero"]
+            capacidade = dados_sala["capacidade"]
+            if capacidade <= 0:
+                raise ValueError(f"Capacidade precisa ser positiva")
+
+            for sala in self.__salas_db:
+                if sala.numero == numero:
+                    raise ValueError(f"Sala {numero} já está cadastrada.")
+
+            nova_sala = Sala(numero, capacidade)
+            self.__salas_db.append(nova_sala)
+            self.__salavisao.mostra_mensagem(f"Sala {numero} foi adicionada com sucesso!")
+
+        except ValueError as ve:
+            self.__salavisao.mostra_mensagem(f"Erro: {ve}")
+        except Exception as e:
+            self.__salavisao.mostra_mensagem(f"Erro inesperado: {e}")
+
+    def atualizar_sala(self):
+        try:
+            self.lista_salas()
+            numero = self.__salavisao.seleciona_sala()
+            sala = self.busca_sala(numero)
+
+            nova_capacidade = self.__salavisao.pega_novos_dados_sala()
+            if nova_capacidade <= 0:
+                raise Exception(f"Capacidade deve ser positivo.")
+            else:
+                sala.capacidade = nova_capacidade
+
+            self.__salavisao.mostra_mensagem(f"Sala {numero} atualizada com sucesso!")
         except SalaNaoEncontrada as e:
-            return str(e)
+            self.__salavisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__salavisao.mostra_mensagem(f"Erro inesperado: {e}")
 
     def busca_sala(self, numero):
-        """
-        Busca uma sala pelo número no banco de dados de salas.
-
-        :param numero: Número da sala a ser buscada.
-        :return: Objeto Sala se encontrado, senão levanta a exceção SalaNaoEncontrada.
-        """
-        for sala in SalaControlador.salas_db:
+        for sala in self.__salas_db:
             if sala.numero == numero:
                 return sala
-        # Se a sala não for encontrada, levanta a exceção SalaNaoEncontrada
         raise SalaNaoEncontrada(numero)
 
-    def remover_sala(self, numero):
+    def remover_sala(self):
         try:
+            self.lista_salas()
+            numero = self.__salavisao.seleciona_sala()
             sala = self.busca_sala(numero)
-            SalaControlador.salas_db.remove(sala)
-            return f"Sala {numero} foi removida com sucesso."
+
+            self.__salas_db.remove(sala)
+            self.__salavisao.mostra_mensagem(f"Sala {numero} foi removida com sucesso.")
         except SalaNaoEncontrada as e:
-            return str(e)
+            self.__salavisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__salavisao.mostra_mensagem(f"Erro inesperado: {e}")
 
-    def listar_salas(self):
-        """
-        Retorna a lista de salas cadastradas.
-        Se a lista estiver vazia, retorna uma mensagem de aviso.
-        """
-        if not SalaControlador.salas_db:
-            return "Nenhuma sala cadastrada."
+    def lista_salas(self):
+        if not self.__salas_db:
+            self.__salavisao.mostra_mensagem("Nenhuma sala cadastrada.")
+            return
 
-        return SalaControlador.salas_db  # Retorna a lista de objetos Sala
+        salas_info = [{"numero": sala.numero, "capacidade": sala.capacidade} for sala in self.__salas_db]
+        self.__salavisao.exibe_lista_salas(salas_info)
+
+    def abre_tela(self):
+        lista_opcoes = {1: self.adicionar_sala, 2: self.atualizar_sala, 3: self.remover_sala, 4: self.lista_salas, 0: self.retornar}
+
+        continua = True
+        while continua:
+            lista_opcoes[self.__salavisao.tela_opcoes()]()
