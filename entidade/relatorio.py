@@ -17,12 +17,12 @@ class Relatorio:
     def horariosMaisFrequentados():
 
        #horarios_vendidos = {}  Cria um dicionário para armazenar o número total de ingressos vendidos por horário
-    """
-    Aqui, aplicaremos uma lógica semelhante ao relatório anterior para definir os horários mais frequentados.
-    Usaremos a propriedade horario da sessão para criar um dicionário, e adicionaremos quantas sessões foram vendidas.
-    Faremos a ordenação, e imprimiremos  os horários mais vendidos.
-    Esse relatório será útil para a gerência, a fim de definir os melhores horários para se vender souvenir, por exemplo.
-    """
+        """
+        Aqui, aplicaremos uma lógica semelhante ao relatório anterior para definir os horários mais frequentados.
+        Usaremos a propriedade horario da sessão para criar um dicionário, e adicionaremos quantas sessões foram vendidas.
+        Faremos a ordenação, e imprimiremos  os horários mais vendidos.
+        Esse relatório será útil para a gerência, a fim de definir os melhores horários para se vender souvenir, por exemplo.
+        """
         pass
 
 

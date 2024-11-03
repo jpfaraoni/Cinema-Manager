@@ -1,5 +1,5 @@
-from sessaovisao import SessaoVisao
-from vendavisao import VendaVisao
+from visao.sessaovisao import SessaoVisao
+from visao.vendavisao import VendaVisao
 class ClienteInterface:
     def __init__(self):
        self.cliente_interface = None

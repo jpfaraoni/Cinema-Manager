@@ -1,5 +1,5 @@
-from sessao import Sessao   
-from cliente import Cliente
+from entidade.sessao import Sessao   
+from entidade.cliente import Cliente
 class Ingresso:
     def __init__(self, sessao: Sessao, cliente: Cliente):
         if isinstance(sessao, Sessao):

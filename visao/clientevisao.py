@@ -1,4 +1,4 @@
-from clientecontrolador import ClienteControlador
+from controlador.clientecontrolador import ClienteControlador
 
 class ClienteVisao:
     def __init__(self):

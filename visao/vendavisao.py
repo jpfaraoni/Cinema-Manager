@@ -1,15 +1,12 @@
-from cliente import Cliente
-from ingresso import Ingresso
-from venda import Venda
-from metodo_de_pagamento import MetodoDePagamento
-from sessao import Sessao
-from vendacontrolador import VendaControlador
+from entidade.cliente import Cliente
+from entidade.ingresso import Ingresso
+from entidade.venda import Venda, MetodoDePagamento
+from entidade.sessao import Sessao
+from controlador.vendacontrolador import VendaControlador
+from visao.clientevisao import ClienteVisao
+from visao.sessaovisao import SessaoVisao
 
 class VendaVisao:
-    """
-    Classe de visão para gerenciar as interações com o usuário relacionadas às vendas de ingressos.
-    """
-
     def __init__(self):
         self.controlador = VendaControlador()  # Associação com o controlador de vendas
 
@@ -34,13 +31,10 @@ class VendaVisao:
     def pega_dados_venda(self):
         try:
             # Dados do cliente
-            nome_cliente = input("Digite o nome do cliente: ")
-            cliente = Cliente(nome_cliente)
+            cliente = ClienteVisao.pega_dados_cliente()
 
             # Dados da sessão
-            filme = input("Digite o nome do filme: ")
-            sala = int(input("Digite o número da sala: "))
-            horario = input("Digite o horário da sessão (HH:MM): ")
+            sessao = SessaoVisao.seleciona_sessao()
 
             # Seleção do método de pagamento
             print("Escolha o método de pagamento:")
@@ -53,9 +47,9 @@ class VendaVisao:
             metodo_pagamento = MetodoDePagamento(metodo_escolhido)
 
             # Chama a função de venda do controlador
-            resultado = self.controlador.vender_ingresso(filme, sala, horario, cliente)
+            resultado = self.controlador.vender_ingresso(sessao, cliente)
             print(resultado)  # Exibe a mensagem de sucesso ou erro
-            return {"cliente": cliente, "filme": filme, "sala": sala, "horario": horario, "metodo_de_pagamento": metodo_pagamento}
+            return {"cliente": cliente, "filme": sessao.filme, "sala": sessao.sala, "horario": sessao.horario, "metodo_de_pagamento": metodo_pagamento}
 
         except ValueError as ve:
             print(f"Erro de valor: {ve}. Tente novamente.")

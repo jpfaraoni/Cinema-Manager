@@ -1,10 +1,9 @@
-from venda import Venda
-from cliente import Cliente
-from ingresso import Ingresso
-from sessao import Sessao
-from metodo_de_pagamento import MetodoDePagamento
+from entidade.venda import Venda, MetodoDePagamento
+from entidade.cliente import Cliente
+from entidade.ingresso import Ingresso
+from entidade.sessao import Sessao
 from datetime import datetime
-from sessaonaoencontrada import SessaoNaoEncontrada
+from exception.sessaonaoencontrada import SessaoNaoEncontrada
 
 class VendaControlador:
     vendas_db = []

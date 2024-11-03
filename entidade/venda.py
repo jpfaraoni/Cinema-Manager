@@ -1,10 +1,17 @@
-from cliente import Cliente
-from filme import Filme
-from sala import Sala
-from sessao import Sessao
-from ingresso import Ingresso
+from entidade.cliente import Cliente
+from entidade.filme import Filme
+from entidade.sala import Sala
+from entidade.sessao import Sessao
+from entidade.ingresso import Ingresso
 from datetime import datetime
-from metodo_de_pagamento import MetodoDePagamento  # Importe o Enum de métodos de pagamento
+
+from enum import Enum
+
+class MetodoDePagamento(Enum):
+    DINHEIRO = "dinheiro"
+    CARTAO_CREDITO = "cartão de crédito"
+    CARTAO_DEBITO = "cartão de débito"
+
 
 class Venda:
     def __init__(self, cliente: Cliente, ingressos: list[Ingresso], metodo_de_pagamento: MetodoDePagamento):
