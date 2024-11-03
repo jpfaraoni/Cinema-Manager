@@ -1,10 +1,9 @@
-from datetime import time
-
-class Filme:    
-    def __init__(self, titulo: str, duracao: int, classificacao_etaria: int):
+class Filme:
+    def __init__(self, titulo: str, duracao: int, genero: str, classificacao_etaria: int):
         self.titulo = titulo
         self.duracao = duracao
         self.classificacao_etaria = classificacao_etaria
+        self.genero = genero
 
     @property
     def titulo(self):
@@ -22,9 +21,28 @@ class Filme:
 
     @duracao.setter
     def duracao(self, duracao: int):
-        if not isinstance(duracao, int):
-            raise ValueError("Duração inválida. Valor de tempo deve estar em minutos.")
+        # if not duracao or not isinstance(duracao, str):
+        #     raise ValueError("Duração inválida.")
         self.__duracao = duracao
+
+    @property
+    def genero(self):
+        return self.__genero
+
+    @genero.setter
+    def genero(self, genero: str):
+        # if not duracao or not isinstance(duracao, str):
+        #     raise ValueError("Duração inválida.")
+        self.__genero = genero
+    # @property
+    # def genero(self):
+    #     return self.__genero
+    #
+    # @genero.setter
+    # def genero(self, genero: str):
+    #     if not genero or not isinstance(genero, str):
+    #         raise ValueError("Gênero inválido.")
+    #     self.__genero = genero
 
     @property
     def classificacao_etaria(self):
@@ -32,4 +50,6 @@ class Filme:
 
     @classificacao_etaria.setter
     def classificacao_etaria(self, classificacao_etaria: int):
+        if not isinstance(classificacao_etaria, int) or classificacao_etaria < 0:
+            raise ValueError("Classificação etária inválida.")
         self.__classificacao_etaria = classificacao_etaria
