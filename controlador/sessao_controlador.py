@@ -194,7 +194,7 @@ class SessaoControlador(ControladorEntidadeAbstrata):
         else:
             turno_mais_frequente = max(turnos, key=turnos.get)
             self.__sessaovisao.mostra_mensagem(
-                f"O turno mais frequentado é: {turno_mais_frequente} com {turnos[turno_mais_frequente]} sessões."
+                f"O turno com mais sessões é: {turno_mais_frequente} com {turnos[turno_mais_frequente]} sessões."
             )
 
 
