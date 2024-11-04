@@ -43,7 +43,7 @@ class ClienteControlador(ControladorEntidadeAbstrata):
         # Remove o cliente do banco de dados, caso exista
         for cliente in self.__clientes_db:
             if cliente.nome == nome:
-                self.clientes_db.remove(cliente)
+                self.__clientes_db.remove(cliente)
                 return f"Cliente {nome} removido com sucesso."
         return f"Cliente {nome} não encontrado."
 
@@ -54,9 +54,36 @@ class ClienteControlador(ControladorEntidadeAbstrata):
         return [str(cliente) for cliente in self.__clientes_db]
     
     def abre_tela(self):
-        lista_opcoes = {1: self.cadastrar_cliente, 2: self.atualizar_cliente, 3: self.remover_cliente, 
-                        4: self.listar_clientes, 0: self.retornar}
+        lista_opcoes = {
+            1: self.cadastrar_cliente_opcao,
+            2: self.atualizar_cliente_opcao,
+            3: self.remover_cliente_opcao,
+            4: self.listar_clientes_opcao,
+            0: self.retornar
+        }
 
         continua = True
         while continua:
-            lista_opcoes[self.__clientevisao.tela_opcoes()]()
+            opcao = self.__clientevisao.tela_opcoes()
+            if opcao in lista_opcoes:
+                lista_opcoes[opcao]()
+
+    def cadastrar_cliente_opcao(self):
+        dados_cliente = self.__clientevisao.pega_dados_cliente()
+        mensagem = self.cadastrar_cliente(dados_cliente['nome'], dados_cliente['fone'], dados_cliente['email'], dados_cliente['idade'])
+        self.__clientevisao.mostra_mensagem(mensagem)
+
+    def atualizar_cliente_opcao(self):
+        nome = self.__clientevisao.seleciona_cliente()
+        dados_cliente = self.__clientevisao.pega_dados_cliente()
+        mensagem = self.atualizar_cliente(nome, dados_cliente['fone'], dados_cliente['email'], dados_cliente['idade'])
+        self.__clientevisao.mostra_mensagem(mensagem)
+
+    def remover_cliente_opcao(self):
+        nome = self.__clientevisao.seleciona_cliente()
+        mensagem = self.remover_cliente(nome)
+        self.__clientevisao.mostra_mensagem(mensagem)
+
+    def listar_clientes_opcao(self):
+        clientes = self.listar_clientes()
+        self.__clientevisao.listar_clientes(clientes)

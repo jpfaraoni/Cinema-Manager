@@ -1,9 +1,11 @@
+from entidade.cliente import Cliente
+
 class ClienteVisao:
     def __init__(self):
-        self.clientevisao = ClienteVisao()
+        pass
 
     def tela_opcoes(self):
-        print("-------- GERENCIAMENTO DE CLIENTES ----------")
+        print("\n-------- GERENCIAMENTO DE CLIENTES ----------")
         print("Escolha a opção:")
         print("1 - Cadastrar Cliente")
         print("2 - Atualizar Cliente")
@@ -22,14 +24,19 @@ class ClienteVisao:
         return opcao
 
     def pega_dados_cliente(self):
+        print("\n===== CADASTRAR CLIENTE =====")
         nome = input("Nome do Cliente: ")
         fone = input("Telefone para Contato: ")
         email = input("Email: ").strip()  # Não converte para maiúsculas
-        idade = input("Idade do Cliente: ")
+        idade = int(input("Idade do Cliente: "))
         return {"nome": nome, "fone": fone, "email": email, "idade": idade}
 
     def mostra_cliente(self, cliente):
-        print("-------- CLIENTE ----------")
+        if not isinstance(cliente, Cliente):
+            print("Erro: O objeto fornecido não é um cliente válido.")
+            return
+        
+        print("\n-------- CLIENTE ----------")
         print(f"NOME: {cliente.nome}")
         print(f"TELEFONE: {cliente.fone}")
         print(f"EMAIL: {cliente.email}")
@@ -45,11 +52,18 @@ class ClienteVisao:
     def listar_clientes(self, clientes):
         if isinstance(clientes, str):
             self.mostra_mensagem(clientes)
-        else:
-            if not clientes:
-                self.mostra_mensagem("Nenhum cliente cadastrado.")
-                return
+            return
 
-            print("\nClientes cadastrados:")
-            for cliente in clientes:
+        if not clientes:
+            self.mostra_mensagem("Nenhum cliente cadastrado.")
+            return
+
+        print("\nClientes cadastrados:")
+        for cliente in clientes:
+            if isinstance(cliente, Cliente):
                 self.mostra_cliente(cliente)
+            else:
+                print("Erro: Um dos itens na lista não é um cliente válido.")
+
+    def mostra_confirmacao(self, acao):
+        print(f"Cliente {acao} com sucesso!")

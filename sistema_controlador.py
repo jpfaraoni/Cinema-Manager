@@ -2,6 +2,9 @@ from sistema_visao import SistemaVisao
 from controlador.filme_controlador import FilmeControlador
 from controlador.sala_controlador import SalaControlador
 from controlador.sessao_controlador import SessaoControlador
+from controlador.venda_controlador import VendaControlador
+from controlador.cliente_controlador import ClienteControlador
+
 
 class SistemaControlador:
 
@@ -9,6 +12,8 @@ class SistemaControlador:
         self.__filmecontrolador = FilmeControlador(self)
         self.__salacontrolador = SalaControlador(self)
         self.__sessaocontrolador = SessaoControlador(self)
+        self.__vendacontrolador = VendaControlador(self)
+        self.__clientecontrolador = ClienteControlador(self)
         self.__sistemavisao = SistemaVisao()
 
     @property
@@ -36,6 +41,12 @@ class SistemaControlador:
     def cadastra_sala(self):
         self.__salacontrolador.abre_tela()
 
+    def cadastra_venda(self):
+        self.__vendacontrolador.abre_tela()
+
+    def cadastra_cliente(self):
+        self.__clientecontrolador.abre_tela()
+
     def encerra_sistema(self):
         exit(0)
 
@@ -44,7 +55,7 @@ class SistemaControlador:
 
     def abre_tela(self):
         lista_opcoes = {1: self.cadastra_sala, 2: self.cadastra_filme, 3: self.cadastra_sessao,
-                        4: self.relatorio_sessoes,
+                        4: self.cadastra_venda, 5: self.cadastra_cliente, 6: self.relatorio_sessoes,
                         0: self.encerra_sistema}
 
         while True:
