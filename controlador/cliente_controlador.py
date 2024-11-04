@@ -17,42 +17,49 @@ class ClienteControlador(ControladorEntidadeAbstrata):
 
         # Tenta criar um novo cliente e adicionar ao banco de dados
         try:
-            novo_cliente = Cliente(nome, fone, email, idade)
+            novo_cliente = Cliente(nome, fone, email, int(idade))
             self.__clientes_db.append(novo_cliente)
             return f"Cliente {nome} foi adicionado(a) com sucesso!"
         except ValueError as e:
             return f"Erro ao cadastrar cliente: {e}"
 
     def atualizar_cliente(self, nome, fone=None, email=None, idade=None):
-        # Procura pelo cliente e tenta atualizar suas informações
-        for cliente in self.__clientes_db:
-            if cliente.nome == nome:
-                try:
-                    if fone is not None:
-                        cliente.fone = fone
-                    if email is not None:
-                        cliente.email = email
-                    if idade is not None:
-                        cliente.idade = idade
-                    return f"Cliente {nome} atualizado com sucesso."
-                except ValueError as e:
-                    return f"Erro ao atualizar cliente: {e}"
-        return f"Cliente {nome} não encontrado."
+    # Usa a nova função busca_cliente
+        cliente = self.busca_cliente(nome)
+        if isinstance(cliente, Cliente):
+            try:
+                if fone is not None:
+                    cliente.fone = fone
+                if email is not None:
+                    cliente.email = email
+                if idade is not None:
+                    cliente.idade = idade
+                return f"Cliente {nome} atualizado com sucesso."
+            except ValueError as e:
+                return f"Erro ao atualizar cliente: {e}"
+        return cliente  # Retorna a mensagem de cliente não encontrado
 
     def remover_cliente(self, nome):
-        # Remove o cliente do banco de dados, caso exista
-        for cliente in self.__clientes_db:
-            if cliente.nome == nome:
-                self.__clientes_db.remove(cliente)
-                return f"Cliente {nome} removido com sucesso."
-        return f"Cliente {nome} não encontrado."
+        # Usa a nova função busca_cliente
+        cliente = self.busca_cliente(nome)
+        if isinstance(cliente, Cliente):
+            self.__clientes_db.remove(cliente)
+            return f"Cliente {nome} removido com sucesso."
+        return cliente  # Retorna a mensagem de cliente não encontrado
+
 
     def listar_clientes(self):
-        # Retorna a lista de clientes ou uma mensagem se não houver clientes
         if not self.__clientes_db:
             return "Nenhum cliente cadastrado."
         return [str(cliente) for cliente in self.__clientes_db]
     
+    def busca_cliente(self, nome):
+        for cliente in self.__clientes_db:
+            if cliente.nome == nome:
+                return cliente
+        return f"Cliente {nome} não encontrado."
+
+
     def abre_tela(self):
         lista_opcoes = {
             1: self.cadastrar_cliente_opcao,

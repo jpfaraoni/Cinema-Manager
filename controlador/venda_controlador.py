@@ -1,10 +1,13 @@
 from entidade.venda import Venda
 from entidade.cliente import Cliente
+from entidade.ingresso import Ingresso  # Importando a classe Ingresso
 from exception.ingresso_indisponivel import IngressoIndisponivel
 from exception.idade_invalida import IdadeInvalida
 from visao.venda_visao import VendaVisao
 from datetime import datetime
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
+from controlador.sessao_controlador import SessaoControlador
+from controlador.cliente_controlador import ClienteControlador
 
 class VendaControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
@@ -12,29 +15,35 @@ class VendaControlador(ControladorEntidadeAbstrata):
         self.__controlador_sistema = controlador_sistema
         self.__vendas = []  # Lista de vendas realizadas
         self.__vendavisao = VendaVisao()
+        self.__clientecontrolador = ClienteControlador(self)
 
     def registrar_venda(self):
         try:
-            self.__controlador_sistema.__sessaocontrolador.listar_sessoes()
-            self.__controlador_sistema.__clientecontrolador.listar_clientes()
-
+            
             dados_venda = self.__vendavisao.pega_dados_venda()
 
-            sessao = self.__controlador_sistema.__sessaocontrolador.busca_sessao(
+            sessao = SessaoControlador(self).busca_sessao(
                 dados_venda["titulo"], dados_venda["sala_numero"], dados_venda["horario"]
             )
-            cliente = self.__controlador_sistema.__clientecontrolador.busca_cliente(dados_venda["cpf_cliente"])
+            self.__clientecontrolador.listar_clientes()
+            cliente = self.__clientecontrolador.busca_cliente(dados_venda["cpf_cliente"])
 
+            # Verifica se o cliente pode assistir ao filme
             if cliente.idade < sessao.filme.classificacao_etaria:
                 raise IdadeInvalida(cliente.idade, sessao.filme.classificacao_etaria)
 
-            if not sessao.ingressos_disponiveis():
+            # Verifica ingressos disponíveis usando o método do SessaoControlador
+            if sessao.ingressos_disponiveis <= 0:
                 raise IngressoIndisponivel(sessao)
 
-            venda = Venda(sessao, cliente, dados_venda["metodo_pagamento"], datetime.now())
+            # Realiza a venda
+            ingresso = Ingresso(cliente, sessao)  # Criando um ingresso
+            venda = Venda(ingresso, datetime.now(), dados_venda["metodo_pagamento"])
             self.__vendas.append(venda)
 
-            sessao.vender_ingresso()
+            # Atualiza o número de ingressos disponíveis na sessão
+            sessao.ingressos_disponiveis -= 1
+
             self.__vendavisao.mostra_mensagem(f"Venda realizada com sucesso para {cliente.nome}!")
         except IdadeInvalida as e:
             self.__vendavisao.mostra_mensagem(f"Erro: {e}")
@@ -98,7 +107,11 @@ class VendaControlador(ControladorEntidadeAbstrata):
                     self.__vendavisao.mostra_mensagem("Venda não pode ser cancelada após o início da sessão.")
                     return
 
-                venda.sessao.cancelar_ingresso_vendido()
+                # Remove o ingresso vendido da lista de ingressos
+                if venda.ingresso in self.__ingressos:
+                    self.__ingressos.remove(venda.ingresso)
+
+                # Remove a venda da lista de vendas
                 self.__vendas.pop(indice_venda)
                 self.__vendavisao.mostra_mensagem(f"Venda cancelada para {venda.cliente.nome}.")
             else:
@@ -108,8 +121,13 @@ class VendaControlador(ControladorEntidadeAbstrata):
 
     def abre_tela(self):
         lista_opcoes = {1: self.registrar_venda, 2: self.atualizar_venda, 3: self.cancelar_venda, 
-                        4: self.listar_vendas, 0: self.retornar}
+                        4: self.listar_vendas, 5: self.gerar_relatorio_vendas, 0: self.retornar}
 
         continua = True
         while continua:
-            lista_opcoes[self.__vendavisao.tela_opcoes()]()
+            opcao = self.__vendavisao.tela_opcoes()
+            funcao = lista_opcoes.get(opcao)
+            if funcao:
+                funcao()
+            else:
+                self.__vendavisao.mostra_mensagem("Opção inválida.")

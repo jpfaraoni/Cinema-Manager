@@ -21,7 +21,6 @@ class VendaVisao:
         titulo = input("TÍTULO DO FILME: ")
         sala_numero = int(input("NÚMERO DA SALA: "))
         horario = input("HORÁRIO DA SESSÃO (HH:MM): ")
-        cpf_cliente = input("CPF DO CLIENTE: ")
 
         print("Método de pagamento:")
         metodo_pagamento = input("Digite o método de pagamento (Cartão, Dinheiro, Pix): ")
@@ -30,7 +29,6 @@ class VendaVisao:
             "titulo": titulo,
             "sala_numero": sala_numero,
             "horario": horario,
-            "cpf_cliente": cpf_cliente,
             "metodo_pagamento": metodo_pagamento
         }
 
@@ -56,7 +54,7 @@ class VendaVisao:
 
     def pega_metodo_pagamento(self):
         print("\n===== ATUALIZAR MÉTODO DE PAGAMENTO =====")
-        novo_metodo_pagamento = input("Novo método de pagamento (Cartão, Dinheiro, Pix): ")
+        novo_metodo_pagamento = input("Novo método de pagamento (1. Cartão, 2. Dinheiro, 3. Pix): ")
         return novo_metodo_pagamento
 
     def pega_dados_cancelamento(self):

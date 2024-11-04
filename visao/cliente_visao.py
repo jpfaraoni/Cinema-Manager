@@ -28,7 +28,7 @@ class ClienteVisao:
         nome = input("Nome do Cliente: ")
         fone = input("Telefone para Contato: ")
         email = input("Email: ").strip()  # Não converte para maiúsculas
-        idade = int(input("Idade do Cliente: "))
+        idade = (input("Idade do Cliente: "))
         return {"nome": nome, "fone": fone, "email": email, "idade": idade}
 
     def mostra_cliente(self, cliente):
@@ -50,9 +50,14 @@ class ClienteVisao:
         print(msg)
 
     def listar_clientes(self, clientes):
-        if isinstance(clientes, str):
-            self.mostra_mensagem(clientes)
-            return
+        if isinstance(clientes, Cliente):
+            self.mostra_mensagem(str(clientes))
+        elif isinstance(clientes, list) and all(isinstance(cliente, Cliente) for cliente in clientes):
+            for cliente in clientes:
+                self.mostra_mensagem(str(cliente))
+        else:
+            self.mostra_mensagem("Nenhum cliente válido encontrado.")
+
 
         if not clientes:
             self.mostra_mensagem("Nenhum cliente cadastrado.")
