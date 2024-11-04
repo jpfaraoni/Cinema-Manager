@@ -10,7 +10,7 @@ class SistemaVisao:
         print("3 - Adicionar Sessão ")
         print("4 - Realizar Venda")
         print("5 - Cadastro de Cliente")
-        print("6 - Visualizar Relatório de Turnos Mais Frequentados")
+        print("6 - Relatório Turno Com Mais Sessões")
         print("0 - Finalizar sistema")
 
         try:
