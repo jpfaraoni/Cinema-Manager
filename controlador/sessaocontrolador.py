@@ -69,86 +69,46 @@ class SessaoControlador(ControladorEntidadeAbstrata):
 
             # Obter dados da sessão a partir da visão
             dados_sessao = self.__sessaovisao.pega_dados_sessao()
-
-            # Extrair dados para variáveis locais
             horario = dados_sessao["horario"]
             tipo = dados_sessao["tipo"]
 
             # Buscar o filme e a sala pelos dados fornecidos
             filme = self._controlador_sistema.filmecontrolador.busca_filme(dados_sessao["titulo"])
-            if filme is None:
-                print("Erro: Filme não encontrado.")
-                return
-
             sala = self._controlador_sistema.salacontrolador.busca_sala(dados_sessao["sala_numero"])
-            if sala is None:
-                print("Erro: Sala não encontrada.")
+
+            # Validar as entradas
+            if filme is None:
+                self.__sessaovisao.mostra_mensagem("Erro: Filme não encontrado.")
                 return
 
-            # Validar o tipo de sala
-            if not isinstance(sala, Sala):
-                print("Erro: Tipo de sala inválido.")
+            if sala is None or not isinstance(sala, Sala):
+                self.__sessaovisao.mostra_mensagem("Erro: Sala não encontrada ou tipo de sala inválido.")
                 return
 
-            # Validar o tipo de sessão
             if tipo is not None and not isinstance(tipo, TipoSessao):
-                print("Erro: Tipo de sessão inválido.")
+                self.__sessaovisao.mostra_mensagem("Erro: Tipo de sessão inválido.")
                 return
 
-            # Validar o horário manualmente (ou use sua função de validação se preferir)
+            # Validar o horário
             if not self.validar_horario(horario):
                 raise HorarioInvalido(horario)
 
             # Criar uma nova sessão e verificar conflitos de horário
             nova_sessao = Sessao(filme, sala, horario, tipo)
             if not self.horario_disponivel(nova_sessao):
-                print(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
+                self.__sessaovisao.mostra_mensagem(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
                 return
 
             # Adicionar a sessão ao banco de dados
             self.__sessoes_db.append(nova_sessao)
-            print(f"Sessão do filme '{filme.titulo}' adicionada com sucesso!")
+            self.__sessaovisao.mostra_mensagem(f"Sessão do filme '{filme.titulo}' adicionada com sucesso!")
 
         except HorarioInvalido as e:
-            print(f"Erro: {e}")
+            self.__sessaovisao.mostra_mensagem(f"Erro: {e}")
         except ValueError as ve:
-            print(f"Erro de valor: {ve}")
+            self.__sessaovisao.mostra_mensagem(f"Erro de valor: {ve}")
         except Exception as ex:
-            print(f"Erro inesperado: {ex}")
-
-    # def adicionar_sessao(self):
-    #
-    #     self._controlador_sistema.filmecontrolador.listar_filmes()
-    #     self._controlador_sistema.salacontrolador.lista_salas()
-    #     dados_sessao = self.__sessaovisao.pega_dados_sessao()
-    #
-    #     horario = dados_sessao["horario"]
-    #     tipo = dados_sessao["tipo"]
-    #
-    #     filme = self._controlador_sistema.filmecontrolador.busca_filme(dados_sessao["titulo"])
-    #     sala = self._controlador_sistema.salacontrolador.busca_sala(dados_sessao["sala_numero"])
-    #
-    #     if sala is None or not isinstance(sala, Sala):
-    #          raise ValueError("Tipo de sala inválida.")
-    #
-    #     if tipo is not None and not isinstance(tipo, TipoSessao):
-    #          raise ValueError("Tipo de sessão inválido.")
-    #
-    #     if not self.validar_horario(horario):
-    #         raise HorarioInvalido(horario)
-    #
-    #     # Se não houver conflito, adiciona a sessão ao "banco de dados"
-    #     nova_sessao = Sessao(filme, sala, horario, tipo)
-    #
-    #     # Verifica se o horário é disponível
-    #     if not self.horario_disponivel(nova_sessao):
-    #         return f"Erro: Conflito de horário na visao {sala.numero} para o horário {horario}."
-    #
-    #     self.__sessoes_db.append(nova_sessao)
-    #     #self.filmes_db.append(nova_sessao.filme)
-    #
-    #     return f"Sessão do filme '{filme.titulo}' adicionada com sucesso!"
-
+            self.__sessaovisao.mostra_mensagem(f"Erro inesperado: {ex}")
 
     def atualizar_sessao(self):
         try:
@@ -203,10 +163,6 @@ class SessaoControlador(ControladorEntidadeAbstrata):
                                                     "horario": e.horario,
                                                     "tipo": e.tipo,
                                                     "ingressos_disponiveis": ingressos_disponiveis})
-    # def listar_sessoes(self):
-    #     if not self.__sessoes_db:
-    #         return "Nenhuma sessão cadastrada."
-    #     return self.__sessoes_db
 
     def listar_ingressos(self):
         for e in self.__ingressos:
@@ -214,6 +170,32 @@ class SessaoControlador(ControladorEntidadeAbstrata):
                                                 "numero_sala": e.sala.numero,
                                                 "horario": e.horario,
                                                 "tipo": e.tipo,})
+
+    def relatorio_sessoes(self):
+        """
+        Método para gerar um relatório das sessões cadastradas.
+        Por exemplo, mostra qual turno (manhã, tarde, noite) tem mais sessões.
+        """
+        turnos = {"manhã": 0, "tarde": 0, "noite": 0}
+
+        for sessao in self.__sessoes_db:
+            horario = datetime.strptime(sessao.horario, "%H:%M")
+            if 6 <= horario.hour < 12:
+                turnos["manhã"] += 1
+            elif 12 <= horario.hour < 18:
+                turnos["tarde"] += 1
+            else:
+                turnos["noite"] += 1
+
+
+        if all(sessoes == 0 for sessoes in turnos.values()):
+            self.__sessaovisao.mostra_mensagem("Nenhuma sessão cadastrada.")
+        else:
+            turno_mais_frequente = max(turnos, key=turnos.get)
+            self.__sessaovisao.mostra_mensagem(
+                f"O turno mais frequentado é: {turno_mais_frequente} com {turnos[turno_mais_frequente]} sessões."
+            )
+
 
 
     def abre_tela(self):
