@@ -11,15 +11,13 @@ class TipoSessao(Enum):
 class Sessao:
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= TipoSessao):
+    def __init__(self, filme: Filme, sala: Sala, horario: str, tipo= TipoSessao):
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):
             self.__sala = sala
         if isinstance(horario, str):
             self.__horario = horario
-        if isinstance(capacidade_maxima, int):
-            self.__capacidade_maxima = capacidade_maxima
         self.tipo = tipo
         self.__ingressos = []
 
@@ -51,7 +49,7 @@ class Sessao:
 
     @property
     def ingressos_disponiveis(self) -> int:
-        return self.__capacidade_maxima - len(self.__ingressos)
+        return self.__sala.capacidade - len(self.__ingressos)
 
     @property
     def tipo(self):
