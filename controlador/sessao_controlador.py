@@ -155,8 +155,10 @@ class SessaoControlador(ControladorEntidadeAbstrata):
         raise SessaoNaoEncontrada(filme_titulo, sala_numero, horario)
 
     def listar_sessoes(self):
+        if not self.__sessoes_db:
+            self.__sessaovisao.mostra_mensagem("Nenhuma sessao cadastrada.")
         for e in self.__sessoes_db:
-            ingressos_disponiveis = e.ingressos_disponiveis()
+            ingressos_disponiveis = e.ingressos_disponiveis
             self.__sessaovisao.mostra_sessao({"titulo": e.filme.titulo,
                                                     "numero_sala": e.sala.numero,
                                                     "horario": e.horario,
