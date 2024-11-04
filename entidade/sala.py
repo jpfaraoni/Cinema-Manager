@@ -19,7 +19,7 @@ class Sala:
 
     @numero.setter
     def numero(self, numero: int):
-        if isinstance(numer, int):
+        if isinstance(numero, int):
             self.__numero = numero
 
     @property
