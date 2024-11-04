@@ -41,8 +41,12 @@ class SistemaControlador:
     def encerra_sistema(self):
         exit(0)
 
+    def relatorio_sessoes(self):
+        self.__sessaocontrolador.relatorio_sessoes()
+
     def abre_tela(self):
         lista_opcoes = {1: self.cadastra_sala, 2: self.cadastra_filme, 3: self.cadastra_sessao,
+                        4: self.relatorio_sessoes,
                         0: self.encerra_sistema}
 
         while True:
