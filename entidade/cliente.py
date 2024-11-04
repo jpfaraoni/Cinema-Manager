@@ -1,4 +1,4 @@
-from entidade.pessoa import Pessoa
+from abstrato.pessoa import Pessoa
 
 class Cliente(Pessoa):
     def __init__(self, nome: str, fone: str, email: str, idade: int):

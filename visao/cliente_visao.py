@@ -1,8 +1,6 @@
-from controlador.cliente_controlador import ClienteControlador
-
 class ClienteVisao:
     def __init__(self):
-        self.controlador = ClienteControlador()
+        self.clientevisao = ClienteVisao()
 
     def tela_opcoes(self):
         print("-------- GERENCIAMENTO DE CLIENTES ----------")

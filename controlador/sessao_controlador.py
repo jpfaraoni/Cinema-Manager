@@ -1,4 +1,3 @@
-from entidade.filme import Filme
 from entidade.sessao import Sessao
 from entidade.sessao import TipoSessao
 from exception.sessao_nao_encontrada import SessaoNaoEncontrada
@@ -7,7 +6,7 @@ from datetime import datetime, timedelta
 from exception.horario_invalido import HorarioInvalido
 from visao.sessao_visao import SessaoVisao
 from entidade.sessao import Sessao
-from controlador.controlador_entidade_abstrata import ControladorEntidadeAbstrata
+from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 from entidade.sala import Sala
 
 class SessaoControlador(ControladorEntidadeAbstrata):

@@ -3,7 +3,7 @@ class SistemaVisao:
         pass
 
     def tela_opcoes(self):
-        print("--------  ---------")
+        print("-------- SISTEMA ---------")
         print("===== ESCOLHA SUA OPÇÃO =====")
         print("1 - Cadastro de Sala ")
         print("2 - Cadastro de Filme ")

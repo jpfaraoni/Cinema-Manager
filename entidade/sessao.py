@@ -53,10 +53,6 @@ class Sessao:
     def ingressos_disponiveis(self) -> int:
         return self.__capacidade_maxima - len(self.__ingressos)
 
-    @ingressos_disponiveis.setter
-    def ingressos_disponiveis(self, ingressos_disponiveis):
-        self.__ingressos_disponiveis = ingressos_disponiveis
-
     @property
     def tipo(self):
         return self.__tipo
