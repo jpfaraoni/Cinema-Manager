@@ -1,7 +1,7 @@
 from controlador.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 from entidade.sala import Sala
-from exception.salanaoencontrada import SalaNaoEncontrada
-from visao.salavisao import SalaVisao
+from exception.sala_nao_encontrada import SalaNaoEncontrada
+from visao.sala_visao import SalaVisao
 
 class SalaControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
@@ -82,3 +82,4 @@ class SalaControlador(ControladorEntidadeAbstrata):
         continua = True
         while continua:
             lista_opcoes[self.__salavisao.tela_opcoes()]()
+

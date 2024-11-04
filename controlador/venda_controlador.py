@@ -3,7 +3,7 @@ from entidade.cliente import Cliente
 from entidade.ingresso import Ingresso
 from entidade.sessao import Sessao
 from datetime import datetime
-from exception.sessaonaoencontrada import SessaoNaoEncontrada
+from exception.sessao_nao_encontrada import SessaoNaoEncontrada
 
 class VendaControlador:
     vendas_db = []

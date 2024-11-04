@@ -53,3 +53,13 @@ class Filme:
         if not isinstance(classificacao_etaria, int) or classificacao_etaria < 0:
             raise ValueError("Classificação etária inválida.")
         self.__classificacao_etaria = classificacao_etaria
+
+    # @property
+    # def sinopse(self):
+    #     return self.__sinopse
+    #
+    # @sinopse.setter
+    # def sinopse(self, sinopse: str):
+    #     if not sinopse or not isinstance(sinopse, str):
+    #         raise ValueError("Sinopse inválida.")
+    #     self.__sinopse = sinopse

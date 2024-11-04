@@ -2,9 +2,9 @@ from entidade.cliente import Cliente
 from entidade.ingresso import Ingresso
 from entidade.venda import Venda, MetodoDePagamento
 from entidade.sessao import Sessao
-from controlador.vendacontrolador import VendaControlador
-from visao.clientevisao import ClienteVisao
-from visao.sessaovisao import SessaoVisao
+from controlador.venda_controlador import VendaControlador
+from visao.cliente_visao import ClienteVisao
+from visao.sessao_visao import SessaoVisao
 
 class VendaVisao:
     def __init__(self):

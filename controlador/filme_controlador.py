@@ -1,6 +1,6 @@
 from entidade.filme import Filme
-from exception.filmenaoencontrado import FilmeNaoEncontrado
-from visao.filmevisao import FilmeVisao
+from exception.filme_nao_encontrado import FilmeNaoEncontrado
+from visao.filme_visao import FilmeVisao
 from controlador.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 
 class FilmeControlador(ControladorEntidadeAbstrata):
@@ -82,4 +82,4 @@ class FilmeControlador(ControladorEntidadeAbstrata):
 
         continua = True
         while continua:
-            lista_opcoes[self.__filmevisao.tela_opcoes()]() #teste
+            lista_opcoes[self.__filmevisao.tela_opcoes()]()

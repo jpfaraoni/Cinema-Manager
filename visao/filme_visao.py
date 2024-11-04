@@ -26,10 +26,17 @@ class FilmeVisao:
             titulo = input("Título do filme: ")
 
             duracao = int(input("Duração do filme(em minutos): "))
+            if duracao <= 0:
+                raise ValueError
 
             genero = input("Digite o genero: ")
+            # Verifica se o gênero contém apenas letras e espaços
+            if not all(c.isalpha() or c.isspace() for c in genero):
+                raise ValueError("O gênero deve conter apenas letras e espaços.")
 
             classificacao_etaria = int(input("Classificação etária do filme: "))
+            if classificacao_etaria < 0:
+                raise ValueError
 
             return {
                 "titulo": titulo,
@@ -43,10 +50,17 @@ class FilmeVisao:
     def pega_novos_dados_filme(self):
         try:
             duracao = int(input("Nova duração do filme(em minutos): "))
+            if duracao <= 0:
+                raise ValueError
 
             genero = input("Novo gênero do filme: ")
+            # Verifica se o gênero contém apenas letras e espaços
+            if not all(c.isalpha() or c.isspace() for c in genero):
+                raise ValueError("O gênero deve conter apenas letras e espaços.")
 
             classificacao_etaria = int(input("Nova classificação etária do filme: "))
+            if classificacao_etaria < 0:
+                raise ValueError
 
             return {
                 "duracao": duracao,
@@ -71,3 +85,4 @@ class FilmeVisao:
         print("\nFilmes cadastrados:")
         for filme in filmes:
             print(f"TÍTULO: {filme['titulo']}, DURAÇÃO: {filme['duracao']}, GÊNERO: {filme['genero']}, CLASSIFICAÇÃO: {filme['classificacao_etaria']}")
+

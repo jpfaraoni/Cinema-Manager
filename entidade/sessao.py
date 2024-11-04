@@ -11,13 +11,15 @@ class TipoSessao(Enum):
 class Sessao:
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: str, tipo= TipoSessao):
+    def __init__(self, filme: Filme, sala: Sala, horario: str, capacidade_maxima: int, tipo= TipoSessao):
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):
             self.__sala = sala
         if isinstance(horario, str):
             self.__horario = horario
+        if isinstance(capacidade_maxima, int):
+            self.__capacidade_maxima = capacidade_maxima
         self.tipo = tipo
         self.__ingressos = []
 
@@ -48,6 +50,14 @@ class Sessao:
         self.__horario = horario
 
     @property
+    def ingressos_disponiveis(self) -> int:
+        return self.__capacidade_maxima - len(self.__ingressos)
+
+    @ingressos_disponiveis.setter
+    def ingressos_disponiveis(self, ingressos_disponiveis):
+        self.__ingressos_disponiveis = ingressos_disponiveis
+
+    @property
     def tipo(self):
         return self.__tipo
 
@@ -56,8 +66,4 @@ class Sessao:
         self.__tipo = tipo
 
     def adicionar_ingresso(self, ingresso):
-        if ingresso is not None:
-            self.__ingressos.append(ingresso)  # Método para adicionar um entidade
-
-    def ingressos_disponiveis(self) -> int:
-        return self.sala.capacidade - len(self.__ingressos)
+         self.__ingressos.append(ingresso)  # Método para adicionar um ingresso

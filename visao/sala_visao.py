@@ -28,19 +28,20 @@ class SalaVisao:
         return {"numero": numero, "capacidade": capacidade}
 
     def pega_novos_dados_sala(self):
-        capacidade = int(input("Nova capacidade de sala: "))
-
-        return(capacidade)
+        try:
+            capacidade = int(input("Nova capacidade de sala: "))
+            return(capacidade)
+        except ValueError as ve:
+            self.mostra_mensagem(f"{ve}")
 
 
     def seleciona_sala(self):
         try:
             numero = int(input("Digite o número da sala que deseja selecionar: "))
-        except ValueError:
-            print("Erro: número inválido. Por favor, insira um número válido.")
+            return numero
+        except ValueError as ve:
+            self.mostra_mensagem(f"{ve}")
             return self.seleciona_sala()
-
-        return numero
 
     def mostra_mensagem(self, msg):
         print(msg)
@@ -54,3 +55,4 @@ class SalaVisao:
         for sala in salas:
             print(f"NÚMERO: {sala['numero']}, CAPACIDADE: {sala['capacidade']}")
             print("\n")
+

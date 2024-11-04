@@ -1,4 +1,4 @@
-from exception.horarioinvalido import HorarioInvalido
+from exception.horario_invalido import HorarioInvalido
 import re
 from entidade.sessao import TipoSessao
 
@@ -67,64 +67,6 @@ class SessaoVisao:
         except HorarioInvalido as hi:
             print(hi)
 
-    # def pega_dados_sessao(self):
-    #     try:
-    #         print("===== ESCOLHA O FILME =====")
-    #         titulo = input("TÍTULO DO FILME: ")
-    #
-    #         print("===== ESCOLHA A SALA =====")
-    #         sala_numero = int(input("NÚMERO DA SALA: "))
-    #
-    #         print("===== DADOS DA SESSÃO =====")
-    #         horario = input("Digite o horário da sessão (HH:MM): ")
-    #         if not re.match(r'^\d{2}:\d{2}$', horario):
-    #             raise HorarioInvalido(horario)
-    #
-    #             # Verificação adicional para horas e minutos
-    #         horas, minutos = map(int, horario.split(':'))
-    #         if not (0 <= horas < 24 and 0 <= minutos < 60):
-    #             raise HorarioInvalido(horario)
-    #
-    #         # Escolha do tipo de sessão
-    #         print("Escolha o tipo de sessão:")
-    #         for tipo in TipoSessao:
-    #             print(f"{tipo.value}. {tipo.name}")
-    #
-    #         tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-    #         if tipo_escolhido not in [tipo.value for tipo in TipoSessao]:
-    #             raise ValueError("Tipo de sessão inválido.")
-    #
-    #         return {"titulo": titulo, "sala_numero": sala_numero, "horario": horario, "tipo": tipo}
-    #
-    #     except ValueError as ve:
-    #         print(f"Erro de valor: {ve}. Tente novamente.")
-    #     except HorarioInvalido as hi:
-    #         print(hi)
-
-    # def pega_dados_sessao(self):
-    #     controlador = input("Digite o nome do controlador: ")
-    #     visao = int(input("Digite o número da visao: "))
-    #     horario = input("Digite o horário da sessão (HH:MM): ")
-    #     ingressos_disponiveis = int(input("Digite a quantidade de ingressos disponíveis: "))
-    #
-    #     # Exibe opções do Enum TipoSessao e captura a escolha do usuário
-    #     print("Escolha o tipo de sessão:")
-    #     try:
-    #         for tipo in TipoSessao:
-    #             print(f"{tipo.value}. {tipo.name}")
-    #
-    #         tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-    #         tipo = TipoSessao(tipo_escolhido)  # Converte a escolha para o tipo Enum
-    #
-    #         return {"controlador": controlador, "visao": visao, "horario": horario,
-    #                 "ingressos_disponiveis": ingressos_disponiveis, "tipo": tipo}
-    #     except ValueError as e:
-    #         print(f"Erro: {e}. Tente novamente.")
-
-        # except Exception as e:
-        # # Captura outros erros de entrada de dados
-        #     print(f"Erro: {e}. Por favor, insira os dados corretamente.")
-
     def mostra_mensagem(self, mensagem):
         print(mensagem)
 
@@ -137,29 +79,7 @@ class SessaoVisao:
         print("INGRESSOS DISPONIVEIS: ", dados_sessao["ingressos_disponiveis"])
         print("\n")
 
-    # def exibe_lista_sessoes(self, sessoes_db):
-    #     """
-    #     Exibe a lista de sessões cadastradas.
-    #
-    #     :param lista_sessoes: Lista de sessões a serem exibidas.
-    #     """
-    #     if isinstance(sessoes_db, str):
-    #         self.mostra_mensagem(sessoes_db)  # Exibe mensagem de erro, se for uma string
-    #     else:
-    #         if not sessoes_db:  # Verifica se a lista de sessões está vazia
-    #             self.mostra_mensagem("Nenhuma sessão cadastrada.")
-    #             return
-    #
-    #         print("\n-- Lista de Sessões --")
-    #         for sessao in sessoes_db:
-    #             # Acessa os atributos da sessão e imprime suas informações
-    #             print(f"Filme: {sessao.filme.titulo}, "
-    #                   f"Sala: {sessao.sala.numero}, "
-    #                   f"Horário: {sessao.horario}, "
-    #                   f"Capacidade: {sessao.sala.capacidade}, "
-    #                   f"Tipo: {sessao.tipo.name}")
-
-
+   
     def mostra_ingressos(self, ingressos):
         """
         Exibe a lista de ingressos vendidos.

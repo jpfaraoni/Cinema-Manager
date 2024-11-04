@@ -1,8 +1,8 @@
-from visao.filmevisao import FilmeVisao
-from visao.clientevisao import ClienteVisao
-from visao.salavisao import SalaVisao
-from visao.sessaovisao import SessaoVisao
-from controlador.sessaocontrolador import SessaoControlador 
+from visao.filme_visao import FilmeVisao
+from visao.cliente_visao import ClienteVisao
+from visao.sala_visao import SalaVisao
+from visao.sessao_visao import SessaoVisao
+from controlador.sessao_controlador import SessaoControlador 
 
 
 class CinemaInterface:

@@ -1,7 +1,12 @@
-from visao.sistemavisao import SistemaVisao
-from controlador.filmecontrolador import FilmeControlador
-from controlador.salacontrolador import SalaControlador
-from controlador.sessaocontrolador import SessaoControlador
+# from limite.tela_sistema import TelaSistema
+# from controle.controlador_amigos import ControladorAmigos
+# from controle.controlador_livros import ControladorLivros
+# from controle.controlador_emprestimo import ControladorEmprestimos
+
+from visao.sistema_visao import SistemaVisao
+from controlador.filme_controlador import FilmeControlador
+from controlador.sala_controlador import SalaControlador
+from controlador.sessao_controlador import SessaoControlador
 
 
 class SistemaControlador:
