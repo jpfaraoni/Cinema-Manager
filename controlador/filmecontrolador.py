@@ -82,4 +82,4 @@ class FilmeControlador(ControladorEntidadeAbstrata):
 
         continua = True
         while continua:
-            lista_opcoes[self.__filmevisao.tela_opcoes()]()
+            lista_opcoes[self.__filmevisao.tela_opcoes()]() #teste
