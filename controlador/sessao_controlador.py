@@ -166,11 +166,11 @@ class SessaoControlador(ControladorEntidadeAbstrata):
                                                     "ingressos_disponiveis": ingressos_disponiveis})
 
     def listar_ingressos(self):
-    for e in self.__ingressos:
-        self.__sessaovisao.mostra_ingressos({"titulo": e.filme.titulo,
-                                             "numero_sala": e.sala.numero,
-                                             "horario": e.horario,
-                                             "tipo": e.tipo, })
+        for e in self.__ingressos:
+            self.__sessaovisao.mostra_ingressos({"titulo": e.filme.titulo,
+                                                "numero_sala": e.sala.numero,
+                                                "horario": e.horario,
+                                                "tipo": e.tipo, })
 
     def relatorio_sessoes(self):
         """
