@@ -1,58 +1,99 @@
+import PySimpleGUI as sg
+
 class SalaVisao:
     def __init__(self):
         pass
 
     def tela_opcoes(self):
-        print("-------- GERENCIAMENTO DE SALAS ----------")
-        print("1 - Adicionar Sala")
-        print("2 - Atualizar Sala")
-        print("3 - Remover Sala")
-        print("4 - Listar Salas")
-        print("0 - Sair")
+        layout = [
+            [sg.Text("-------- GERENCIAMENTO DE SALAS ----------", size=(30, 1))],
+            [sg.Button("Adicionar Sala", key=1)],
+            [sg.Button("Atualizar Sala", key=2)],
+            [sg.Button("Remover Sala", key=3)],
+            [sg.Button("Listar Salas", key=4)],
+            [sg.Button("Sair", key=0)],
+        ]
+        window = sg.Window("Menu Principal - Salas", layout)
 
-        try:
-            opcao = int(input("Escolha a opção: "))
-            if opcao not in [0, 1, 2, 3, 4]:
-                raise ValueError("Opção inválida.")
-        except ValueError as e:
-            print(f"Erro: {e}")
-            return self.tela_opcoes()
-
-        return opcao
+        event, _ = window.read()
+        window.close()
+        return event
 
     def pega_dados_sala(self):
-        print("-------- DADOS DA SALA ----------")
-        numero = int(input("Número da sala: "))
-        capacidade = int(input("Capacidade da sala: "))
+        layout = [
+            [sg.Text("Número da sala:"), sg.InputText(key="numero")],
+            [sg.Text("Capacidade da sala:"), sg.InputText(key="capacidade")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Cadastrar Sala", layout)
 
-        return {"numero": numero, "capacidade": capacidade}
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            return {
+                "numero": int(values["numero"]),
+                "capacidade": int(values["capacidade"]),
+            }
+        except ValueError:
+            sg.popup("Erro: Dados inválidos.")
+            return None
 
     def pega_novos_dados_sala(self):
-        try:
-            capacidade = int(input("Nova capacidade de sala: "))
-            return(capacidade)
-        except ValueError as ve:
-            self.mostra_mensagem(f"{ve}")
+        layout = [
+            [sg.Text("Nova capacidade da sala:"), sg.InputText(key="capacidade")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Atualizar Sala", layout)
 
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            return int(values["capacidade"])
+        except ValueError:
+            sg.popup("Erro: Capacidade inválida.")
+            return None
 
     def seleciona_sala(self):
+        layout = [
+            [sg.Text("Digite o número da sala que deseja selecionar:"), sg.InputText(key="numero")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Selecionar Sala", layout)
+
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
         try:
-            numero = int(input("Digite o número da sala que deseja selecionar: "))
-            return numero
-        except ValueError as ve:
-            self.mostra_mensagem(f"{ve}")
-            return self.seleciona_sala()
+            return int(values["numero"])
+        except ValueError:
+            sg.popup("Erro: Número inválido.")
+            return None
 
     def mostra_mensagem(self, msg):
-        print(msg)
+        sg.popup(msg)
 
     def exibe_lista_salas(self, salas):
         if not salas:
-            self.mostra_mensagem("Nenhuma sala cadastrada.")
+            sg.popup("Nenhuma sala cadastrada.")
             return
 
-        print("\nSalas cadastradas:")
+        layout = [[sg.Text("Salas cadastradas:")]]
         for sala in salas:
-            print(f"NÚMERO: {sala['numero']}, CAPACIDADE: {sala['capacidade']}")
-            print("\n")
+            layout.append([sg.Text(f"NÚMERO: {sala['numero']}, CAPACIDADE: {sala['capacidade']}")])
+        layout.append([sg.Button("Fechar")])
+
+        window = sg.Window("Lista de Salas", layout)
+        window.read()
+        window.close()
 
