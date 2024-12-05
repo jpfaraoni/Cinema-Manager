@@ -1,88 +1,106 @@
+import PySimpleGUI as sg
 class FilmeVisao:
     def __init__(self):
         pass
 
     def tela_opcoes(self):
-        print("-------- GERENCIAMENTO DE FILMES ----------")
-        print("1 - Adicionar Filme")
-        print("2 - Atualizar Filme")
-        print("3 - Remover Filme")
-        print("4 - Listar Filmes")
-        print("0 - Sair")
+        layout = [
+            [sg.Text("-------- GERENCIAMENTO DE FILMES ----------", size=(30, 1))],
+            [sg.Button("Adicionar Filme", key=1)],
+            [sg.Button("Atualizar Filme", key=2)],
+            [sg.Button("Remover Filme", key=3)],
+            [sg.Button("Listar Filmes", key=4)],
+            [sg.Button("Sair", key=0)],
+        ]
+        window = sg.Window("Menu Principal", layout)
 
-        try:
-            opcao = int(input("Escolha a opção: "))
-            if opcao not in [0, 1, 2, 3, 4]:
-                raise ValueError("Opção inválida.")
-        except ValueError as e:
-            print(f"Erro: {e}")
-            return self.tela_opcoes()
-
-        return opcao
+        event, _ = window.read()
+        window.close()
+        return event
 
     def pega_dados_filme(self):
-        print("-------- DADOS DO FILME ----------")
+        layout = [
+            [sg.Text("Título do filme:"), sg.InputText(key="titulo")],
+            [sg.Text("Duração do filme (em minutos):"), sg.InputText(key="duracao")],
+            [sg.Text("Gênero do filme:"), sg.InputText(key="genero")],
+            [sg.Text("Classificação etária:"), sg.InputText(key="classificacao_etaria")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Cadastrar Filme", layout)
+
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
         try:
-            titulo = input("Título do filme: ")
-
-            duracao = int(input("Duração do filme(em minutos): "))
-            if duracao <= 0:
-                raise ValueError
-
-            genero = input("Digite o genero: ")
-            # Verifica se o gênero contém apenas letras e espaços
-            if not all(c.isalpha() or c.isspace() for c in genero):
-                raise ValueError("O gênero deve conter apenas letras e espaços.")
-
-            classificacao_etaria = int(input("Classificação etária do filme: "))
-            if classificacao_etaria < 0:
-                raise ValueError
-
             return {
-                "titulo": titulo,
-                "duracao": duracao,
-                "genero": genero,
-                "classificacao_etaria": classificacao_etaria
+                "titulo": values["titulo"],
+                "duracao": int(values["duracao"]),
+                "genero": values["genero"],
+                "classificacao_etaria": int(values["classificacao_etaria"]),
             }
         except ValueError:
-            raise ValueError("Dados inválidos.")
+            sg.popup("Erro: Dados inválidos.")
+            return None
 
     def pega_novos_dados_filme(self):
+        layout = [
+            [sg.Text("Nova duração do filme (em minutos):"), sg.InputText(key="duracao")],
+            [sg.Text("Novo gênero do filme:"), sg.InputText(key="genero")],
+            [sg.Text("Nova classificação etária:"), sg.InputText(key="classificacao_etaria")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Atualizar Filme", layout)
+
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
         try:
-            duracao = int(input("Nova duração do filme(em minutos): "))
-            if duracao <= 0:
-                raise ValueError
-
-            genero = input("Novo gênero do filme: ")
-            # Verifica se o gênero contém apenas letras e espaços
-            if not all(c.isalpha() or c.isspace() for c in genero):
-                raise ValueError("O gênero deve conter apenas letras e espaços.")
-
-            classificacao_etaria = int(input("Nova classificação etária do filme: "))
-            if classificacao_etaria < 0:
-                raise ValueError
-
             return {
-                "duracao": duracao,
-                "genero": genero,
-                "classificacao_etaria": classificacao_etaria
+                "duracao": int(values["duracao"]),
+                "genero": values["genero"],
+                "classificacao_etaria": int(values["classificacao_etaria"]),
             }
         except ValueError:
-            raise ValueError("Dados inválidos.")
+            sg.popup("Erro: Dados inválidos.")
+            return None
 
     def mostra_mensagem(self, msg):
-        print(msg)
+        sg.popup(msg)
 
     def seleciona_filme(self):
-        titulo = input("Digite o título do filme que deseja selecionar: ")
-        return titulo
+        layout = [
+            [sg.Text("Digite o título do filme que deseja selecionar:"), sg.InputText(key="titulo")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Selecionar Filme", layout)
+
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        return values["titulo"]
 
     def listar_filmes(self, filmes):
         if not filmes:
-            self.mostra_mensagem("Nenhum filme cadastrado.")
+            sg.popup("Nenhum filme cadastrado.")
             return
 
-        print("\nFilmes cadastrados:")
+        layout = [[sg.Text("Filmes cadastrados:")]]
         for filme in filmes:
-            print(f"TÍTULO: {filme['titulo']}, DURAÇÃO: {filme['duracao']}, GÊNERO: {filme['genero']}, CLASSIFICAÇÃO: {filme['classificacao_etaria']}")
+            layout.append(
+                [sg.Text(f"TÍTULO: {filme['titulo']}, DURAÇÃO: {filme['duracao']} min, GÊNERO: {filme['genero']}, "
+                         f"CLASSIFICAÇÃO: {filme['classificacao_etaria']} anos")]
+            )
+        layout.append([sg.Button("Fechar")])
 
+        window = sg.Window("Lista de Filmes", layout)
+        window.read()
+        window.close()
