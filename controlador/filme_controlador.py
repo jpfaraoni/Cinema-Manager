@@ -2,7 +2,7 @@ from entidade.filme import Filme
 from exception.filme_nao_encontrado import FilmeNaoEncontrado
 from visao.filme_visao import FilmeVisao
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
-from DAO.filmedao import FilmeDAO
+from DAO.filme_dao import FilmeDAO
 
 class FilmeControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
