@@ -1,123 +1,136 @@
-from exception.horario_invalido import HorarioInvalido
+import PySimpleGUI as sg
 import re
 from entidade.sessao import TipoSessao
+from exception.horario_invalido import HorarioInvalido
 
 class SessaoVisao:
-    """
-    Classe de visão para gerenciar as interações com o usuário relacionadas às sessões.
-    """
-
     def __init__(self):
         pass
-    # self.controlador = SessaoControlador
 
     def tela_opcoes(self):
-        print("\n-- Menu Sessão --")
-        print("1. Adicionar sessão")
-        print("2. Atualizar sessão")
-        print("3. Remover sessão")
-        print("4. Listar sessões")
-        print("0. Sair")
-        try:
-            opcao = int(input("Escolha a opção: "))
-            if opcao not in [0, 1, 2, 3, 4]:
-                raise ValueError("Opção inválida.")
-        except ValueError as e:
-            print(f"Erro: {e}. Por favor, digite um número válido.")
-            return self.tela_opcoes()  # Chama novamente para uma entrada correta
+        layout = [
+            [sg.Text("-- Menu Sessão --", size=(30, 1))],
+            [sg.Button("Adicionar Sessão", key=1)],
+            [sg.Button("Atualizar Sessão", key=2)],
+            [sg.Button("Remover Sessão", key=3)],
+            [sg.Button("Listar Sessões", key=4)],
+            [sg.Button("Sair", key=0)],
+        ]
+        window = sg.Window("Menu Sessão", layout)
 
-        return opcao
+        event, _ = window.read()
+        window.close()
+        return event
 
     def pega_dados_sessao(self):
-        try:
-            print("===== ESCOLHA O FILME =====")
-            titulo = input("TÍTULO DO FILME: ")
+        layout = [
+            [sg.Text("TÍTULO DO FILME:"), sg.InputText(key="titulo")],
+            [sg.Text("NÚMERO DA SALA:"), sg.InputText(key="sala_numero")],
+            [sg.Text("HORÁRIO DA SESSÃO (HH:MM):"), sg.InputText(key="horario")],
+            [sg.Text("Escolha o tipo de sessão:")],
+            [sg.Radio(tipo.name.replace("_", ""), "TIPO", key=f"tipo_{tipo.value}") for tipo in TipoSessao],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
 
-            print("===== ESCOLHA A SALA =====")
-            sala_numero = int(input("NÚMERO DA SALA: "))
+        window = sg.Window("Cadastrar Sessão", layout)
+        event, values = window.read()
+        window.close()
 
-            print("===== DADOS DA SESSÃO =====")
-            horario = input("Digite o horário da sessão (HH:MM): ")
-            if not re.match(r'^\d{2}:\d{2}$', horario):
-                raise HorarioInvalido(horario)
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
 
-                # Verificação adicional para horas e minutos
-            horas, minutos = map(int, horario.split(':'))
-            if not (0 <= horas < 24 and 0 <= minutos < 60):
-                raise HorarioInvalido(horario)
+        if not re.match(r'^\d{2}:\d{2}$', values["horario"]):
+            raise HorarioInvalido(values["horario"])
 
-            # Escolha do tipo de sessão
-            print("Escolha o tipo de sessão:")
-            for tipo in TipoSessao:
-                print(f"{tipo.value}. {tipo.name}")
+        horas, minutos = map(int, values["horario"].split(":"))
+        if not (0 <= horas < 24 and 0 <= minutos < 60):
+            raise HorarioInvalido(values["horario"])
 
-            # tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-            # if tipo_escolhido not in [tipo.value for tipo in TipoSessao]:
-            #     raise ValueError("Tipo de sessão inválido.")
-            tipo_escolhido = int(input("Digite o número correspondente ao tipo de sessão: "))
-            if tipo_escolhido in [tipo.value for tipo in TipoSessao]:
-                tipo = TipoSessao(tipo_escolhido)
-            else:
-                raise ValueError("Tipo de sessão inválido.")
+        tipo_selecionado = next((tipo for tipo in TipoSessao if values.get(f"tipo_{tipo.value}")), None)
+        if not tipo_selecionado:
+            raise ValueError("Tipo de sessão inválido.")
 
-            return {"titulo": titulo, "sala_numero": sala_numero, "horario": horario, "tipo": tipo}
-
-        except ValueError as ve:
-            print(f"Erro de valor: {ve}. Tente novamente.")
-        except HorarioInvalido as hi:
-            print(hi)
+        return {
+            "titulo": values["titulo"],
+            "sala_numero": int(values["sala_numero"]),
+            "horario": values["horario"],
+            "tipo": tipo_selecionado,
+        }
 
     def mostra_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup(mensagem)
 
     def mostra_sessao(self, dados_sessao):
-        print("\n")
-        print("TÍTULO: ", dados_sessao["titulo"])
-        print("SALA: ", dados_sessao["numero_sala"])
-        print("HORARIO: ", dados_sessao["horario"])
-        print("TIPO: ", dados_sessao["tipo"].name)
-        print("INGRESSOS DISPONIVEIS: ", dados_sessao["ingressos_disponiveis"])
-        print("\n")
+        layout = [
+            [sg.Text("TÍTULO: ", size=(15, 1)), sg.Text(dados_sessao["titulo"])],
+            [sg.Text("SALA: ", size=(15, 1)), sg.Text(dados_sessao["numero_sala"])],
+            [sg.Text("HORÁRIO: ", size=(15, 1)), sg.Text(dados_sessao["horario"])],
+            [sg.Text("CÓDIGO: ", size=(15, 1)), sg.Text(dados_sessao["codigo"])],
+            [sg.Text("TIPO: ", size=(15, 1)), sg.Text(dados_sessao["tipo"].name)],
+            [sg.Text("INGRESSOS DISPONÍVEIS: ", size=(15, 1)), sg.Text(dados_sessao["ingressos_disponiveis"])]
+        ]
+        layout.append([sg.Button("Fechar")])
 
-   
+        window = sg.Window("Detalhes da Sessão", layout)
+        window.read()
+        window.close()
+
     def mostra_ingressos(self, ingressos):
-        """
-        Exibe a lista de ingressos vendidos.
+        if not ingressos:
+            sg.popup("Nenhum ingresso vendido.")
+            return
 
-        :param ingressos: Lista de ingressos a serem exibidos.
-        """
-        if isinstance(ingressos, str):
-            self.mostra_mensagem(ingressos)  # Exibe mensagem de erro, se for uma string
-        else:
-            if not ingressos:  # Verifica se a lista de ingressos está vazia
-                self.mostra_mensagem("Nenhum ingresso vendido.")
-                return
+        layout = [[sg.Text("Ingressos vendidos:")]]
+        for ingresso in ingressos:
+            layout.append([
+                sg.Text(f"Filme: {ingresso.sessao.filme.titulo}, Sala: {ingresso.sessao.sala}, \
+                        Horário: {ingresso.sessao.horario}, Cliente: {ingresso.cliente.nome}")
+            ])
+        layout.append([sg.Button("Fechar")])
 
-            print("\nIngressos vendidos:")
-            for ingresso in ingressos:
-                # Assume que o entidade possui atributos 'sessao' e 'cliente'
-                print(f"Filme: {ingresso.sessao.filme.titulo}, "
-                      f"Sala: {ingresso.sessao.sala}, "
-                      f"Horário: {ingresso.sessao.horario}, "
-                      f"Cliente: {ingresso.cliente.nome}")
+        window = sg.Window("Ingressos Vendidos", layout)
+        window.read()
+        window.close()
 
     def seleciona_sessao(self):
-        titulo = input("Digite o nome do titulo da sessão: ")
-        sala_numero = int(input("Digite o número da sala: "))
-        horario = input("Digite o horário da sessão (HH:MM): ")
-        return {"titulo": titulo, "sala_numero": sala_numero, "horario": horario}
+        layout = [
+            [sg.Text("Digite o código da sessão:"), sg.InputText(key="codigo")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+
+        window = sg.Window("Selecionar Sessão", layout)
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            return int(values["codigo"])
+        except ValueError:
+            sg.popup("Erro: Código inválido.")
+            return None
 
     def pega_novos_dados_sessao(self):
-        """
-        Solicita ao usuário novos dados para a sessão.
-        """
-        try:
-            capacidade = int(input("Digite a nova capacidade máxima: "))
-            tipo = int(input("Digite o novo tipo (1 - 2D, 2 - 3D, 3 - IMAX): "))  # Exemplo de opções de tipo
-            if tipo not in [t.value for t in TipoSessao]:  # Supondo que TipoSessao seja um Enum
-                raise ValueError("Tipo inválido. Escolha um número correspondente ao tipo de sessão.")
-        except ValueError as e:
-            print(f"Erro: {e}. Por favor, insira valores válidos.")
-            return self.pega_novos_dados_sessao()  # Chama novamente para uma entrada correta
+        layout = [
+            [sg.Text("Nova capacidade máxima:"), sg.InputText(key="capacidade")],
+            [sg.Text("Novo tipo de sessão:")],
+            [sg.Radio(tipo.name, "TIPO", key=f"tipo_{tipo.value}") for tipo in TipoSessao],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
 
-        return {"capacidade": capacidade, "tipo": TipoSessao(tipo)}
+        window = sg.Window("Atualizar Sessão", layout)
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        tipo_selecionado = next((tipo for tipo in TipoSessao if values.get(f"tipo_{tipo.value}")), None)
+        if not tipo_selecionado:
+            raise ValueError("Tipo de sessão inválido.")
+
+        return {
+            "capacidade": int(values["capacidade"]),
+            "tipo": tipo_selecionado,
+        }
