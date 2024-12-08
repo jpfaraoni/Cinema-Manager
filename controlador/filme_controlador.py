@@ -2,31 +2,38 @@ from entidade.filme import Filme
 from exception.filme_nao_encontrado import FilmeNaoEncontrado
 from visao.filme_visao import FilmeVisao
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
+from DAO.filmedao import FilmeDAO
 
 class FilmeControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
         super().__init__(controlador_sistema)
         self.__filmes_db = []
         self.__filmevisao = FilmeVisao()
-
+        self.__filme_DAO = FilmeDAO()
 
     def adicionar_filme(self):
         try:
             dados_filme = self.__filmevisao.pega_dados_filme()
-            titulo = dados_filme["titulo"]
-            duracao = dados_filme["duracao"]
+            if dados_filme is not None:
+                titulo = dados_filme["titulo"]
+                duracao = dados_filme["duracao"]
 
-            # if not isinstance(duracao, int):
-            #     raise ValueError("Duração deve ser em minutos.")
+                if not isinstance(duracao, int):
+                    raise ValueError("Duração deve ser em minutos.")
 
-            # Verifica se o filme já está cadastrado
-            for filme in self.__filmes_db:
-                if filme.titulo == titulo:
-                    raise ValueError(f"Filme '{titulo}' já está cadastrado.")
-
-            novo_filme = Filme(dados_filme["titulo"], dados_filme["duracao"], dados_filme["genero"], dados_filme["classificacao_etaria"])
-            self.__filmes_db.append(novo_filme)
-            self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi adicionado com sucesso!")
+                try:
+                    self.busca_filme(titulo)  # Tenta buscar o filme pelo título
+                    raise Exception(f"Filme '{titulo}' já está cadastrado.")
+                except FilmeNaoEncontrado:
+                    novo_filme = Filme(
+                        dados_filme["titulo"],
+                        dados_filme["duracao"],
+                        dados_filme["genero"],
+                        dados_filme["classificacao_etaria"]
+                    )
+                    # USO DE DAO PARA SERIALIZAÇÃO
+                    self.__filme_DAO.add(novo_filme)
+                    self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi adicionado com sucesso!")
 
         except ValueError as e:
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
@@ -34,24 +41,53 @@ class FilmeControlador(ControladorEntidadeAbstrata):
             self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
     def atualizar_filme(self):
+        #TODO implementar um metodo update na classe DAO abstrata e realizar o update apos atualizar o objeto para o db refletir a nova instancia.
         try:
             self.listar_filmes()
             titulo = self.__filmevisao.seleciona_filme()
             filme = self.busca_filme(titulo)
 
             novos_dados = self.__filmevisao.pega_novos_dados_filme()
-            filme.duracao = novos_dados["duracao"]
-            filme.genero = novos_dados["genero"]
-            filme.classificacao_etaria = novos_dados["classificacao_etaria"]
+            if novos_dados is not None:
+                filme.duracao = novos_dados["duracao"]
+                filme.genero = novos_dados["genero"]
+                filme.classificacao_etaria = novos_dados["classificacao_etaria"]
 
-            self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' atualizado com sucesso!")
+                self.__filme_DAO.update(filme)
+                self.listar_filmes()
+
+                self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' atualizado com sucesso!")
         except FilmeNaoEncontrado as e:
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
             self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
+    # def alterar_amigo(self):
+    #     self.lista_amigos()
+    #     cpf_amigo = self.__tela_amigo.seleciona_amigo()
+    #     amigo = self.pega_amigo_por_cpf(cpf_amigo)
+    #
+    #     if (amigo is not None):
+    #         novos_dados_amigo = self.__tela_amigo.pega_dados_amigo()
+    #         amigo.nome = novos_dados_amigo["nome"]
+    #         amigo.telefone = novos_dados_amigo["telefone"]
+    #         amigo.cpf = novos_dados_amigo["cpf"]  # nao deve ser alterado!
+    #         # Atualiza o amigo com aquele cpf, ou seja, busca amigo no arquivo pelo cpf.
+    #         # Se o cpf foi alterado, vai dar erro.
+    #         self.__amigo_DAO.update(amigo)
+    #         self.lista_amigos()
+    #     else:
+    #         self.__tela_amigo.mostra_mensagem("ATENCAO: Amigo não existente")
+
+    # def busca_filme(self, titulo):
+    #     for filme in self.__filmes_db:
+    #         if filme.titulo == titulo:
+    #             return filme
+    #     raise FilmeNaoEncontrado(titulo)
+
     def busca_filme(self, titulo):
-        for filme in self.__filmes_db:
+        filmes = self.__filme_DAO.get_all()
+        for filme in filmes:
             if filme.titulo == titulo:
                 return filme
         raise FilmeNaoEncontrado(titulo)
@@ -62,19 +98,30 @@ class FilmeControlador(ControladorEntidadeAbstrata):
             titulo = self.__filmevisao.seleciona_filme()
             filme = self.busca_filme(titulo)
 
-            self.__filmes_db.remove(filme)
+            # USO DE DAO PARA SERIALIZACAO
+            self.__filme_DAO.remove(titulo)
             self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi removido com sucesso.")
         except FilmeNaoEncontrado as e:
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
             self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
+    # def listar_filmes(self):
+    #     if not self.__filmes_db:
+    #         self.__filmevisao.mostra_mensagem("Nenhum filme cadastrado.")
+    #         return
+    #
+    #     filmes_info = [{"titulo": filme.titulo, "duracao": filme.duracao, "genero": filme.genero, "classificacao_etaria": filme.classificacao_etaria} for filme in self.__filmes_db]
+    #     self.__filmevisao.listar_filmes(filmes_info)
+
+    #SERIALIZACAO USANDO DAO
     def listar_filmes(self):
-        if not self.__filmes_db:
+        filmes = self.__filme_DAO.get_all()
+        if not filmes:
             self.__filmevisao.mostra_mensagem("Nenhum filme cadastrado.")
             return
-
-        filmes_info = [{"titulo": filme.titulo, "duracao": filme.duracao, "genero": filme.genero, "classificacao_etaria": filme.classificacao_etaria} for filme in self.__filmes_db]
+        filmes_info = [{"titulo": filme.titulo, "duracao": filme.duracao, "genero": filme.genero,
+                        "classificacao_etaria": filme.classificacao_etaria} for filme in filmes]
         self.__filmevisao.listar_filmes(filmes_info)
 
     def abre_tela(self):
