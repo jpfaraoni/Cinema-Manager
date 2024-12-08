@@ -9,15 +9,19 @@ class TipoSessao(Enum):
 
 
 class Sessao:
+    #TODO opcao 1: criar uma chave unica com random, gerando um numero grande e passando com um atributo.
+    #TODO opcao 2: criar um singleton(slides), e incrementar um contador.
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: str, tipo= TipoSessao):
+    def __init__(self, filme: Filme, sala: Sala, horario: str, codigo: int, tipo= TipoSessao):
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):
             self.__sala = sala
         if isinstance(horario, str):
             self.__horario = horario
+        if isinstance(codigo, int):
+            self.__codigo = codigo
         self.tipo = tipo
         self.__ingressos = []
 
@@ -59,5 +63,13 @@ class Sessao:
     def tipo(self, tipo: str):
         self.__tipo = tipo
 
+    @property
+    def codigo(self):
+        return self.__codigo
+
+    @codigo.setter
+    def codigo(self, codigo: int):
+        self.__codigo = codigo
+
     def adicionar_ingresso(self, ingresso):
-         self.__ingressos.append(ingresso)  # Método para adicionar um ingresso
+         self.__ingressos.append(ingresso)
