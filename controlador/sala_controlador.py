@@ -70,7 +70,7 @@ class SalaControlador(ControladorEntidadeAbstrata):
             if numero is not None:
                 sala = self.busca_sala(numero)
 
-                self.__sala_DAO.remove(sala)
+                self.__sala_DAO.remove(numero)
                 self.__salavisao.mostra_mensagem(f"Sala {numero} foi removida com sucesso.")
         except SalaNaoEncontrada as e:
             self.__salavisao.mostra_mensagem(f"Erro: {e}")
