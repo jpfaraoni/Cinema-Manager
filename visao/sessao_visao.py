@@ -2,19 +2,27 @@ import PySimpleGUI as sg
 import re
 from entidade.sessao import TipoSessao
 from exception.horario_invalido import HorarioInvalido
+from PIL import Image
 
 class SessaoVisao:
     def __init__(self):
         pass
-
+#TODO cortar a imagem
+#TODO criar um folder
+    Image.open("visao/imagens/rb_13067.png").resize((400, 266)).save("imagem_redimensionada.png")
+    # Image.open("rb_13067.png").resize((400, 266)).save("imagem_redimensionada.png")
+    Image.open("visao/imagens/rb_13067.png").resize((400, 266)).save("imagem_redimensionada.png")
+    Image.open("visao/imagens/menus_sessoes.jpg").resize((320, 60)).save("menus_sessoes_red.png")
     def tela_opcoes(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
         layout = [
-            [sg.Text("-- Menu Sessão --", size=(30, 1))],
+            [sg.Image(filename= 'imagem_redimensionada.png')],
+            [sg.Text("MENU SESSÃO", size=(30, 1))],
             [sg.Button("Adicionar Sessão", key=1)],
             [sg.Button("Atualizar Sessão", key=2)],
             [sg.Button("Remover Sessão", key=3)],
             [sg.Button("Listar Sessões", key=4)],
-            [sg.Button("Sair", key=0)],
+            [sg.Button("Sair", key=5)],
         ]
         window = sg.Window("Menu Sessão", layout)
 
@@ -23,7 +31,9 @@ class SessaoVisao:
         return event
 
     def pega_dados_sessao(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
         layout = [
+            [sg.Push(), sg.Image(filename='menus_sessoes_red.png'), sg.Push()],
             [sg.Text("TÍTULO DO FILME:"), sg.InputText(key="titulo")],
             [sg.Text("NÚMERO DA SALA:"), sg.InputText(key="sala_numero")],
             [sg.Text("HORÁRIO DA SESSÃO (HH:MM):"), sg.InputText(key="horario")],
@@ -58,9 +68,11 @@ class SessaoVisao:
         }
 
     def mostra_mensagem(self, mensagem):
+        sg.ChangeLookAndFeel('DarkGrey10')
         sg.popup(mensagem)
 
     def mostra_sessao(self, dados_sessao):
+        sg.ChangeLookAndFeel('DarkGrey10')
         layout = [
             [sg.Text("TÍTULO: ", size=(15, 1)), sg.Text(dados_sessao["titulo"])],
             [sg.Text("SALA: ", size=(15, 1)), sg.Text(dados_sessao["numero_sala"])],
@@ -75,24 +87,8 @@ class SessaoVisao:
         window.read()
         window.close()
 
-    def mostra_ingressos(self, ingressos):
-        if not ingressos:
-            sg.popup("Nenhum ingresso vendido.")
-            return
-
-        layout = [[sg.Text("Ingressos vendidos:")]]
-        for ingresso in ingressos:
-            layout.append([
-                sg.Text(f"Filme: {ingresso.sessao.filme.titulo}, Sala: {ingresso.sessao.sala}, \
-                        Horário: {ingresso.sessao.horario}, Cliente: {ingresso.cliente.nome}")
-            ])
-        layout.append([sg.Button("Fechar")])
-
-        window = sg.Window("Ingressos Vendidos", layout)
-        window.read()
-        window.close()
-
     def seleciona_sessao(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
         layout = [
             [sg.Text("Digite o código da sessão:"), sg.InputText(key="codigo")],
             [sg.Button("Confirmar"), sg.Button("Cancelar")],
@@ -112,6 +108,7 @@ class SessaoVisao:
             return None
 
     def pega_novos_dados_sessao(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
         layout = [
             [sg.Text("Nova capacidade máxima:"), sg.InputText(key="capacidade")],
             [sg.Text("Novo tipo de sessão:")],
@@ -134,3 +131,4 @@ class SessaoVisao:
             "capacidade": int(values["capacidade"]),
             "tipo": tipo_selecionado,
         }
+
