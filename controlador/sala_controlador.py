@@ -2,7 +2,7 @@ from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 from entidade.sala import Sala
 from exception.sala_nao_encontrada import SalaNaoEncontrada
 from visao.sala_visao import SalaVisao
-from DAO.sala_dao import SalaDAO
+from DAO.saladao import SalaDAO
 
 class SalaControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
@@ -39,17 +39,18 @@ class SalaControlador(ControladorEntidadeAbstrata):
         try:
             self.lista_salas()
             numero = self.__salavisao.seleciona_sala()
-            sala = self.busca_sala(numero)
+            if numero is not None:
+                sala = self.busca_sala(numero)
 
-            nova_capacidade = self.__salavisao.pega_novos_dados_sala()
-            if nova_capacidade <= 0:
-                raise ValueError(f"Capacidade deve ser um valor positivo.")
-            if nova_capacidade is not None:
-                sala.capacidade = nova_capacidade
+                nova_capacidade = self.__salavisao.pega_novos_dados_sala()
+                if nova_capacidade <= 0:
+                    raise ValueError(f"Capacidade deve ser um valor positivo.")
+                if nova_capacidade is not None:
+                    sala.capacidade = nova_capacidade
 
-            self.__sala_DAO.update(sala)
-            self.lista_salas()
-            # self.__salavisao.mostra_mensagem(f"Sala {numero} atualizada com sucesso!")
+                self.__sala_DAO.update(sala)
+                self.lista_salas()
+                # self.__salavisao.mostra_mensagem(f"Sala {numero} atualizada com sucesso!")
         except SalaNaoEncontrada as e:
             self.__salavisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
@@ -66,10 +67,11 @@ class SalaControlador(ControladorEntidadeAbstrata):
         try:
             self.lista_salas()
             numero = self.__salavisao.seleciona_sala()
-            sala = self.busca_sala(numero)
+            if numero is not None:
+                sala = self.busca_sala(numero)
 
-            self.__sala_DAO.remove(sala)
-            self.__salavisao.mostra_mensagem(f"Sala {numero} foi removida com sucesso.")
+                self.__sala_DAO.remove(sala)
+                self.__salavisao.mostra_mensagem(f"Sala {numero} foi removida com sucesso.")
         except SalaNaoEncontrada as e:
             self.__salavisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
@@ -82,14 +84,6 @@ class SalaControlador(ControladorEntidadeAbstrata):
             return
         salas_info = [{"numero": sala.numero, "capacidade": sala.capacidade} for sala in salas]
         self.__salavisao.exibe_lista_salas(salas_info)
-
-    # def listar_filmes(self):
-    #     filmes = self.__filme_DAO.get_all()
-    #     # if not filmes:
-    #     #     self.__filmevisao.mostra_mensagem("Nenhum filme cadastrado.")
-    #     filmes_info = [{"titulo": filme.titulo, "duracao": filme.duracao, "genero": filme.genero,
-    #                     "classificacao_etaria": filme.classificacao_etaria} for filme in filmes]
-    #     self.__filmevisao.listar_filmes(filmes_info)
 
     def abre_tela(self):
         lista_opcoes = {1: self.adicionar_sala, 2: self.atualizar_sala, 3: self.remover_sala, 4: self.lista_salas, 0: self.retornar}
