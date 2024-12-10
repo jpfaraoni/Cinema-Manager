@@ -2,12 +2,11 @@ from entidade.filme import Filme
 from exception.filme_nao_encontrado import FilmeNaoEncontrado
 from visao.filme_visao import FilmeVisao
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
-from DAO.filme_dao import FilmeDAO
+from DAO.filmedao import FilmeDAO
 
 class FilmeControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
         super().__init__(controlador_sistema)
-        self.__filmes_db = []
         self.__filmevisao = FilmeVisao()
         self.__filme_DAO = FilmeDAO()
 
@@ -62,29 +61,6 @@ class FilmeControlador(ControladorEntidadeAbstrata):
         except Exception as e:
             self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
-    # def alterar_amigo(self):
-    #     self.lista_amigos()
-    #     cpf_amigo = self.__tela_amigo.seleciona_amigo()
-    #     amigo = self.pega_amigo_por_cpf(cpf_amigo)
-    #
-    #     if (amigo is not None):
-    #         novos_dados_amigo = self.__tela_amigo.pega_dados_amigo()
-    #         amigo.nome = novos_dados_amigo["nome"]
-    #         amigo.telefone = novos_dados_amigo["telefone"]
-    #         amigo.cpf = novos_dados_amigo["cpf"]  # nao deve ser alterado!
-    #         # Atualiza o amigo com aquele cpf, ou seja, busca amigo no arquivo pelo cpf.
-    #         # Se o cpf foi alterado, vai dar erro.
-    #         self.__amigo_DAO.update(amigo)
-    #         self.lista_amigos()
-    #     else:
-    #         self.__tela_amigo.mostra_mensagem("ATENCAO: Amigo não existente")
-
-    # def busca_filme(self, titulo):
-    #     for filme in self.__filmes_db:
-    #         if filme.titulo == titulo:
-    #             return filme
-    #     raise FilmeNaoEncontrado(titulo)
-
     def busca_filme(self, titulo):
         filmes = self.__filme_DAO.get_all()
         for filme in filmes:
@@ -105,14 +81,6 @@ class FilmeControlador(ControladorEntidadeAbstrata):
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
             self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
-
-    # def listar_filmes(self):
-    #     if not self.__filmes_db:
-    #         self.__filmevisao.mostra_mensagem("Nenhum filme cadastrado.")
-    #         return
-    #
-    #     filmes_info = [{"titulo": filme.titulo, "duracao": filme.duracao, "genero": filme.genero, "classificacao_etaria": filme.classificacao_etaria} for filme in self.__filmes_db]
-    #     self.__filmevisao.listar_filmes(filmes_info)
 
     #SERIALIZACAO USANDO DAO
     def listar_filmes(self):
