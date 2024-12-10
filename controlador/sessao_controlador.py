@@ -1,21 +1,14 @@
-from controlador.filme_controlador import FilmeControlador
-from controlador.sala_controlador import SalaControlador
-from entidade.sessao import Sessao
 from entidade.sessao import TipoSessao
 from exception.filme_nao_encontrado import FilmeNaoEncontrado
 from exception.sala_nao_encontrada import SalaNaoEncontrada
 from exception.sessao_nao_encontrada import SessaoNaoEncontrada
-# from entidade import Ingresso
 from datetime import datetime, timedelta
 from exception.horario_invalido import HorarioInvalido
 from visao.sessao_visao import SessaoVisao
 from entidade.sessao import Sessao
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
-from entidade.sala import Sala
 from random import randint
 from DAO.sessaodao import SessaoDAO
-# from controlador.filme_controlador import FilmeControlador
-# from controlador.sala_controlador import SalaControlador
 
 
 class SessaoControlador(ControladorEntidadeAbstrata):
@@ -24,11 +17,8 @@ class SessaoControlador(ControladorEntidadeAbstrata):
         super().__init__(controlador_sistema)
         self.__sessoes_db = []
         self.__ingressos = []
-        # ingressos = []
         self.__sessaovisao = SessaoVisao()
         self.__sessao_DAO = SessaoDAO()
-        # self.__filme_controlador = FilmeControlador()
-        # self.__sala_controlador = SalaControlador()
 
         """
         Controlador responsável por gerenciar as Sessões.
@@ -119,7 +109,6 @@ class SessaoControlador(ControladorEntidadeAbstrata):
             self.__sessaovisao.mostra_mensagem(f"Erro inesperado: {ex}")
 
     def atualizar_sessao(self):
-        #filme: Filme, sala: Sala, horario: str, codigo: int, tipo= TipoSessao
         try:
             self.listar_sessoes()
             codigo = self.__sessaovisao.seleciona_sessao()
@@ -154,28 +143,6 @@ class SessaoControlador(ControladorEntidadeAbstrata):
         except Exception as ex:
             self.__sessaovisao.mostra_mensagem(f"Erro inesperado: {ex}")
 
-    # def atualizar_filme(self):
-    #     #TODO implementar um metodo update na classe DAO abstrata e realizar o update apos atualizar o objeto para o db refletir a nova instancia.
-    #     try:
-    #         self.listar_filmes()
-    #         titulo = self.__filmevisao.seleciona_filme()
-    #         filme = self.busca_filme(titulo)
-    #
-    #         novos_dados = self.__filmevisao.pega_novos_dados_filme()
-    #         if novos_dados is not None:
-    #             filme.duracao = novos_dados["duracao"]
-    #             filme.genero = novos_dados["genero"]
-    #             filme.classificacao_etaria = novos_dados["classificacao_etaria"]
-    #
-    #             self.__filme_DAO.update(filme)
-    #             self.listar_filmes()
-    #
-    #             self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' atualizado com sucesso!")
-    #     except FilmeNaoEncontrado as e:
-    #         self.__filmevisao.mostra_mensagem(f"Erro: {e}")
-    #     except Exception as e:
-    #         self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
-
     def remover_sessao(self):
         #    def remover_sessao(self, filme, sala, horario):
         try:
@@ -190,20 +157,6 @@ class SessaoControlador(ControladorEntidadeAbstrata):
             self.__sessaovisao.mostra_mensagem(sne)
         except ValueError as ve:
             self.__sessaovisao.mostra_mensagem(ve)
-
-    # def remover_filme(self):
-    #     try:
-    #         self.listar_filmes()
-    #         titulo = self.__filmevisao.seleciona_filme()
-    #         filme = self.busca_filme(titulo)
-    #
-    #         # USO DE DAO PARA SERIALIZACAO
-    #         self.__filme_DAO.remove(titulo)
-    #         self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi removido com sucesso.")
-    #     except FilmeNaoEncontrado as e:
-    #         self.__filmevisao.mostra_mensagem(f"Erro: {e}")
-    #     except Exception as e:
-    #         self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
     def busca_sessao(self, codigo: int):
         sessoes = self.__sessao_DAO.get_all()
@@ -224,20 +177,6 @@ class SessaoControlador(ControladorEntidadeAbstrata):
                                               "codigo": sessao.codigo,
                                               "tipo": sessao.tipo,
                                               "ingressos_disponiveis": ingressos_disponiveis})
-        # def lista_salas(self):
-        #     salas = self.__sala_DAO.get_all()
-        #     if not salas:
-        #         self.__salavisao.mostra_mensagem("Nenhuma sala cadastrada.")
-        #         return
-        #     salas_info = [{"numero": sala.numero, "capacidade": sala.capacidade} for sala in salas]
-        #     self.__salavisao.exibe_lista_salas(salas_info)
-
-    # def listar_ingressos(self):
-    #     for e in self.__ingressos:
-    #         self.__sessaovisao.mostra_ingressos({"titulo": e.filme.titulo,
-    #                                              "numero_sala": e.sala.numero,
-    #                                              "horario": e.horario,
-    #                                              "tipo": e.tipo, })
 
     def relatorio_sessoes(self):
         """
@@ -265,8 +204,7 @@ class SessaoControlador(ControladorEntidadeAbstrata):
 
     def abre_tela(self):
         lista_opcoes = {1: self.adicionar_sessao, 2: self.atualizar_sessao, 3: self.remover_sessao,
-                        4: self.listar_sessoes,
-                        0: self.retornar}
+                        4: self.listar_sessoes, 5: self.retornar}
 
         continua = True
         while continua:
