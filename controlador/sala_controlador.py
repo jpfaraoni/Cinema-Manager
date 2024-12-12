@@ -2,7 +2,7 @@ from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 from entidade.sala import Sala
 from exception.sala_nao_encontrada import SalaNaoEncontrada
 from visao.sala_visao import SalaVisao
-from DAO.saladao import SalaDAO
+from DAO.sala_dao import SalaDAO
 
 class SalaControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
