@@ -4,19 +4,32 @@ class FilmeVisao:
         pass
 
     def tela_opcoes(self):
-        layout = [
-            [sg.Text("-------- GERENCIAMENTO DE FILMES ----------", size=(30, 1))],
-            [sg.Button("Adicionar Filme", key=1)],
-            [sg.Button("Atualizar Filme", key=2)],
-            [sg.Button("Remover Filme", key=3)],
-            [sg.Button("Listar Filmes", key=4)],
-            [sg.Button("Sair", key=0)],
+        sg.change_look_and_feel('DarkGrey10')
+        sg.change_look_and_feel('DarkGrey10')
+
+        layout_esquerda = [
+            [sg.Image(filename='visao/imagens/rb_60.png')]
         ]
-        window = sg.Window("Menu Principal", layout)
+
+        layout_direita = [
+            [sg.Button("Adicionar Filme", key=1, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Atualizar Filme", key=2, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Remover Filme", key=3, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Listar Filmes", key=4, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Sair", key=0, size=(9, 1), font=("Helvetica", 12))],
+        ]
+
+        layout = [
+            [sg.Column(layout_direita),
+             sg.VSeparator(),
+             sg.Column(layout_esquerda)]
+        ]
+
+        window = sg.Window("Menu Filme", layout, size=(600, 400), finalize=True)
 
         event, _ = window.read()
         window.close()
-        return event
+        return event if event is not None else 0
 
     def pega_dados_filme(self):
         layout = [
@@ -24,7 +37,7 @@ class FilmeVisao:
             [sg.Text("Duração do filme (em minutos):"), sg.InputText(key="duracao")],
             [sg.Text("Gênero do filme:"), sg.InputText(key="genero")],
             [sg.Text("Classificação etária:"), sg.InputText(key="classificacao_etaria")],
-            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+            [sg.Button("Confirmar"), sg.Cancel("Cancelar")],
         ]
         window = sg.Window("Cadastrar Filme", layout)
 
@@ -42,8 +55,8 @@ class FilmeVisao:
                 "classificacao_etaria": int(values["classificacao_etaria"]),
             }
         except ValueError:
-            sg.popup("Erro: Dados inválidos.")
-            return None
+            raise ValueError("Dados inválidos.")
+
 
     def pega_novos_dados_filme(self):
         layout = [
@@ -67,8 +80,7 @@ class FilmeVisao:
                 "classificacao_etaria": int(values["classificacao_etaria"]),
             }
         except ValueError:
-            sg.popup("Erro: Dados inválidos.")
-            return None
+            raise ValueError("Dados inválidos.")
 
     def mostra_mensagem(self, msg):
         sg.popup(msg)
