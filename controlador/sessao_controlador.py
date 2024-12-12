@@ -1,4 +1,3 @@
-from entidade.sessao import TipoSessao
 from exception.filme_nao_encontrado import FilmeNaoEncontrado
 from exception.sala_nao_encontrada import SalaNaoEncontrada
 from exception.sessao_nao_encontrada import SessaoNaoEncontrada
@@ -78,10 +77,6 @@ class SessaoControlador(ControladorEntidadeAbstrata):
                 filme = self._controlador_sistema.filmecontrolador.busca_filme(dados_sessao["titulo"])
                 sala = self._controlador_sistema.salacontrolador.busca_sala(dados_sessao["sala_numero"])
 
-                if tipo is not None and not isinstance(tipo, TipoSessao):
-                    self.__sessaovisao.mostra_mensagem("Erro: Tipo de sessão inválido.")
-                    return
-
                 # Validar o horário
                 if not self.validar_horario(horario):
                     raise HorarioInvalido(horario)
@@ -89,9 +84,7 @@ class SessaoControlador(ControladorEntidadeAbstrata):
                 # Criar uma nova sessão e verificar conflitos de horário
                 nova_sessao = Sessao(filme, sala, horario, randint(0, 10000), tipo)
                 if not self.horario_disponivel(nova_sessao):
-                    self.__sessaovisao.mostra_mensagem(
-                        f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
-                    return
+                    raise Exception(f"Erro: Conflito de horário na sala {sala.numero} para o horário {horario}.")
 
                 # Adicionar a sessão ao banco de dados
                 self.__sessao_DAO.add(nova_sessao)
@@ -104,7 +97,7 @@ class SessaoControlador(ControladorEntidadeAbstrata):
         except SalaNaoEncontrada as sne:
             self.__sessaovisao.mostra_mensagem(sne)
         except ValueError as ve:
-            self.__sessaovisao.mostra_mensagem(f"Erro de valor: {ve}")
+            self.__sessaovisao.mostra_mensagem(f"Erro: {ve}")
         except Exception as ex:
             self.__sessaovisao.mostra_mensagem(f"Erro inesperado: {ex}")
 
@@ -117,6 +110,8 @@ class SessaoControlador(ControladorEntidadeAbstrata):
             sessao = self.busca_sessao(codigo)
 
             novos_dados_sessao = self.__sessaovisao.pega_dados_sessao()
+            if novos_dados_sessao is None:
+                return
             filme = self._controlador_sistema.filmecontrolador.busca_filme(novos_dados_sessao["titulo"])
             sala = self._controlador_sistema.salacontrolador.busca_sala(novos_dados_sessao["sala_numero"])
             horario = novos_dados_sessao["horario"]
