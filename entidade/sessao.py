@@ -2,12 +2,6 @@ from entidade.filme import Filme
 from entidade.sala import Sala
 from enum import Enum
 
-class TipoSessao(Enum):
-    _2D = 1
-    _3D = 2
-    _IMAX = 3
-
-
 class Sessao:
     #TODO opcao 1: criar uma chave unica com random, gerando um numero grande e passando com um atributo.
     #TODO opcao 2: criar um singleton(slides), e incrementar um contador.
