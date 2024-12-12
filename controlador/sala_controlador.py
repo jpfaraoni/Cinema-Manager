@@ -39,18 +39,20 @@ class SalaControlador(ControladorEntidadeAbstrata):
         try:
             self.lista_salas()
             numero = self.__salavisao.seleciona_sala()
-            if numero is not None:
-                sala = self.busca_sala(numero)
+            if numero is None:
+                return
+            sala = self.busca_sala(numero)
 
-                nova_capacidade = self.__salavisao.pega_novos_dados_sala()
-                if nova_capacidade <= 0:
-                    raise ValueError(f"Capacidade deve ser um valor positivo.")
-                if nova_capacidade is not None:
-                    sala.capacidade = nova_capacidade
+            nova_capacidade = self.__salavisao.pega_novos_dados_sala()
+            if nova_capacidade is None:
+                return
+            if nova_capacidade <= 0:
+                raise ValueError(f"Capacidade deve ser um valor positivo.")
+            sala.capacidade = nova_capacidade
 
-                self.__sala_DAO.update(sala)
-                self.lista_salas()
-                # self.__salavisao.mostra_mensagem(f"Sala {numero} atualizada com sucesso!")
+            self.__sala_DAO.update(sala)
+            self.lista_salas()
+        # self.__salavisao.mostra_mensagem(f"Sala {numero} atualizada com sucesso!")
         except SalaNaoEncontrada as e:
             self.__salavisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
