@@ -1,27 +1,35 @@
 import PySimpleGUI as sg
-from PIL import Image
 
 class SalaVisao:
     def __init__(self):
         pass
 
-    # Image.open("menus_sala.jpg").resize((320, 60)).save("menus_sala_red.jpg")
     def tela_opcoes(self):
         sg.ChangeLookAndFeel('DarkGrey10')
-        layout = [
-            # [sg.Image(filename='menus_sala_red.jpg')],
-            [sg.Text("GERENCIAMENTO DE SALAS", size=(30, 1))],
-            [sg.Button("Adicionar Sala", key=1)],
-            [sg.Button("Atualizar Sala", key=2)],
-            [sg.Button("Remover Sala", key=3)],
-            [sg.Button("Listar Salas", key=4)],
-            [sg.Button("Sair", key=0)],
+        layout_esquerda = [
+            [sg.Image(filename='visao/imagens/rb_60.png')]
         ]
-        window = sg.Window("Menu Principal - Salas", layout)
 
+        layout_direita = [
+        [sg.Button("Adicionar Sala", key=1, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Atualizar Sala", key=2, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Remover Sala", key=3, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Listar Salas", key=4, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Sair", key=0, size=(10, 1), font=("Helvetica", 12))],
+        ]
+
+        layout = [
+            [sg.Column(layout_direita),
+             sg.VSeparator(),
+             sg.Column(layout_esquerda)]
+        ]
+
+        window = sg.Window("Menu Sala", layout)
         event, _ = window.read()
         window.close()
-        return event
+        # if event == sg.WINDOW_CLOSED:
+        #     event = 0
+        return event if event is not None else 0
 
     def pega_dados_sala(self):
         sg.ChangeLookAndFeel('DarkGrey10')
@@ -44,8 +52,7 @@ class SalaVisao:
                 "capacidade": int(values["capacidade"]),
             }
         except ValueError:
-            sg.popup("Erro: Dados inválidos.")
-            return None
+            raise ValueError("Dados inválidos")
 
     def pega_novos_dados_sala(self):
         sg.ChangeLookAndFeel('DarkGrey10')
@@ -64,8 +71,7 @@ class SalaVisao:
         try:
             return int(values["capacidade"])
         except ValueError:
-            sg.popup("Erro: Capacidade inválida.")
-            return None
+            raise ValueError("Dados inválidos.")
 
     def seleciona_sala(self):
         sg.ChangeLookAndFeel('DarkGrey10')
@@ -84,8 +90,7 @@ class SalaVisao:
         try:
             return int(values["numero"])
         except ValueError:
-            sg.popup("Erro: Número inválido.")
-            return None
+            raise ValueError("Dados inválidos.")
 
     def mostra_mensagem(self, msg):
         sg.ChangeLookAndFeel('DarkGrey10')
@@ -105,4 +110,3 @@ class SalaVisao:
         window = sg.Window("Lista de Salas", layout)
         window.read()
         window.close()
-
