@@ -1,44 +1,47 @@
 import PySimpleGUI as sg
-import re
 from entidade.sessao import TipoSessao
-from exception.horario_invalido import HorarioInvalido
-from PIL import Image
 
 class SessaoVisao:
     def __init__(self):
         pass
-#TODO cortar a imagem
-#TODO criar um folder
-    Image.open("visao/imagens/rb_13067.png").resize((400, 266)).save("imagem_redimensionada.png")
-    # Image.open("rb_13067.png").resize((400, 266)).save("imagem_redimensionada.png")
-    Image.open("visao/imagens/rb_13067.png").resize((400, 266)).save("imagem_redimensionada.png")
-    Image.open("visao/imagens/menus_sessoes.jpg").resize((320, 60)).save("menus_sessoes_red.png")
+
     def tela_opcoes(self):
         sg.ChangeLookAndFeel('DarkGrey10')
-        layout = [
-            [sg.Image(filename= 'imagem_redimensionada.png')],
-            [sg.Text("MENU SESSÃO", size=(30, 1))],
-            [sg.Button("Adicionar Sessão", key=1)],
-            [sg.Button("Atualizar Sessão", key=2)],
-            [sg.Button("Remover Sessão", key=3)],
-            [sg.Button("Listar Sessões", key=4)],
-            [sg.Button("Sair", key=5)],
+
+        layout_esquerda = [
+            [sg.Image(filename='visao/imagens/rb_60.png')]
         ]
+
+        layout_direita = [
+            [sg.Button("Adicionar Sessão", key=1, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Atualizar Sessão", key=2, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Remover Sessão", key=3, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Listar Sessões", key=4, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Sair", key=5, size=(9, 1), font=("Helvetica", 12))],
+        ]
+
+        layout = [
+            [sg.Column(layout_direita),
+             sg.VSeparator(),
+             sg.Column(layout_esquerda)]
+        ]
+
         window = sg.Window("Menu Sessão", layout)
 
         event, _ = window.read()
         window.close()
-        return event
+        #key '5' = self.retornar
+        return event if event is not None else 5
 
     def pega_dados_sessao(self):
         sg.ChangeLookAndFeel('DarkGrey10')
         layout = [
-            [sg.Push(), sg.Image(filename='menus_sessoes_red.png'), sg.Push()],
             [sg.Text("TÍTULO DO FILME:"), sg.InputText(key="titulo")],
             [sg.Text("NÚMERO DA SALA:"), sg.InputText(key="sala_numero")],
             [sg.Text("HORÁRIO DA SESSÃO (HH:MM):"), sg.InputText(key="horario")],
             [sg.Text("Escolha o tipo de sessão:")],
-            [sg.Radio(tipo.name.replace("_", ""), "TIPO", key=f"tipo_{tipo.value}") for tipo in TipoSessao],
+            [sg.Radio("2D", "TIPO", key="2D"), sg.Radio("3D", "TIPO", key="3D"),
+            sg.Radio("IMAX", "TIPO", key="IMAX")],
             [sg.Button("Confirmar"), sg.Button("Cancelar")],
         ]
 
@@ -49,23 +52,18 @@ class SessaoVisao:
         if event == "Cancelar" or event == sg.WINDOW_CLOSED:
             return None
 
-        if not re.match(r'^\d{2}:\d{2}$', values["horario"]):
-            raise HorarioInvalido(values["horario"])
+        tipo_selecionado = next((key for key, value in values.items() if key in ["2D", "3D", "IMAX"] and value), None)
 
-        horas, minutos = map(int, values["horario"].split(":"))
-        if not (0 <= horas < 24 and 0 <= minutos < 60):
-            raise HorarioInvalido(values["horario"])
+        try:
+            return {
+                "titulo": values["titulo"],
+                "sala_numero": int(values["sala_numero"]),
+                "horario": values["horario"],
+                "tipo": tipo_selecionado,
+            }
 
-        tipo_selecionado = next((tipo for tipo in TipoSessao if values.get(f"tipo_{tipo.value}")), None)
-        if not tipo_selecionado:
-            raise ValueError("Tipo de sessão inválido.")
-
-        return {
-            "titulo": values["titulo"],
-            "sala_numero": int(values["sala_numero"]),
-            "horario": values["horario"],
-            "tipo": tipo_selecionado,
-        }
+        except ValueError:
+            raise ValueError("Dados inválidos.")
 
     def mostra_mensagem(self, mensagem):
         sg.ChangeLookAndFeel('DarkGrey10')
@@ -78,7 +76,8 @@ class SessaoVisao:
             [sg.Text("SALA: ", size=(15, 1)), sg.Text(dados_sessao["numero_sala"])],
             [sg.Text("HORÁRIO: ", size=(15, 1)), sg.Text(dados_sessao["horario"])],
             [sg.Text("CÓDIGO: ", size=(15, 1)), sg.Text(dados_sessao["codigo"])],
-            [sg.Text("TIPO: ", size=(15, 1)), sg.Text(dados_sessao["tipo"].name)],
+            [sg.Text("TIPO: ", size=(15, 1)), sg.Text(dados_sessao["tipo"])],
+            # [sg.Text("TIPO: ", size=(15, 1)), sg.Text(dados_sessao["tipo"].name)],
             [sg.Text("INGRESSOS DISPONÍVEIS: ", size=(15, 1)), sg.Text(dados_sessao["ingressos_disponiveis"])]
         ]
         layout.append([sg.Button("Fechar")])
@@ -131,4 +130,5 @@ class SessaoVisao:
             "capacidade": int(values["capacidade"]),
             "tipo": tipo_selecionado,
         }
+
 
