@@ -13,29 +13,30 @@ class FilmeControlador(ControladorEntidadeAbstrata):
     def adicionar_filme(self):
         try:
             dados_filme = self.__filmevisao.pega_dados_filme()
-            if dados_filme is not None:
-                titulo = dados_filme["titulo"]
-                duracao = dados_filme["duracao"]
+            if dados_filme is None:
+                return
+            titulo = dados_filme["titulo"]
+            duracao = dados_filme["duracao"]
 
-                if not isinstance(duracao, int):
-                    raise ValueError("Duração deve ser em minutos.")
+            if not isinstance(duracao, int):
+                raise ValueError("Duração deve ser em minutos.")
 
-                try:
-                    self.busca_filme(titulo)  # Tenta buscar o filme pelo título
-                    raise Exception(f"Filme '{titulo}' já está cadastrado.")
-                except FilmeNaoEncontrado:
-                    novo_filme = Filme(
-                        dados_filme["titulo"],
-                        dados_filme["duracao"],
-                        dados_filme["genero"],
-                        dados_filme["classificacao_etaria"]
-                    )
-                    # USO DE DAO PARA SERIALIZAÇÃO
-                    self.__filme_DAO.add(novo_filme)
-                    self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi adicionado com sucesso!")
+            try:
+                self.busca_filme(titulo)  # Tenta buscar o filme pelo título
+                raise Exception(f"Filme '{titulo}' já está cadastrado.")
+            except FilmeNaoEncontrado:
+                novo_filme = Filme(
+                    dados_filme["titulo"],
+                    dados_filme["duracao"],
+                    dados_filme["genero"],
+                    dados_filme["classificacao_etaria"]
+                )
+                # USO DE DAO PARA SERIALIZAÇÃO
+                self.__filme_DAO.add(novo_filme)
+                self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi adicionado com sucesso!")
 
-        except ValueError as e:
-            self.__filmevisao.mostra_mensagem(f"Erro: {e}")
+        except ValueError as ve:
+            self.__filmevisao.mostra_mensagem(f"Erro: {ve}")
         except Exception as e:
             self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
@@ -44,18 +45,23 @@ class FilmeControlador(ControladorEntidadeAbstrata):
         try:
             self.listar_filmes()
             titulo = self.__filmevisao.seleciona_filme()
+            if titulo is None:
+                return
             filme = self.busca_filme(titulo)
 
             novos_dados = self.__filmevisao.pega_novos_dados_filme()
-            if novos_dados is not None:
-                filme.duracao = novos_dados["duracao"]
-                filme.genero = novos_dados["genero"]
-                filme.classificacao_etaria = novos_dados["classificacao_etaria"]
+            if novos_dados is None:
+                return
+            filme.duracao = novos_dados["duracao"]
+            filme.genero = novos_dados["genero"]
+            filme.classificacao_etaria = novos_dados["classificacao_etaria"]
 
-                self.__filme_DAO.update(filme)
-                self.listar_filmes()
+            self.__filme_DAO.update(filme)
+            self.listar_filmes()
 
-                self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' atualizado com sucesso!")
+            self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' atualizado com sucesso!")
+        except ValueError as ve:
+            self.__filmevisao.mostra_mensagem(f"Erro: {ve}")
         except FilmeNaoEncontrado as e:
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
         except Exception as e:
@@ -72,6 +78,8 @@ class FilmeControlador(ControladorEntidadeAbstrata):
         try:
             self.listar_filmes()
             titulo = self.__filmevisao.seleciona_filme()
+            if titulo is None:
+                return
             filme = self.busca_filme(titulo)
 
             # USO DE DAO PARA SERIALIZACAO
