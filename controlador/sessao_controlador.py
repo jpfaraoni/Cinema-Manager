@@ -7,7 +7,7 @@ from visao.sessao_visao import SessaoVisao
 from entidade.sessao import Sessao
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 from random import randint
-from DAO.sessaodao import SessaoDAO
+from DAO.sessao_dao import SessaoDAO
 
 
 class SessaoControlador(ControladorEntidadeAbstrata):
