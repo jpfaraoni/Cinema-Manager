@@ -1,5 +1,4 @@
 import PySimpleGUI as sg
-from entidade.sessao import TipoSessao
 
 class SessaoVisao:
     def __init__(self):
