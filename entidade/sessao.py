@@ -7,7 +7,7 @@ class Sessao:
     #TODO opcao 2: criar um singleton(slides), e incrementar um contador.
     sessoes_db = []
 
-    def __init__(self, filme: Filme, sala: Sala, horario: str, codigo: int, tipo: str):
+    def __init__(self, filme: Filme, sala: Sala, horario: str, codigo: int, tipo = str):
         if isinstance(filme, Filme):
             self.__filme = filme
         if isinstance(sala, Sala):

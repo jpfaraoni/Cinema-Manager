@@ -1,11 +1,12 @@
 from abstrato.pessoa import Pessoa
 
 class Cliente(Pessoa):
-    def __init__(self, nome: str, telefone: str, email: str, idade: int):
-        self.__nome = nome
-        self.__telefone = telefone  # Inicialize o atributo privado
-        self.__email = email
-        self.__idade = idade
+    def __init__(self, nome: str, telefone: str, email: str, idade: int, cpf: str):
+        self.nome = nome  # Usando o setter do nome
+        self.telefone = telefone  # Usando o setter do telefone
+        self.email = email  # Usando o setter do email
+        self.idade = idade  # Usando o setter da idade
+        self.cpf = cpf  # Usando o setter do CPF
 
     @property
     def nome(self):
@@ -19,14 +20,13 @@ class Cliente(Pessoa):
 
     @property
     def telefone(self):
-        return self.__telefone  # Corrige o acesso ao atributo privado
-
+        return self.__telefone
+    
     @telefone.setter
     def telefone(self, telefone: str):
         if not telefone or len(telefone) < 10:
             raise ValueError("Telefone inválido. O telefone deve ter pelo menos 10 caracteres.")
         self.__telefone = telefone
-
 
     @property
     def email(self):
@@ -47,9 +47,19 @@ class Cliente(Pessoa):
         if not isinstance(idade, int) or idade <= 0:
             raise ValueError("Idade inválida. A idade deve ser um número inteiro positivo.")
         self.__idade = idade
+    
+    @property
+    def cpf(self):
+        return self.__cpf
+    
+    @cpf.setter
+    def cpf(self, cpf: str):
+        if len(cpf) != 11 or not cpf.isdigit():
+            raise ValueError("CPF inválido. O CPF deve ter 11 dígitos numéricos.")
+        self.__cpf = cpf
 
     def obter_tipo_pessoa(self):
         return "Cliente"
 
     def __str__(self):
-        return f"Cliente: {self.nome}, Telefone: {self.telefone}, Email: {self.email}, Idade: {self.idade}"
+        return f"Cliente: {self.nome}, Telefone: {self.telefone}, Email: {self.email}, Idade: {self.idade}, CPF: {self.cpf}"

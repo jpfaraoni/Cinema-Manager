@@ -2,24 +2,28 @@ from abstrato.dao import DAO
 from entidade.cliente import Cliente
 
 class ClienteDAO(DAO):
-    def __init__(self):
-        super().__init__('clientes.pkl')
+    def __init__(self, datasource='clientes.pkl'):
+        # O datasource é passado como parâmetro para o arquivo de persistência
+        super().__init__(datasource)
 
     def add(self, cliente: Cliente):
-        super().add(cliente.nome, cliente)
-        super().add(cliente.email, cliente)
-        super().add(cliente.idade, cliente)
-        super().add(cliente.telefone, cliente)
+        """Adiciona um cliente ao cache e salva no arquivo."""
+        if isinstance(cliente, Cliente):
+            super().add(cliente.cpf, cliente)
+
+    def remove(self, cpf: str):
+        """Remove um cliente pelo CPF do cache e salva no arquivo."""
+        super().remove(cpf)
 
     def update(self, cliente: Cliente):
-        if cliente and isinstance(cliente, Cliente):
-            super().update(cliente.nome, cliente)
+        """Atualiza um cliente no cache e salva no arquivo."""
+        if isinstance(cliente, Cliente):
+            super().update(cliente.cpf, cliente)
 
-    def get(self, key: str):
-        if isinstance(key, str):
-            return super().get(key)
+    def get_all(self):
+        """Retorna todos os clientes."""
+        return super().get_all()
 
-    def remove(self, key: str):
-        if isinstance(key, str):
-            super().remove(key)
-
+    def get_by_cpf(self, cpf: str):
+        """Busca um cliente pelo CPF."""
+        return super().get(cpf)

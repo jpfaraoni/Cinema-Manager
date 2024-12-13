@@ -110,7 +110,7 @@ class SessaoVisao:
         layout = [
             [sg.Text("Nova capacidade máxima:"), sg.InputText(key="capacidade")],
             [sg.Text("Novo tipo de sessão:")],
-            [sg.Radio(tipo.name, "TIPO", key=f"tipo_{tipo.value}") for tipo in TipoSessao],
+            [sg.Radio(tipo.name, "TIPO", key=f"tipo_{tipo.value}") for tipo in tipo_selecionado],
             [sg.Button("Confirmar"), sg.Button("Cancelar")],
         ]
 
@@ -121,7 +121,7 @@ class SessaoVisao:
         if event == "Cancelar" or event == sg.WINDOW_CLOSED:
             return None
 
-        tipo_selecionado = next((tipo for tipo in TipoSessao if values.get(f"tipo_{tipo.value}")), None)
+        tipo_selecionado = next((tipo for tipo in tipo_selecionado if values.get(f"tipo_{tipo.value}")), None)
         if not tipo_selecionado:
             raise ValueError("Tipo de sessão inválido.")
 

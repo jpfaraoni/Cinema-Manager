@@ -1,86 +1,149 @@
+import PySimpleGUI as sg
+from enum import Enum
+
+import PySimpleGUI as sg
+from enum import Enum
+
+class MetodoDePagamento(Enum):
+    DINHEIRO = "Dinheiro"
+    CARTAO_CREDITO = "Cartão de Crédito"
+    CARTAO_DEBITO = "Cartão de Débito"
+    PIX = "Pix"
+
 class VendaVisao:
+    def __init__(self):
+        pass
+
     def tela_opcoes(self):
-        print("\n-- Menu Vendas --")
-        print("1. Realizar venda")
-        print("2. Listar vendas")
-        print("3. Atualizar venda")
-        print("4. Cancelar venda")
-        print("0. Sair")
-        try:
-            opcao = int(input("Escolha a opção: "))
-            if opcao not in [0, 1, 2, 3, 4]:
-                raise ValueError("Opção inválida.")
-        except ValueError as e:
-            print(f"Erro: {e}. Por favor, digite um número válido.")
-            return self.tela_opcoes()  # Chama novamente para uma entrada correta
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Button("Realizar Venda", key=1, size=(20, 1), font=("Helvetica", 12))],
+            [sg.Button("Listar Vendas", key=2, size=(20, 1), font=("Helvetica", 12))],
+            [sg.Button("Atualizar Venda", key=3, size=(20, 1), font=("Helvetica", 12))],
+            [sg.Button("Cancelar Venda", key=4, size=(20, 1), font=("Helvetica", 12))],
+            [sg.Button("Sair", key=0, size=(20, 1), font=("Helvetica", 12))],
+        ]
 
-        return opcao
+        window = sg.Window("Menu Venda", layout)
+        event, _ = window.read()
+        window.close()
+        return event if event is not None else 0
 
-    def pega_dados_venda(self):
-        print("\n===== REALIZAR VENDA =====")
-        titulo = input("TÍTULO DO FILME: ")
-        sala_numero = int(input("NÚMERO DA SALA: "))
-        horario = input("HORÁRIO DA SESSÃO (HH:MM): ")
+    def pega_dados_venda(self, sessao):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Text(f"Título do Filme: {sessao.filme.titulo}")],
+            [sg.Text(f"Número da Sala: {sessao.sala.numero}")],
+            [sg.Text(f"Horário da Sessão: {sessao.horario}")],
+            [sg.Text(f"Ingressos Disponíveis: {sessao.ingressos_disponiveis}")],
+            [sg.Text("Método de Pagamento:")],
+            sg.Combo([e.value for e in MetodoDePagamento], key="metodo_pagamento", readonly=True),
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
 
-        print("Método de pagamento:")
-        metodo_pagamento = input("Digite o método de pagamento (Cartão, Dinheiro, Pix): ")
+        window = sg.Window("Realizar Venda", layout)
+        event, values = window.read()
+        window.close()
 
-        return {
-            "titulo": titulo,
-            "sala_numero": sala_numero,
-            "horario": horario,
-            "metodo_pagamento": metodo_pagamento
-        }
-
-    def seleciona_venda(self, vendas):
-        try:
-            if not vendas:
-                print("Nenhuma venda disponível para seleção.")
-                return None
-
-            print("\n===== SELECIONE UMA VENDA =====")
-            for index, venda in enumerate(vendas):
-                print(f"{index}. Cliente: {venda.cliente.nome}, Filme: {venda.sessao.filme.titulo}")
-
-            indice = int(input("Escolha o índice da venda: "))
-            if indice < 0 or indice >= len(vendas):
-                print("Índice inválido.")
-                return None
-
-            return indice
-        except ValueError:
-            print("Entrada inválida. Por favor, digite um número.")
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
             return None
 
-    def pega_metodo_pagamento(self):
-        print("\n===== ATUALIZAR MÉTODO DE PAGAMENTO =====")
-        novo_metodo_pagamento = input("Novo método de pagamento (1. Cartão, 2. Dinheiro, 3. Pix): ")
-        return novo_metodo_pagamento
+        try:
+            return {
+                "metodo_pagamento": values["metodo_pagamento"]
+            }
+        except ValueError:
+            raise ValueError("Dados inválidos. Certifique-se de que os campos estão corretos.")
 
-    def pega_dados_cancelamento(self):
-        print("\n===== CANCELAR VENDA =====")
-        confirmar = input("Tem certeza que deseja cancelar a venda? (s/n): ").lower()
-        return confirmar == 's'
+    def seleciona_venda(self, vendas):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        if not vendas:
+            sg.popup("Nenhuma venda disponível.")
+            return None
+
+        layout = [
+            [sg.Text("Selecione a venda:")],
+            [sg.Listbox(values=[f"Venda {i+1}: {v['titulo']} - {v['cliente']}" for i, v in enumerate(vendas)], 
+                        size=(50, 10), key="venda_selecionada")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+
+        window = sg.Window("Selecionar Venda", layout)
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            selecionada = values["venda_selecionada"]
+            if selecionada:
+                return vendas[[f"Venda {i+1}: {v['titulo']} - {v['cliente']}" for i, v in enumerate(vendas)].index(selecionada[0])]
+            else:
+                raise ValueError("Nenhuma venda selecionada.")
+        except ValueError:
+            raise ValueError("Seleção inválida.")
 
     def mostra_mensagem(self, mensagem):
-        print(mensagem)
+        sg.ChangeLookAndFeel('DarkGrey10')
+        sg.popup(mensagem)
 
-    def mostra_venda(self, dados_venda):
-        print("\n===== DETALHES DA VENDA =====")
-        print(f"Cliente: {dados_venda['cliente_nome']}")
-        print(f"Filme: {dados_venda['filme']}")
-        print(f"Sala: {dados_venda['sala']}")
-        print(f"Horário da sessão: {dados_venda['horario_sessao']}")
-        print(f"Horário da compra: {dados_venda['horario_compra']}")
-        print(f"Método de pagamento: {dados_venda['metodo_pagamento']}\n")
+    def exibe_lista_vendas(self, vendas):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        if not vendas:
+            sg.popup("Nenhuma venda cadastrada.")
+            return
 
-    def mostra_relatorio_vendas(self, total_vendas_por_filme):
-        print("\n===== RELATÓRIO DE VENDAS =====")
-        if not total_vendas_por_filme:
-            print("Nenhuma venda registrada.")
+        layout = [[sg.Text("Vendas cadastradas:")]]
+        for venda in vendas:
+            layout.append([sg.Text(f"Cliente: {venda['cliente']}, Filme: {venda['titulo']}, Preço: R${venda['preco']:.2f}")])
+        layout.append([sg.Button("Fechar")])
+
+        window = sg.Window("Lista de Vendas", layout)
+        window.read()
+        window.close()
+
+    def pega_codigo_sessao(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Text("Digite o código da sessão:")],
+            [sg.InputText(key="codigo_sessao")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+
+        window = sg.Window("Selecionar Sessão", layout)
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            return int(values["codigo_sessao"])
+        except ValueError:
+            self.mostra_mensagem("Código inválido. Certifique-se de digitar um número.")
+            return None
+        
+    def pega_cpf_cliente(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Text("Digite o CPF do Cliente:")],
+            [sg.InputText(key="cpf_cliente")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+
+        window = sg.Window("Selecionar Cliente", layout)
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        cpf = values["cpf_cliente"]
+
+        # Verificar se o CPF tem 11 dígitos numéricos
+        if len(cpf) == 11 and cpf.isdigit():
+            return cpf
         else:
-            for filme, total in total_vendas_por_filme.items():
-                print(f"Filme: {filme} | Total de vendas: {total}")
-
-    def mostra_confirmacao(self, acao):
-        print(f"Venda {acao} com sucesso!")
+            self.mostra_mensagem("CPF inválido. Certifique-se de digitar um CPF válido (11 dígitos).")
+            return None
