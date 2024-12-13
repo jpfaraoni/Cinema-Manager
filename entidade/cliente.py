@@ -1,11 +1,9 @@
 from abstrato.pessoa import Pessoa
 
 class Cliente(Pessoa):
-    def __init__(self, nome: str, fone: str, email: str, idade: int):
-        # Chama o construtor da classe abstrata Pessoa
-        super().__init__()
+    def __init__(self, nome: str, telefone: str, email: str, idade: int):
         self.__nome = nome
-        self.__fone = fone
+        self.__telefone = telefone  # Inicialize o atributo privado
         self.__email = email
         self.__idade = idade
 
@@ -20,14 +18,15 @@ class Cliente(Pessoa):
         self.__nome = nome
 
     @property
-    def fone(self):
-        return self.__fone
+    def telefone(self):
+        return self.__telefone  # Corrige o acesso ao atributo privado
 
-    @fone.setter
-    def fone(self, fone: str):
-        if not fone or len(fone) < 10:
+    @telefone.setter
+    def telefone(self, telefone: str):
+        if not telefone or len(telefone) < 10:
             raise ValueError("Telefone inválido. O telefone deve ter pelo menos 10 caracteres.")
-        self.__fone = fone
+        self.__telefone = telefone
+
 
     @property
     def email(self):
@@ -53,4 +52,4 @@ class Cliente(Pessoa):
         return "Cliente"
 
     def __str__(self):
-        return f"Cliente: {self.nome}, Telefone: {self.fone}, Email: {self.email}, Idade: {self.idade}"
+        return f"Cliente: {self.nome}, Telefone: {self.telefone}, Email: {self.email}, Idade: {self.idade}"

@@ -1,96 +1,105 @@
-from entidade.cliente import Cliente
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
+from exception.cliente_nao_encontrado import ClienteNaoEncontrado
+from entidade.cliente import Cliente
 from visao.cliente_visao import ClienteVisao
-
+from DAO.cliente_dao import ClienteDAO
 
 class ClienteControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
         super().__init__(controlador_sistema)
-        self.__clientes_db = []  # Simulação do banco de dados em memória
+        self.__clientes_db = []
         self.__clientevisao = ClienteVisao()
+        self.__cliente_DAO = ClienteDAO()
 
-    def cadastrar_cliente(self, nome, fone, email, idade):
-        # Verifica se o cliente já está cadastrado
-        for cliente in self.__clientes_db:
-            if cliente.nome == nome:
-                return f"Cliente {nome} já está cadastrado(a)."
 
-        # Tenta criar um novo cliente e adicionar ao banco de dados
+    def cadastrar_cliente(self):
         try:
-            novo_cliente = Cliente(nome, fone, email, int(idade))
-            self.__clientes_db.append(novo_cliente)
-            return f"Cliente {nome} foi adicionado(a) com sucesso!"
-        except ValueError as e:
-            return f"Erro ao cadastrar cliente: {e}"
+            dados_cliente = self.__clientevisao.pega_dados_cliente()
+            if dados_cliente is not None:
+                nome = dados_cliente["nome"]
+                telefone = dados_cliente["telefone"]
+                email = dados_cliente["email"]
+                idade = dados_cliente["idade"]
 
-    def atualizar_cliente(self, nome, fone=None, email=None, idade=None):
-    # Usa a nova função busca_cliente
-        cliente = self.busca_cliente(nome)
-        if isinstance(cliente, Cliente):
-            try:
-                if fone is not None:
-                    cliente.fone = fone
-                if email is not None:
-                    cliente.email = email
-                if idade is not None:
-                    cliente.idade = idade
-                return f"Cliente {nome} atualizado com sucesso."
-            except ValueError as e:
-                return f"Erro ao atualizar cliente: {e}"
-        return cliente  # Retorna a mensagem de cliente não encontrado
+                if not isinstance(nome, str):
+                    raise ValueError(f"Nome precisa ser válido")
+                if not isinstance(telefone, str):
+                    raise ValueError(f"Telefone precisa ser válido")
+                if not isinstance(email, str):
+                    raise ValueError(f"Email precisa ser válido")
+                if not isinstance(idade, int):
+                    raise ValueError(f"Idade precisa ser válido")
 
-    def remover_cliente(self, nome):
-        # Usa a nova função busca_cliente
-        cliente = self.busca_cliente(nome)
-        if isinstance(cliente, Cliente):
-            self.__clientes_db.remove(cliente)
-            return f"Cliente {nome} removido com sucesso."
-        return cliente  # Retorna a mensagem de cliente não encontrado
+                try:
+                    self.busca_cliente(nome)  # Tenta buscar o filme pelo título
+                    raise Exception(f"Cliente {nome} já está cadastrado.")
+                except ClienteNaoEncontrado:
+                    novo_cliente = Cliente(dados_cliente["nome"],dados_cliente["telefone"], 
+                                           dados_cliente["email"], dados_cliente["idade"])
+                    # USO DE DAO PARA SERIALIZAÇÃO
+                    self.__cliente_DAO.add(novo_cliente)
+                    self.__clientevisao.mostra_mensagem(f"Cliente {nome} foi adicionado com sucesso!")
+        except ValueError as ve:
+            self.__clientevisao.mostra_mensagem(f"Erro: {ve}")
+        except Exception as e:
+            self.__clientevisao.mostra_mensagem(f"Erro inesperado: {e}")
 
+    def atualizar_cliente(self):
+        try:
+            self.lista_clientes()
+            nome = self.__clientevisao.seleciona_cliente()
+            if nome is None:
+                return
+            cliente = self.busca_cliente(nome)
 
-    def listar_clientes(self):
-        if not self.__clientes_db:
-            return "Nenhum cliente cadastrado."
-        return [str(cliente) for cliente in self.__clientes_db]
-    
+            novos_dados = self.__clientevisao.pega_novos_dados_cliente()
+            if novos_dados is None:
+                return
+            telefone, email, idade = novos_dados
+            cliente.fone = telefone
+            cliente.email = email
+            cliente.idade = idade
+
+            self.__cliente_DAO.update(cliente)
+            self.__clientevisao.mostra_mensagem(f"Cliente {nome} atualizado com sucesso!")
+        except ClienteNaoEncontrado as e:
+            self.__clientevisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__clientevisao.mostra_mensagem(f"Erro inesperado: {e}")
+
     def busca_cliente(self, nome):
-        for cliente in self.__clientes_db:
+        clientes = self.__cliente_DAO.get_all()
+        for cliente in clientes:
             if cliente.nome == nome:
                 return cliente
-        return f"Cliente {nome} não encontrado."
+        raise ClienteNaoEncontrado(nome)
 
+    def remover_cliente(self):
+        try:
+            self.lista_clientes()
+            nome = self.__clientevisao.seleciona_cliente()
+            if nome is not None:
+                cliente = self.busca_cliente(nome)
+                self.__cliente_DAO.remove(nome)
+                self.__clientevisao.mostra_mensagem(f"Cliente {nome} foi removido com sucesso.")
+        except ClienteNaoEncontrado as e:
+            self.__clientevisao.mostra_mensagem(f"Erro: {e}")
+        except Exception as e:
+            self.__clientevisao.mostra_mensagem(f"Erro inesperado: {e}")
+
+    def lista_clientes(self):
+        clientes = self.__cliente_DAO.get_all()
+        if not clientes:
+            self.__clientevisao.mostra_mensagem("Nenhum cliente cadastrado.")
+            return
+        clientes_info = [{"nome": cliente.nome, "telefone": cliente.telefone, 
+                          "email": cliente.email, "idade": cliente.idade} for cliente in clientes]
+        self.__clientevisao.exibe_lista_clientes(clientes_info)
 
     def abre_tela(self):
-        lista_opcoes = {
-            1: self.cadastrar_cliente_opcao,
-            2: self.atualizar_cliente_opcao,
-            3: self.remover_cliente_opcao,
-            4: self.listar_clientes_opcao,
-            0: self.retornar
-        }
+        lista_opcoes = {1: self.cadastrar_cliente, 2: self.atualizar_cliente, 3: self.remover_cliente, 4: self.lista_clientes, 0: self.retornar}
 
         continua = True
         while continua:
-            opcao = self.__clientevisao.tela_opcoes()
-            if opcao in lista_opcoes:
-                lista_opcoes[opcao]()
+            lista_opcoes[self.__clientevisao.tela_opcoes()]()
 
-    def cadastrar_cliente_opcao(self):
-        dados_cliente = self.__clientevisao.pega_dados_cliente()
-        mensagem = self.cadastrar_cliente(dados_cliente['nome'], dados_cliente['fone'], dados_cliente['email'], dados_cliente['idade'])
-        self.__clientevisao.mostra_mensagem(mensagem)
-
-    def atualizar_cliente_opcao(self):
-        nome = self.__clientevisao.seleciona_cliente()
-        dados_cliente = self.__clientevisao.pega_dados_cliente()
-        mensagem = self.atualizar_cliente(nome, dados_cliente['fone'], dados_cliente['email'], dados_cliente['idade'])
-        self.__clientevisao.mostra_mensagem(mensagem)
-
-    def remover_cliente_opcao(self):
-        nome = self.__clientevisao.seleciona_cliente()
-        mensagem = self.remover_cliente(nome)
-        self.__clientevisao.mostra_mensagem(mensagem)
-
-    def listar_clientes_opcao(self):
-        clientes = self.listar_clientes()
-        self.__clientevisao.listar_clientes(clientes)

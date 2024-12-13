@@ -1,74 +1,124 @@
-from entidade.cliente import Cliente
+import PySimpleGUI as sg
 
 class ClienteVisao:
     def __init__(self):
         pass
 
     def tela_opcoes(self):
-        print("\n-------- GERENCIAMENTO DE CLIENTES ----------")
-        print("Escolha a opção:")
-        print("1 - Cadastrar Cliente")
-        print("2 - Atualizar Cliente")
-        print("3 - Remover Cliente")
-        print("4 - Listar Clientes")
-        print("0 - Sair")
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout_esquerda = [
+            [sg.Image(filename='visao/imagens/rb_60.png')]
+        ]
+
+        layout_direita = [
+        [sg.Button("Cadastrar Cliente", key=1, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Atualizar Cliente", key=2, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Remover Cliente", key=3, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Listar Clientes", key=4, size=(10, 1), font=("Helvetica", 12))],
+        [sg.Button("Sair", key=0, size=(10, 1), font=("Helvetica", 12))],
+        ]
+
+        layout = [
+            [sg.Column(layout_direita),
+             sg.VSeparator(),
+             sg.Column(layout_esquerda)]
+        ]
+
+        window = sg.Window("Menu Cliente", layout)
+        event, _ = window.read()
+        window.close()
+        # if event == sg.WINDOW_CLOSED:
+        #     event = 0
+        return event if event is not None else 0
+    
+    def pega_dados_cliente(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Text("Nome Cliente:"), sg.InputText(key="nome")],
+            [sg.Text("Telefone para Contato:"), sg.InputText(key="telefone")],
+            [sg.Text("Email:"), sg.InputText(key="email")],
+            [sg.Text("Idade:"), sg.InputText(key="idade")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Cadastrar Cliente", layout)
+
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
 
         try:
-            opcao = int(input("Escolha a opção: "))
-            if opcao not in [0, 1, 2, 3, 4]:
-                raise ValueError("Opção inválida.")
-        except ValueError as e:
-            print(f"Erro: {e}. Por favor, digite um número válido.")
-            return self.tela_opcoes()
+            return {
+                "nome": str(values["nome"]),
+                "telefone": str(values["telefone"]),
+                "email": str(values["email"]),
+                "idade": int(values["idade"]),
+            }
+        except ValueError:
+            raise ValueError("Dados inválidos")
 
-        return opcao
+    def pega_novos_dados_cliente(self):
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Text("Novo telefone:"), sg.InputText(key="telefone")],
+            [sg.Text("Novo email:"), sg.InputText(key="email")],
+            [sg.Text("Nova idade:"), sg.InputText(key="idade")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Atualizar Cliente", layout)
 
-    def pega_dados_cliente(self):
-        print("\n===== CADASTRAR CLIENTE =====")
-        nome = input("Nome do Cliente: ")
-        fone = input("Telefone para Contato: ")
-        email = input("Email: ").strip()  # Não converte para maiúsculas
-        idade = (input("Idade do Cliente: "))
-        return {"nome": nome, "fone": fone, "email": email, "idade": idade}
+        event, values = window.read()
+        window.close()
 
-    def mostra_cliente(self, cliente):
-        if not isinstance(cliente, Cliente):
-            print("Erro: O objeto fornecido não é um cliente válido.")
-            return
-        
-        print("\n-------- CLIENTE ----------")
-        print(f"NOME: {cliente.nome}")
-        print(f"TELEFONE: {cliente.fone}")
-        print(f"EMAIL: {cliente.email}")
-        print(f"IDADE: {cliente.idade}")
-        print("\n")
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            return {
+                "telefone": str(values["telefone"]),
+                "email": str(values["email"]),
+                "idade": int(values["idade"]),
+            }
+        except ValueError:
+            raise ValueError("Dados inválidos.")
+
 
     def seleciona_cliente(self):
-        return input("Digite o nome do cliente que deseja selecionar: ")
+        sg.ChangeLookAndFeel('DarkGrey10')
+        layout = [
+            [sg.Text("Digite o nome do cliente que deseja selecionar:"), sg.InputText(key="nome")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")],
+        ]
+        window = sg.Window("Selecionar Cliente", layout)
+
+        event, values = window.read()
+        window.close()
+
+        if event == "Cancelar" or event == sg.WINDOW_CLOSED:
+            return None
+
+        try:
+            return str(values["nome"])
+        except ValueError:
+            raise ValueError("Dados inválidos.")
 
     def mostra_mensagem(self, msg):
-        print(msg)
+        sg.ChangeLookAndFeel('DarkGrey10')
+        sg.popup(msg)
 
-    def listar_clientes(self, clientes):
-        if isinstance(clientes, Cliente):
-            self.mostra_mensagem(str(clientes))
-        elif isinstance(clientes, list) and all(isinstance(cliente, Cliente) for cliente in clientes):
-            for cliente in clientes:
-                self.mostra_mensagem(str(cliente))
-        else:
-            self.mostra_mensagem("Nenhum cliente válido encontrado.")
-
-
+    def exibe_lista_clientes(self, clientes):
+        sg.ChangeLookAndFeel('DarkGrey10')
         if not clientes:
-            self.mostra_mensagem("Nenhum cliente cadastrado.")
+            sg.popup("Nenhum cliente cadastrado.")
             return
-
-        print("\nClientes cadastrados:")
+        
+        layout = [[sg.Text("Clientes cadastrados:")]]
         for cliente in clientes:
-            if isinstance(cliente, Cliente):
-                self.mostra_cliente(cliente)
-            else:
-                print("Erro: Um dos itens na lista não é um cliente válido.")
+            layout.append([sg.Text(f"NOME: {cliente['nome']}, TELEFONE: {cliente['telefone']}, "
+                                f"EMAIL: {cliente['email']}, IDADE: {cliente['idade']}")])
+        layout.append([sg.Button("Fechar")])
 
-    def mostra_confirmacao(self, acao):
-        print(f"Cliente {acao} com sucesso!")
+        window = sg.Window("Lista de Clientes", layout)
+        window.read()
+        window.close()

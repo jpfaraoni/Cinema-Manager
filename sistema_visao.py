@@ -19,8 +19,8 @@ class SistemaVisao:
             [sg.Button("Salas", key=1, size=(9, 1), font=("Helvetica", 12))],
             [sg.Button("Filmes", key=2, size=(9, 1), font=("Helvetica", 12))],
             [sg.Button("Sessões", key=3, size=(9, 1), font=("Helvetica", 12))],
-            [sg.Button("Realizar Venda", key=4, size=(9, 1), font=("Helvetica", 12))],
-            [sg.Button("Cadastro Cliente", key=5, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Vendas", key=4, size=(9, 1), font=("Helvetica", 12))],
+            [sg.Button("Clientes", key=5, size=(9, 1), font=("Helvetica", 12))],
             [sg.Button("Relatório", key=6, size=(9, 1), font=("Helvetica", 12))],
             [sg.Button("Finalizar Sistema", size=(9, 1), font=("Helvetica", 12))],
         ]
