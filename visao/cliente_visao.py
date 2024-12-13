@@ -1,72 +1,63 @@
 import PySimpleGUI as sg
 
 class ClienteVisao:
-    def __init__(self):
-        pass
-
     def tela_opcoes(self):
-        sg.ChangeLookAndFeel('DarkGrey10')
-        layout_esquerda = [
-            [sg.Image(filename='visao/imagens/rb_60.png')]
-        ]
-
-        layout_direita = [
-            [sg.Button("Cadastrar Cliente", key=1, size=(10, 1), font=("Helvetica", 12))],
-            [sg.Button("Atualizar Cliente", key=2, size=(10, 1), font=("Helvetica", 12))],
-            [sg.Button("Remover Cliente", key=3, size=(10, 1), font=("Helvetica", 12))],
-            [sg.Button("Listar Clientes", key=4, size=(10, 1), font=("Helvetica", 12))],
-            [sg.Button("Sair", key=0, size=(10, 1), font=("Helvetica", 12))],
-        ]
-
+        sg.theme('DarkGrey10')
         layout = [
-            [sg.Column(layout_direita),
-             sg.VSeparator(),
-             sg.Column(layout_esquerda)]
+            [sg.Button("Cadastrar Cliente", key=1)],
+            [sg.Button("Listar Clientes", key=2)],
+            [sg.Button("Remover Cliente", key=3)],
+            [sg.Button("Sair", key=0)]
         ]
 
         window = sg.Window("Menu Cliente", layout)
         event, _ = window.read()
         window.close()
-        return event if event is not None else 0
+        return event
 
     def pega_dados_cliente(self):
-        sg.ChangeLookAndFeel('DarkGrey10')
+        sg.theme('DarkGrey10')
         layout = [
-            [sg.Text("Nome Cliente:"), sg.InputText(key="nome")],
-            [sg.Text("Telefone Cliente:"), sg.InputText(key="telefone")],
-            [sg.Text("Email Cliente:"), sg.InputText(key="email")],
-            [sg.Text("Idade Cliente:"), sg.InputText(key="idade")],
-            [sg.Text("CPF Cliente:"), sg.InputText(key="cpf")],
-            [sg.Button("Cadastrar", size=(10, 1), font=("Helvetica", 12))]
+            [sg.Text("Nome:"), sg.InputText(key="nome")],
+            [sg.Text("Telefone:"), sg.InputText(key="telefone")],
+            [sg.Text("Email:"), sg.InputText(key="email")],
+            [sg.Text("Idade:"), sg.InputText(key="idade")],
+            [sg.Text("CPF:"), sg.InputText(key="cpf")],
+            [sg.Button("Cadastrar", key="cadastrar")]
         ]
 
         window = sg.Window("Cadastrar Cliente", layout)
         event, values = window.read()
         window.close()
 
-        if event == "Cadastrar":
-            if not values["nome"] or not values["telefone"] or not values["email"] or not values["idade"] or not values["cpf"]:
-                self.mostra_mensagem("Por favor, preencha todos os campos.")
-                return None
-            return {
-                "nome": values["nome"],
-                "telefone": values["telefone"],
-                "email": values["email"],
-                "idade": int(values["idade"]) if values["idade"].isdigit() else None,
-                "cpf": values["cpf"]
-            }
+        if event == "cadastrar":
+            return values
         return None
 
     def mostra_mensagem(self, mensagem):
         sg.Popup("Mensagem", mensagem)
 
-    def exibe_lista_clientes(self, lista_clientes):
+    def exibe_lista_clientes(self, clientes):
         layout = [
-            [sg.Text("Lista de Clientes", font=("Helvetica", 14))],
-            [sg.Listbox([f"{cliente['nome']} - {cliente['telefone']} - {cliente['email']} - {cliente['cpf']} - {cliente['idade']} anos" 
-                        for cliente in lista_clientes], size=(50, 10), key="lista_clientes")],
-            [sg.Button("Fechar", size=(10, 1), font=("Helvetica", 12))]
+            [sg.Text("Clientes Cadastrados")],
+            [sg.Listbox(values=clientes, size=(50, 10))],
+            [sg.Button("Fechar")]
         ]
+
+        window = sg.Window("Lista de Clientes", layout)
+        window.read()
+        window.close()
+
+    def pega_cpf_cliente(self):
+        layout = [
+            [sg.Text("CPF do Cliente:"), sg.InputText(key="cpf")],
+            [sg.Button("Confirmar")]
+        ]
+
+        window = sg.Window("Remover Cliente", layout)
+        event, values = window.read()
+        window.close()
+        return values["cpf"] if event == "Confirmar" else None
 
         window = sg.Window("Lista de Clientes", layout)
         event, _ = window.read()
