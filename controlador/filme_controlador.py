@@ -1,8 +1,9 @@
-from entidade.filme import Filme
+om entidade.filme import Filme
 from exception.filme_nao_encontrado import FilmeNaoEncontrado
 from visao.filme_visao import FilmeVisao
 from abstrato.controlador_entidade_abstrata import ControladorEntidadeAbstrata
 from DAO.filme_dao import FilmeDAO
+from exception.cancelopexeception import CancelOpException
 
 class FilmeControlador(ControladorEntidadeAbstrata):
     def __init__(self, controlador_sistema):
@@ -13,13 +14,17 @@ class FilmeControlador(ControladorEntidadeAbstrata):
     def adicionar_filme(self):
         try:
             dados_filme = self.__filmevisao.pega_dados_filme()
-            if dados_filme is None:
-                return
             titulo = dados_filme["titulo"]
             duracao = dados_filme["duracao"]
+            genero = dados_filme["genero"]
+            classificacao_etaria = dados_filme["classificacao_etaria"]
 
-            if not isinstance(duracao, int):
-                raise ValueError("Duração deve ser em minutos.")
+            if duracao <= 0:
+                raise ValueError("Duração inválida.")
+            if genero.isnumeric():
+                raise ValueError("Gênero inválido.")
+            if classificacao_etaria < 0:
+                raise ValueError("Classificação etária inválida.")
 
             try:
                 self.busca_filme(titulo)  # Tenta buscar o filme pelo título
@@ -37,21 +42,32 @@ class FilmeControlador(ControladorEntidadeAbstrata):
 
         except ValueError as ve:
             self.__filmevisao.mostra_mensagem(f"Erro: {ve}")
+        except CancelOpException:
+            pass
         except Exception as e:
-            self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
+            self.__filmevisao.mostra_mensagem(f"Erro: {e}")
 
     def atualizar_filme(self):
         #TODO implementar um metodo update na classe DAO abstrata e realizar o update apos atualizar o objeto para o db refletir a nova instancia.
         try:
             self.listar_filmes()
             titulo = self.__filmevisao.seleciona_filme()
-            if titulo is None:
-                return
             filme = self.busca_filme(titulo)
 
             novos_dados = self.__filmevisao.pega_novos_dados_filme()
-            if novos_dados is None:
-                return
+
+            titulo = novos_dados["titulo"]
+            duracao = novos_dados["duracao"]
+            genero = novos_dados["genero"]
+            classificacao_etaria = novos_dados["classificacao_etaria"]
+
+            if duracao <= 0:
+                raise ValueError("Duração inválida.")
+            if genero.isnumeric():
+                raise ValueError("Gênero inválido.")
+            if classificacao_etaria < 0:
+                raise ValueError("Classificação etária inválida.")
+
             filme.duracao = novos_dados["duracao"]
             filme.genero = novos_dados["genero"]
             filme.classificacao_etaria = novos_dados["classificacao_etaria"]
@@ -64,8 +80,8 @@ class FilmeControlador(ControladorEntidadeAbstrata):
             self.__filmevisao.mostra_mensagem(f"Erro: {ve}")
         except FilmeNaoEncontrado as e:
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
-        except Exception as e:
-            self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
+        except CancelOpException:
+            pass
 
     def busca_filme(self, titulo):
         filmes = self.__filme_DAO.get_all()
@@ -78,8 +94,6 @@ class FilmeControlador(ControladorEntidadeAbstrata):
         try:
             self.listar_filmes()
             titulo = self.__filmevisao.seleciona_filme()
-            if titulo is None:
-                return
             filme = self.busca_filme(titulo)
 
             # USO DE DAO PARA SERIALIZACAO
@@ -87,8 +101,8 @@ class FilmeControlador(ControladorEntidadeAbstrata):
             self.__filmevisao.mostra_mensagem(f"Filme '{titulo}' foi removido com sucesso.")
         except FilmeNaoEncontrado as e:
             self.__filmevisao.mostra_mensagem(f"Erro: {e}")
-        except Exception as e:
-            self.__filmevisao.mostra_mensagem(f"Erro inesperado: {e}")
+        except CancelOpException:
+            pass
 
     #SERIALIZACAO USANDO DAO
     def listar_filmes(self):
